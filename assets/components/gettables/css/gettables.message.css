@@ -1,0 +1,10 @@
+/* Messages */
+@import url("./lib/jquery.jgrowl.min.css");
+div.jGrowl > .ui-state-highlight {
+    background: inherit;
+    color: inherit;
+    border: inherit;
+}
+.gettables-message-success { background-color: green !important; }
+.gettables-message-error { background-color: brown !important; }
+.gettables-message-info { background-color: black !important; }
