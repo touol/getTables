@@ -29,12 +29,15 @@ class getSelect
     public function handleRequest($action, $data = array())
     {
 		$class = get_class($this);
-		if($action != 'ajax' and $this->config['isAjax'])
+		if($action != 'autocomplect' and $this->config['isAjax'])
 			return $this->error("Доступ запрешен $class $action");
 		
 		switch($action){
 			case 'compile':
 				return $this->compile($data);
+				break;
+			case 'autocomplect':
+				return $this->autocomplect($data);
 				break;
 			/*case 'fetch':
 				return $this->fetch($data);
@@ -46,25 +49,77 @@ class getSelect
 				return $this->error("Метод $action в классе $class не найден!");
 		}
     }
-
+	public function autocomplect($data)
+    {
+		$hash = $data['hash'];
+		$select_name = $data['select_name'];
+		if(!$select = $this->getTables->getClassCache('getSelect',$select_name)){
+			return $this->error("select $select_name не найден!");
+		}
+		$select['pdoTools']['limit'] = 0;
+		if(empty($select['where'])){
+			$select['where'] = [];
+		}
+		$where = [];
+		if((int)$data['id']){
+			$where['id'] = (int)$data['id'];
+			$select['pdoTools']['limit'] = 1;
+			if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
+			$select['pdoTools']['where'] = array_merge($select['pdoTools']['where'],$where);
+			$this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+			$rows = $this->pdoTools->run();
+			if(isset($rows[0])){
+				$content = $this->pdoTools->getChunk('@INLINE '.$select['content'],$rows[0]);
+				return $this->success('',array('content'=>$content));
+			}else{
+				return $this->error("Объект {$select['class']} id {$data['id']} не найден!");
+			}
+				
+		}else{
+			$query = $data['query'];
+			if($query){
+				foreach($select['where'] as $field=>$value){
+					$value = str_replace('query',$query,$value);
+					$where[$field] = $value;
+				}
+			}
+			if(!empty($where)){
+				if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
+				$select['pdoTools']['where'] = array_merge($select['pdoTools']['where'],$where);
+			}
+		}
+		
+		$this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+		$rows = $this->pdoTools->run();
+		$output = [];
+		foreach($rows as $row){
+			$content = $this->pdoTools->getChunk('@INLINE '.$select['content'],$row);
+			$output[] = '<li><a href="#" data-id="'.$row['id'].'">'.$content.'</a></li>';
+		}
+		return $this->success('',array('html'=>implode("\r\n",$output)));
+	}
 	public function compile($selects)
     {
 		if(empty($selects)) return $this->error("Пустой selects! getSelect compile");
 		$compile = [];
 		foreach($selects as $name=>&$select){
 			if(empty($select['class'])) $select['class'] = $name;
+			if(empty($select['name'])) $select['name'] = $name;
 			switch($select['class']){
 				case 'users':
-					if(empty($select['groups'])) $pdoUser['groups'] = $select['groups'];
-					if(empty($select['roles'])) $pdoUser['roles'] = $select['roles'];
-					if(empty($select['users'])) $pdoUser['users'] = $select['users'];
-					if(empty($select['showInactive'])) $pdoUser['showInactive'] = $select['showInactive'];
-					if(empty($select['showBlocked'])) $pdoUser['showBlocked'] = $select['showBlocked'];
+					$pdoUser = [];
+					if(!empty($select['groups'])) $pdoUser['groups'] = $select['groups'];
+					if(!empty($select['roles'])) $pdoUser['roles'] = $select['roles'];
+					if(!empty($select['users'])) $pdoUser['users'] = $select['users'];
+					if(!empty($select['showInactive'])) $pdoUser['showInactive'] = $select['showInactive'];
+					if(!empty($select['showBlocked'])) $pdoUser['showBlocked'] = $select['showBlocked'];
+					if(empty($select['fields'])) $pdoUser['select'] = 'id,fullname';
 					$pdoUser = $this->pdoUsersConfig($pdoUser);
-					if(empty($select['pdoTools'])) $select['pdoTools'] = [];
-					$select['pdoTools'] = array_merge($pdoUser,$select['pdoTools']);
+					
+
+					$select['pdoTools'] = $pdoUser;
 					if(empty($select['type'])) $select['type'] = 'select';
-					if(empty($select['content'])) $select['content'] = '{$fullname} {$email}';
+					if(empty($select['content'])) $select['content'] = '{$fullname}';
 					break;
 				case 'template':
 					$pdoTemplate = [
@@ -85,6 +140,7 @@ class getSelect
 			switch($select['type']){
 				case 'select':
 					$select['pdoTools']['limit'] = 0;
+					
 					$this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
 					$rows = $this->pdoTools->run();
 					$data = [];
@@ -97,18 +153,38 @@ class getSelect
 					}
 					$select['data'] = $data;
 					$compile[$name] = $select;
+					
+					//$this->pdoTools->addTime('select '.print_r($select,1));
+					break;
+				case 'autocomplect':
+					/*$select['pdoTools']['limit'] = 0;
+					
+					$this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+					$rows = $this->pdoTools->run();
+					$data = [];
+					foreach($rows as $row){
+						$d = [
+							'id' =>$row['id'],
+							'content' =>$this->pdoTools->getChunk('@INLINE '.$select['content'],$row),
+						];
+						$data[] = $d;
+					}
+					$select['data'] = $data;*/
+					$compile[$name] = $select;
+					
 					break;
 			}
+			
 		}
 		return $this->success('',array('selects'=>$compile));
     }
 	
-	public function pdoUsersConfig($scriptProperties = array())
+	public function pdoUsersConfig($sp = array())
     {
         $class = 'modUser';
 		$profile = 'modUserProfile';
 		$member = 'modUserGroupMember';
-
+		//$this->pdoTools->addTime('select sp'.print_r($sp,1));
 		// Start building "Where" expression
 		$where = array();
 		if (empty($showInactive)) {
@@ -142,7 +218,8 @@ class getSelect
 			),
 		);
 		foreach ($tmp as $k => $p) {
-			if (!empty($$k)) {
+			if (!empty($sp[$k])) {
+				$$k = $sp[$k];
 				$$k = array_map('trim', explode(',', $$k));
 				${$k . '_in'} = ${$k . '_out'} = $fetch_in = $fetch_out = array();
 				foreach ($$k as $v) {
@@ -199,8 +276,8 @@ class getSelect
 
 		// Add custom parameters
 		foreach (array('where', 'innerJoin', 'select') as $v) {
-			if (!empty($scriptProperties[$v])) {
-				$tmp = $scriptProperties[$v];
+			if (!empty($sp[$v])) {
+				$tmp = $sp[$v];
 				if (!is_array($tmp)) {
 					$tmp = json_decode($tmp, true);
 				}
@@ -208,9 +285,9 @@ class getSelect
 					$$v = array_merge($$v, $tmp);
 				}
 			}
-			unset($scriptProperties[$v]);
+			unset($sp[$v]);
 		}
-		$this->pdoTools->addTime('Conditions prepared');
+		//$this->pdoTools->addTime('Conditions prepared');
 
 		$default = array(
 			'class' => $class,
@@ -225,14 +302,14 @@ class getSelect
 			'disableConditions' => true,
 		);
 
-		if (!empty($users_in) && (empty($scriptProperties['sortby']) || $scriptProperties['sortby'] == $class . '.id')) {
-			$scriptProperties['sortby'] = "find_in_set(`$class`.`id`,'" . implode(',', $users_in) . "')";
-			$scriptProperties['sortdir'] = '';
+		if (!empty($users_in) && (empty($sp['sortby']) || $sp['sortby'] == $class . '.id')) {
+			$sp['sortby'] = "find_in_set(`$class`.`id`,'" . implode(',', $users_in) . "')";
+			$sp['sortdir'] = '';
 		}
 
 		// Merge all properties and run!
-		$this->pdoTools->addTime('Query parameters ready');
-		return array_merge($default, $scriptProperties);
+		//$this->pdoTools->addTime('Query parameters ready');
+		return array_merge($default, $sp);
     }
 	
     public function error($message = '', $data = array())

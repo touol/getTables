@@ -25,6 +25,15 @@ return [
                 'type' => 'textfield',
                 'value' => 'getTable.Modal.CreateUpdate.tpl',
             ],
+			/*
+				'getTableNavTpl' => 'getTable.nav.tpl',
+			'getTableEditRowTpl' => 'getTable.EditRow.tpl',
+			'getTableFilterTpl' => 'getTable.Filter.tpl',
+				*/
+			'getTableFilterTpl' => [
+                'type' => 'textfield',
+                'value' => 'getTable.Filter.tpl',
+            ],
 			'getTabsTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTabs.tpl',
@@ -74,6 +83,15 @@ return [
 			'getTableModalCreateUpdateTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTable.Modal.CreateUpdate.tpl',
+            ],
+			/*
+				'getTableNavTpl' => 'getTable.nav.tpl',
+			'getTableEditRowTpl' => 'getTable.EditRow.tpl',
+			'getTableFilterTpl' => 'getTable.Filter.tpl',
+				*/
+			'getTableFilterTpl' => [
+                'type' => 'textfield',
+                'value' => 'getTable.Filter.tpl',
             ],
 			'getTabsTpl' => [
                 'type' => 'textfield',

@@ -38,6 +38,18 @@ class getModal
     public function handleRequest($action, $data = array())
     {
 		$class = get_class($this);
+		if($data['sub_where_current']){
+			$_REQUEST['sub_where_current'] = $table['sub_where_current'] = $data['sub_where_current'];
+			$data['sub_where_current'] = json_decode($data['sub_where_current'],1);
+		}else if($data['table_data']['sub_where_current']){
+			$_REQUEST['sub_where_current'] = $table['sub_where_current'] = json_encode($data['table_data']['sub_where_current']);
+			$data['sub_where_current'] = $data['table_data']['sub_where_current'];
+		} 
+		if($data['parent_current']){
+			$data['parent_current'] = json_decode($data['parent_current'],1);
+		}else if($data['table_data']['parent_current']){
+			$data['parent_current'] = $data['table_data']['parent_current'];
+		}
 		switch($action){
 			case 'fetchTableModal':
 				return $this->fetchTableModal($data);
@@ -61,8 +73,8 @@ class getModal
 		$table_action = !empty($data['button_data']['action'])
             ? (string)$data['button_data']['action']
             : false;
-		$table_name = !empty($data['table_name'])
-            ? (string)$data['table_name']
+		$table_name = !empty($data['table_data']['name'])
+            ? (string)$data['table_data']['name']
             : false;
 		$tr_data = !empty($data['tr_data']) ? $data['tr_data'] : [];
            
@@ -71,9 +83,11 @@ class getModal
 		if(!$table_name) return $this->error("Нет table_name!");
 		//$this->getTables->addDebug($_SESSION['getTables']);
 		//$this->getTables->clearCache();
-		if(empty($this->config['getTable'][$table_name])) return $this->error("Таблица $table_name не найдена! ",$this->config);
-		
-		$table = $this->config['getTable'][$table_name];
+		//if(empty($this->config['getTable'][$table_name])) return $this->error("Таблица $table_name не найдена! ",$this->config);
+		if(!$table = $this->getTables->getClassCache('getTable',$table_name)){
+			return $this->error("Таблица $table_name не найдено",$this->config);
+		}
+		//$table = $this->config['getTable'][$table_name];
 		//echo json_encode($table);
 		$modal = $table['modal'][$table_action];
 		$edits = $table['edits'];
@@ -81,10 +95,24 @@ class getModal
 		$modal['table_name'] = $table_name;
 		$modal['table_action'] = $table_action;
 		
+		if($data['sub_where_current']) $modal['sub_where_current'] = json_encode($data['sub_where_current']);
+		if($data['parent_current']) $modal['parent_current'] = json_encode($data['parent_current']);
+		
 		if($tr_data){
 			$edits = $this->generateEditsData($edits,$tr_data,$table);
 		}
-		if(!empty($table['defaultFieldSet'])) $edits = $this->defaultFieldSet($edits,$table['defaultFieldSet']);
+		$this->getTables->addDebug($data['sub_where_current'],'fetchTableModal $data[sub_where_current] ');
+		if($data['sub_where_current']){
+			//$table['default'] = array_merge($table['default'],$data['table_data']['sub_where_current']);
+			foreach($edits as &$edit){
+				if(isset($data['sub_where_current'][$edit['field']])){
+					$edit['force'] = $data['sub_where_current'][$edit['field']];
+				}
+			}
+		}
+		$edits = $this->defaultFieldSet($edits);
+		
+		//if(!empty($table['force'])) $edits = $this->defaultFieldSet($edits,$table['force']);
 		//return $this->error("getModal fetchTableModal modal! ",$tr_data);
 		$modal['edits'] = $edits;
 		$this->getTables->addDebug($modal,'fetchTableModal $modal ');
@@ -92,11 +120,25 @@ class getModal
 		
 		return $this->success('',array('html'=>$html));
     }
-	public function defaultFieldSet($edits,$defaultFieldSet)
+	public function defaultFieldSet($edits)
     {
 		foreach($edits as &$edit){
-			if($defaultFieldSet[$edit['field']])
-				$edit['value'] = $defaultFieldSet[$edit['field']]['value'];
+			if($edit['default'] and empty($edit['value'])){
+				$edit['force'] = $edit['default'];
+			}
+			if($edit['force']){
+				switch($edit['type']){
+					case 'date':
+						$edit['force'] = date('Y-m-d',strtotime($edit['force']));
+						break;
+				}
+				switch($edit['force']){
+					case 'user_id':
+						$edit['force'] = $this->modx->user->id;
+						break;
+				}
+				$edit['value'] = $edit['force'];
+			}
 		}
 		return $edits;
     }
@@ -122,7 +164,31 @@ class getModal
 		
 		foreach($rows as $row){
 			foreach($edits as &$edit){
-				$edit['value'] = $row[$edit['field']];
+				if(!empty($edit['multiple']) and isset($edit['pdoTools']) and !empty($edit['search_fields'])){
+					if(empty($edit['pdoTools']['class'])) $edit['pdoTools']['class'] = $edit['class'];
+					$where = [];
+					foreach($edit['search_fields'] as $field=>$row_field){
+						$where[$field] = $row[$row_field];
+					}
+					$edit['pdoTools']['where'] = $where;
+					$edit['pdoTools']['limit'] = 0;
+					
+					$this->pdoTools->config = array_merge($this->config['pdoClear'],$edit['pdoTools']);
+					$edit['value'] = $this->pdoTools->run();
+					$value = [];
+					foreach($edit['value'] as $v){
+						$value[$v[$edit['field']]] = $v[$edit['field']];
+					}
+					$edit['value'] = $value;
+					$edit['json'] = json_encode($value);
+					
+				}else{
+					$edit['value'] = $row[$edit['as']];
+				}
+				if(isset($edit['field_content'])){
+					$edit['content'] = $row[$edit['field_content']];
+				}
+				//$this->getTables->addDebug($edit,'$edit generateEditsData');
 			}
 		}
 		return $edits;

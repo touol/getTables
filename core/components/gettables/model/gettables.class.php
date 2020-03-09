@@ -1,8 +1,20 @@
 <?php
+//продумать для удаления пустых записей в БВ. Наверно тригером.
+//в pdoTools fenom добавлен модификатор abs
+//в pdoTools fenom добавлен alias для таблицы
+//в pdoTools fenom добавлен subpdo 
+//https://prisma-cms.com/topics/dzhoinyi-podzaprosov-sredstvami-xpdo-2159.html
+//https://www.sql.ru/forum/687908/faq-vyborka-pervoy-posledney-zapisi-v-gruppah
 
+/*
+1) Удалять пустые записи в БВ. Триггер
+2) Копи строк
+3) Загрузка js css и чанков
+4) 
+*/
 class getTables
 {
-    public $version = '1.0.0-pl';
+    public $version = '1.0.4-pl';
 	/** @var modX $modx */
     public $modx;
 	/** @var pdoFetch $pdoTools */
@@ -39,8 +51,7 @@ class getTables
 			'ctx' => 'web',
 			
 			'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
-			'getTableNavTpl' => 'getTable.nav.tpl',
-			'getTableEditRowTpl' => 'getTable.EditRow.tpl',
+			
 		], $config);
 		
 		$this->models['getTabs']['class'] = 'gettabs.class.php';
@@ -58,7 +69,7 @@ class getTables
 			if(isset($this->config['pdoTools'])){
 				$this->pdoTools->setConfig($this->config['pdoTools']);
 			}else{
-				$pdoConfig = ['return'=>'data',];
+				$pdoConfig = ['return'=>'data','limit'=>60];
 				if (!empty($this->config['loadModels'])) {
 					$pdoConfig['loadModels'] = $this->config['loadModels'];
 				}
@@ -69,6 +80,8 @@ class getTables
         }
 		
 		$this->config['hash'] = sha1(json_encode($this->config));
+		
+		$this->pdoTools->addTime('__construct');
     }
 	
 	public function addDebug($debug = [],$mes = '')
@@ -119,34 +132,94 @@ class getTables
 	
 	public function initialize()
     {
-		if(!$this->config['isAjax']){
+		
+		if(!$this->config['isAjax'] and !$this->config['registerCSS_JS']){
 			$this->saveCache();
 			$this->registerCSS_JS();
 		}
 	}
+	public function cacheConfig()
+	{
+		if (empty($this->config['cacheKey'])) $this->config['cacheKey'] = 'getTables';
+		if (empty($this->config['cacheHandler'])) $this->config['cacheHandler'] = $this->modx->getOption('cache_resource_handler', null, $this->modx->getOption(xPDO::OPT_CACHE_HANDLER, null, 'xPDOFileCache'));
+		if (!isset($this->config['cacheExpires'])) $this->config['cacheExpires'] = (integer) $this->modx->getOption('cache_resource_expires', null, $this->modx->getOption(xPDO::OPT_CACHE_EXPIRES, null, 0));
+		
+		if (empty($this->config['cacheElementKey'])) $this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $this->config['hash'];
+
+		$this->config['cacheOptions'] = array(
+			xPDO::OPT_CACHE_KEY => $this->config['cacheKey'],
+			xPDO::OPT_CACHE_HANDLER => $this->config['cacheHandler'],
+			xPDO::OPT_CACHE_EXPIRES => $this->config['cacheExpires'],
+		);
+		//$this->addDebug($this->config,'cacheConfig');
+		$this->pdoTools->addTime('cacheConfig');
+	}
 	public function getClassCache($gts_class,$gts_name)
     {
-		if(isset($_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name]))
-			return $_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name];
+		/*if(isset($_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name]))
+			return $_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name];*/
+		/*$this->cacheConfig();
+		$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $this->config['hash'];
+		
+		$this->addDebug($this->config,'cacheConfig');
+		if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions'])){
+			//$this->config = $cashed;
+			return $cashed[$gts_class][$gts_name];
+		}*/
+		if($gts_name == 'all' and isset($this->config[$gts_class])){
+			return $this->config[$gts_class];
+		}
+		if(isset($this->config[$gts_class][$gts_name])) return $this->config[$gts_class][$gts_name];
 		return false;
 	}
-	public function clearCache()
+	/*public function clearCache()
     {
 		unset($_SESSION['getTables']);
-	}
-	public function setClassCache($gts_class,$gts_name, $gts_config)
+	}*/
+	/*public function setClassCache($gts_class,$gts_name, $gts_config)
     {
-		$_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name] = $gts_config;
+		$this->config[$gts_class][$gts_name] = $gts_config;
+		$this->saveCache();
 		return true;
-	}
+	}*/
 	public function setClassConfig($gts_class, $gts_name, $gts_config)
     {
 		if(!$this->config[$gts_class][$gts_name]) $this->config[$gts_class][$gts_name] = [];
-		$this->config[$gts_class][$gts_name] = array_merge($this->config[$gts_class][$gts_name], $gts_config);
-		$this->setClassCache($gts_class,$gts_name, $this->config[$gts_class][$gts_name]);
+		if($gts_name == 'all'){
+			$this->config[$gts_class] = array_merge($this->config[$gts_class], $gts_config);
+		}else{
+			$this->config[$gts_class][$gts_name] = array_merge($this->config[$gts_class][$gts_name], $gts_config);
+		}
+		
+		$this->saveCache();
+		//$this->setClassCache($gts_class,$gts_name, $this->config[$gts_class][$gts_name]);
 		//$this->registryAppName[$gts_class][] = $gts_name;
 	}
-	
+	public function loadFromCache($hash)
+    {
+		/*if(!empty($_SESSION['getTables'][$hash]))
+			$this->config = $_SESSION['getTables'][$hash];*/
+		$this->cacheConfig();
+		$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $hash;
+		if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions']))
+			$this->config = $cashed;
+	}
+	public function saveCache()
+    {
+		/*if(!empty($this->config['hash']))
+			$_SESSION['getTables'][$this->config['hash']] = $this->config;*/
+		$this->cacheConfig();
+		$this->modx->cacheManager->set($this->config['cacheElementKey'], $this->config, $this->config['cacheExpires'], $this->config['cacheOptions']);
+	}
+	public function initFromCache()
+    {
+		if(!$this->config['compile']){
+			$this->cacheConfig();
+			//$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $hash;
+			if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions']))
+				$this->config = $cashed;
+		}
+	}
 	public function getRegistryAppName($gts_class, $gts_name)
     {
 		$i = 1; $gts_name_temp = $gts_name;
@@ -169,21 +242,8 @@ class getTables
 		} while ($i < 10000);
 	}
 	
-	public function loadFromCache($hash)
-    {
-		if(!empty($_SESSION['getTables'][$hash]))
-			$this->config = $_SESSION['getTables'][$hash];
-	}
-	public function saveCache()
-    {
-		if(!empty($this->config['hash']))
-			$_SESSION['getTables'][$this->config['hash']] = $this->config;
-	}
-	public function initFromCache()
-    {
-		if(!empty($_SESSION['getTables'][$this->config['hash']]))
-			$this->config = $_SESSION['getTables'][$this->config['hash']];
-	}
+	
+	
 	
 	public function getCSS_JS()
     {
@@ -197,6 +257,7 @@ class getTables
 			
 			'frontend_framework_style_css' => $this->modx->getOption('gettables_frontend_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
 			'frontend_framework_style_js' => $this->modx->getOption('gettables_frontend_framework_style_js',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/js/bootstrap.min.js'),
+			'gettables_excel_style' => '[[+assetsUrl]]css/gettables.excel-style.css',
 			
 			'frontend_message_css' => $this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.message.css'),
 			'frontend_message_js' => $this->modx->getOption('gettables_frontend_message_js',null,'[[+jsUrl]]gettables.message.js'),
@@ -213,6 +274,7 @@ class getTables
 	}
 	public function registerCSS_JS()
     {
+		$this->pdoTools->addTime('registerCSS_JS');
 		$config = $this->config;
 		$placeholders = $this->makePlaceholders($config);
 		//$this->modx->log(1,"<pre>".print_r($placeholders,1)."</pre>");
@@ -232,6 +294,8 @@ class getTables
 		if($config['load_frontend_framework_style']) $csss[] = $CSS_JS['frontend_framework_style_css'];
 		$csss[] = $CSS_JS['frontend_message_css']; 
 		if(!empty($CSS_JS['frontend_gettabs_css'])) $csss[] = $CSS_JS['frontend_gettabs_css'];
+		
+		if(!empty($CSS_JS['gettables_excel_style'])) $csss[] = $CSS_JS['gettables_excel_style'];
 		
 		if($config['add_css']){
 			foreach(explode(",",$config['add_css']) as $acss){
@@ -288,7 +352,7 @@ class getTables
 		$this->modx->regClientStartupScript(
 			'<script type="text/javascript">getTablesConfig = ' . $data . ';</script>', true
 		);
-		//$this->config['registerCSS_JS'] = true;
+		$this->config['registerCSS_JS'] = true;
 	}
 	
     /**
@@ -302,7 +366,7 @@ class getTables
     public function handleRequest($action, $data = array())
     {
         //$this->pdoTools->addTime("getTables handleRequest $action");
-		
+		$this->pdoTools->addTime("handleRequest $action");
 		
 		$ctx = !empty($data['ctx'])
             ? (string)$data['ctx']
@@ -322,6 +386,11 @@ class getTables
 		}
 		$this->config['isAjax'] = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
 		//$this->pdoTools->addTime("getTables handleRequest action $action data {ignore}".print_r($data,1)."{/ignore}");
+		$table['pdoTools']['loadModels'] = $table['loadModels'];
+		if($this->config['isAjax'] and $this->config['loadModels']){
+			$this->pdoTools->config['loadModels'] = $this->config['loadModels'];
+			$this->pdoTools->loadModels();
+		} 
 		
         $this->initialize();
 
@@ -364,13 +433,17 @@ class getTables
 		}else{
 			
 		}
-		
+		//$this->addDebug($response,"handleRequest");
 		if(!$response) {
-			$response = $this->error("Ошибка {get_class($this)} handleRequest!");
+			$class = get_class($this);
+			$response = $this->error("Ошибка {$class} handleRequest!");
 		}
-        
-		$response['log'] = '<pre class="getTablesLog">' . print_r($this->pdoTools->getTime(), 1) . '</pre>';
-		if($this->config['debug']) $response['debugs'] = $this->debugs;
+        if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['showLog'])) {
+			$response['log'] = '<pre class="getTablesLog" style="width:900px;">' . print_r($this->pdoTools->getTime(), 1) . '</pre>';
+		}
+		if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['debug'])) {
+			$response['debugs'] = $this->debugs;
+		}
 		
 		$response = $this->config['isAjax'] ? json_encode($response) : $response;
 		return $response;

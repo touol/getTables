@@ -4,7 +4,12 @@
       <form action="" method="post" class="gts-form">
           <input type="hidden" name="hash" value="{$modal.hash}">
 		  <input type="hidden" name="table_name" value="{$modal.table_name}">
-		  
+		  {if $modal.sub_where_current}
+		        <input type="hidden" name="sub_where_current" value='{$modal.sub_where_current}'>
+		  {/if}
+		  {if $modal.parent_current}
+    		   <input type="hidden" name="parent_current" value='{$modal.parent_current}'>
+    	  {/if}
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
               <span aria-hidden="true">×</span>
@@ -16,13 +21,40 @@
                 {switch $edit.type}
                     {case 'hidden'}
                         <input type="hidden" id="{$edit.field}" name="{$edit.field}" value="{$edit.value}"/>
-                    {case 'view'}
-                        <input type="text" data-field="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control disabled"/>
+                    {case 'view','modal_view'}
+                        <div class="form-group">
+                            <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+                            <div class="controls">
+                        <input type="text" data-field="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control" disabled/>
+                        </div>
+                        </div>
+                    {case 'disabled'}
+                        <div class="form-group">
+                            <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+                            <div class="controls">
+                                <input type="text" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control " disabled/>
+                            </div>
+                        </div>
+                    {case 'readonly'}
+                        <div class="form-group">
+                            <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+                            <div class="controls">
+                                <input type="text" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control " readonly/>
+                            </div>
+                        </div>
                     {case 'text'}
                         <div class="form-group">
                             <label class="control-label" for="{$edit.field}">{$edit.label}</label>
                             <div class="controls">
                                 <input type="text" id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control"/>
+                                <span class="error_{$edit.field}"></span>
+                            </div>
+                        </div>
+                    {case 'textarea'}
+                        <div class="form-group">
+                            <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+                            <div class="controls">
+                                <textarea id="{$edit.field}" name="{$edit.field}" placeholder="{$edit.placeholder}" class="form-control">{$edit.value}</textarea>
                                 <span class="error_{$edit.field}"></span>
                             </div>
                         </div>
@@ -33,15 +65,59 @@
                             {$edit.label}
                         </label>
                     {case 'select'}
+                        {switch $edit.select.type}
+                            {case 'select'}
+                                <div class="form-group">
+                                    <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+                                    <div class="controls">
+                                        {if $edit.multiple}
+                                            <select data-field="{$edit.field}" name="{$edit.field}[]" data-value='{$edit.json}' placeholder="{$edit.placeholder}" 
+                                                class="form-control get-select-multiple" multiple="multiple">
+                                                {foreach $edit.select.data as $d}
+                                                    <option value="{$d.id}" {if $edit.value[$d.id]}selected{/if} >{$d.content}</option>
+                                                {/foreach}
+                                            </select>
+                                        {else}
+                                            <select data-field="{$edit.field}" name="{$edit.field}" data-value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control">
+                                                <option value=""></option>
+                                                {foreach $edit.select.data as $d}
+                                                    <option value="{$d.id}" {if $edit.value == $d.id}selected{/if} >{$d.content}</option>
+                                                {/foreach}
+                                            </select>
+                                         {/if}
+                                    </div>
+                                </div>
+                             {case 'autocomplect'}
+                                <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$edit.select.name}" data-modal="1">
+                                  <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+                                  <div class="input-group">
+                                    <input type="hidden" class="get-autocomplect-hidden-id" 
+                                            value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" 
+                                            />
+                                    <span class="input-group-addon {if $edit.hide_id}hidden{/if}">
+                                        <input type="number" class="get-autocomplect-id" 
+                                            value="{$edit.value}"  
+                                            placeholder="id" min="0"/>
+                                    </span>
+                                    <input type="search" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"/>
+                                    <div class="input-group-btn">
+                                      <button class="btn get-autocomplect-all">
+                                          <span class="caret"></span>
+                                      </button>
+                                     </div>
+                                  </div>
+                                  <ul class="dropdown-menu get-autocomplect-menu" role="menu">
+                                      
+                                    </ul>
+                                </div>
+                        {/switch}
+                    {case 'date'}
                         <div class="form-group">
                             <label class="control-label" for="{$edit.field}">{$edit.label}</label>
                             <div class="controls">
-                                <select data-field="{$edit.field}" name="{$edit.field}" data-value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control get-table-autosave">
-                                    <option value="">Выберете {$edit.placeholder}</option>
-                                    {foreach $edit.select.data as $d}
-                                        <option value="{$d.id}" {if $edit.value == $d.id}selected{/if} >{$d.content}</option>
-                                    {/foreach}
-                                </select>
+                                <input type="text" id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control get-date"
+                                    autocomplect="off"/>
+                                <span class="error_{$edit.field}"></span>
                             </div>
                         </div>
                 {/switch}
@@ -54,5 +130,4 @@
       </form>
     </div>
   </div>
-</div>  
-
+</div>

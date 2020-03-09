@@ -5,6 +5,10 @@ return [
         'file' => 'getTable.outer',
         'description' => '',
     ],
+	'getTable.Filter.tpl' => [
+        'file' => 'getTable.Filter',
+        'description' => '',
+    ],
 	'getTable.nav.tpl' => [
         'file' => 'getTable.nav',
         'description' => '',
@@ -25,5 +29,6 @@ return [
         'file' => 'getTabs',
         'description' => '',
     ],
+
 	
 ];

@@ -1,0 +1,202 @@
+#demo_navi {
+	z-index: 99999;
+	position: fixed;
+	left: -0.1px;
+	top: 0px;
+	height: 50px;
+	width: 100%;
+	background: url(../images/bar_bg.jpg);
+	border-bottom: 1px solid #0d0d0d;
+	box-shadow: 0px 2px 15px rgba( 0, 0, 0, 0.2);
+}
+
+#demo_navi a {
+	text-decoration: none;
+}
+
+#demo_navi  .logo {
+    white-space: nowrap; /* Отменяем перенос текста */
+	background: url(../images/logo_add.png) no-repeat;
+	font-size: 30px;
+	padding: 0px 0px 0px 70px;
+	line-height: 50px;
+	color: #eeeeee;
+	font-weight: ;
+	text-shadow: 0px 1px 1px #000;
+	float: left;
+	font-family: "Pontano Sans", Helvetica;
+}
+
+#demo_navi  .demo {
+	font-size: 12px;
+	font-family: "Pontano Sans", Helvetica;
+	padding: 0px 6px 0px 4px;
+	line-height: 20px;
+	margin-bottom: 13px;
+	color: #eeeeee;
+	font-weight: ;
+	text-shadow: 0px 1px 0px #000;
+	float: left;
+}
+
+#demo_navi  .name {
+    white-space: nowrap; /* Отменяем перенос текста */
+    overflow: hidden; /* Обрезаем содержимое */
+	font-size: 18px;
+	padding: 0px 20px 0px 0px;
+	line-height: 48px;
+	color: #eeeeee;
+	font-weight: ;
+	text-shadow: 0px 1px 0px #000;
+	float: right;
+	font-family: "Pontano Sans", Helvetica;
+}
+
+#controls {
+  position: fixed;
+  top: 120px;
+  left: 0.9em;
+  z-index: 10;
+  background: #fff;
+  padding: 1em 1em;
+  opacity: .7;
+  border-top: solid .4em #444;
+  border-bottom: solid .4em #444;
+}
+#controls label {
+  display: block;
+  margin: 1em 0;
+}
+#controls label span {
+  display: inline-block;
+  min-width: 3.5em;
+}
+#controls label input {
+  font-family: 'Montserrat';
+  font-size: 12pt;
+  padding-bottom: .2em;
+  width: 10em;
+  border: none;
+  border-bottom: solid 1px #999;
+  color: #000;
+  outline: none;
+  webkit-appearance: none;
+}
+#controls p {
+  text-align: right;
+  font-size: 80%;
+  margin: 1em 0 .5em 0;
+}
+#controls p.error {
+  color: #b00;
+}
+/* кнопка закрытия */
+.close {
+    background-color: rgba(47, 47, 47, 0.9);
+    height: 24px;
+    line-height: 24px;
+    position: absolute;
+    right: 0px;
+	cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+	color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    top: 0px;
+    width: 24px;
+}
+.close:hover {
+    background-color: rgba(195, 228, 37, 1);
+}
+
+
+a.small {
+    font-size:12px;
+}
+
+a.medium {
+    font-size:14px;
+}
+
+a.big {
+    font-size:18px;
+}
+
+a.otherbuttons {
+  display: inline-block;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #ffffff;
+  padding: 8px 12px;
+  background: -moz-linear-gradient(
+    top,
+    #6b6b6b 0%,
+    #242424);
+  background: -webkit-gradient(
+    linear, left top, left bottom, 
+    from(#6b6b6b),
+    to(#242424));
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border: 1px solid #000;
+  -moz-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.7);
+  -webkit-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.7);
+  text-shadow:
+    0px -1px 0px rgba(000,000,000,0.4),
+    0px 1px 0px rgba(255,255,255,0.3);
+  margin: 10px 5px;
+}
+
+a.greenotherb:hover {
+  background: -moz-linear-gradient(
+    top,
+    #bbd624 0%,
+    #689425);
+  background: -webkit-gradient(
+    linear, left top, left bottom, 
+    from(#bbd624),
+    to(#689425));
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border: 1px solid #507d15;
+  -moz-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.7);
+  -webkit-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.7);
+  text-shadow:
+    0px -1px 0px rgba(000,000,000,0.2),
+    0px 1px 0px rgba(255,255,255,0.3);
+}
+
+a.redotherb:hover {
+  background: -moz-linear-gradient(
+    top,
+    #f03554 0%,
+    #942538);
+  background: -webkit-gradient(
+    linear, left top, left bottom, 
+    from(#f03554),
+    to(#942538));
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border: 1px solid #7d1515;
+  -moz-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.7);
+  -webkit-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.7);
+  text-shadow:
+    0px -1px 0px rgba(000,000,000,0.2),
+    0px 1px 0px rgba(255,255,255,0.3);
+}
