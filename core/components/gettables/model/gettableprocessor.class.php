@@ -1,58 +1,4 @@
 <?php
-/*
-'commands'=>[
-	'before'=>[
-		'check_max_sum'=>[
-			'test_data'=>'
-				{if $data.td.field == "amount"} 
-					{set $ostatok_order_new = $old_rows[0].price - $old_rows[0].sum_amount + $old_rows[0].amount - $data.td.value}
-					
-					{if $ostatok_order_new < 0}
-						return error Сумма остатка заказа меньше введенной суммы! {$ostatok_order_new}
-					{/if}
-					{set $ostatok_perevod_new = $parent_old_row.sum - $parent_old_row.sum_amount + $old_rows[0].amount - $data.td.value}
-					{if $ostatok_perevod_new < 0}
-						return error Сумма остатка перевода меньше введенной суммы! {$ostatok_perevod_new}
-					{/if}
-				{/if}',
-		],
-	],
-	'after'=>[
-		'check_sum_close'=>[
-			'test_data'=>'
-				{if $data.td.field == "amount"} 
-					{set $ostatok_order_new = $old_rows[0].price - $old_rows[0].sum_amount + $old_rows[0].amount - $data.td.value}
-					{$ostatok_order_new}
-				{/if}',
-			'sets'=>[
-				'informacia_po_oplatam'=>[
-					'class'=>'BaseOtchet'
-					'set_value'=>'{if $test_data == 0}Оплачено{else}{$test_data}{/if}',
-					'query'=>[
-						'sk_order_id'=>'current_id'
-					],
-				],
-				'sum_closed'=>[
-					'class'=>'BaseOtchet'
-					'set_value'=>'{if $test_data == 0}1{else}skip set{/if}',
-					'query'=>[
-						'sk_order_id'=>'current_id'
-					],
-				],
-				'sum_closed_trans'=>[
-					'field'=>'sum_closed',
-					'class'=>'gtsBTranslation'
-					'set_value'=>'{set $ostatok_perevod_new = $parent_old_row.sum - $parent_old_row.sum_amount + $old_rows[0].amount - $data.td.value}
-							{if $ostatok_perevod_new == 0}1{else}skip set{/if}',
-					'query'=>[
-						'id'=>'parent_id'
-					],
-				],
-			],
-		],
-	],
-],
-*/
 class getTableProcessor
 {
     public $modx;
@@ -61,202 +7,16 @@ class getTableProcessor
 	
 	public $getTables;
 	public $getTable;
-	public $debug = [];
+	
+	//потом проверить зачем это. Наверно для обновления строк таблиц при autosave, но не доделано.
 	public $old_rows = [];
 	public $old_row_ids;
-	public $new_values = [];
-	public $parent_old_row = [];
+	public $parent_old_row = []; 
 	public $parent_old_row_id;
+	
 	public $triggers = [
-		'gtsBTranslation'=>[
-			'before'=>[
-				'update,remove'=>[
-					'test_child'=>[
-						'gets'=>[
-							'child'=>[
-								'class' => 'gtsBPayment',
-								'where' => [
-									'translation_id' => 'id',
-								],
-								'query'=>'count',
-							],
-							'translation'=>[
-								'class' => 'gtsBTranslation',
-								'where' => [
-									'id' => 'id',
-								],
-								'query'=>'object',
-							],
-						],
-						//return error 2020-02-02 {strtotime("-6 day") |date_format : "%Y-%m-%d %H:%M:%S"} {strtotime("yesterday 00:00")} {strtotime($translation.date)} {$user_id}
-						'test_data'=>'
-						
-						{if strtotime("-6 day") > strtotime($translation.date) and $user_id != 19}
-							return error Можно редактировать данные только за 6 дней!
-						{/if}
-						{if $child > 0} 
-							return error На данный платеж есть оплаты
-						{/if}',
-					],
-				],
-			],
-		],
-		'gtsBPayment'=>[
-			'before'=>[
-				'update,create'=>[
-					'test_sum_sk_order'=>[
-						'sensitive'=>[
-							'amount'=>[],
-						],
-						'gets'=>[
-							'translation'=>[
-								'class' => 'gtsBTranslation',
-								'where' => [
-									'id' => 'translation_id',
-								],
-								'query'=>'object',
-							],
-							'sum_translation'=>[
-								'class' => 'gtsBPayment',
-								'where' => [
-									'translation_id' => 'translation_id',
-								],
-								'query'=>'sum',
-								'field'=>'amount',
-							],
-							
-							'order'=>[
-								'switch'=>[
-									'zakaz'=>[
-										'fields'=>[
-											'payment_type_id'=>1,
-										],
-										'get'=>[
-											'class' => 'BaseOtchet',
-											'where' => [
-												'sk_order_id' => 'order_id',
-											],
-											'query'=>'object',
-										],
-									],
-								],
-								
-							],
-							'sum_order'=>[
-								'class' => 'gtsBPayment',
-								'where' => [
-									'payment_type_id'=>'payment_type_id',
-									'order_id' => 'order_id',
-								],
-								'query'=>'sum',
-								'field'=>'amount',
-							],
-						],
-						'test_data'=>'
-
-								{set $ostatok_perevod_new = $translation.sum - $sum_translation + $object_old.amount - $object_new.amount}
-								
-								{if $ostatok_perevod_new < 0 and abs($ostatok_perevod_new) > 0.1}
-									return error Сумма остатка перевода меньше введенной суммы! {$ostatok_perevod_new}
-								{/if}
-								{if $object_new.amount < 0} return error Отрицательные суммы запрещены! {/if}
-								{if $object_new.amount == 0 and $method == "create"}
-									 return error Сумма 0!{/if}
-								{/if}
-								{if $order}
-									{set $ostatok_order_new = $order.price - $sum_order + $object_old.amount - $object_new.amount}
-									{if $ostatok_order_new < 0 and abs($ostatok_order_new) > 0.1}
-										return error Сумма остатка заказа меньше введенной суммы! {$ostatok_order_new}
-									{/if}
-								{/if}
-
-							',
-					],
-				],
-			],
-			'after'=>[
-				'update,create'=>[
-					'set_statuses'=>[
-						'sensitive'=>[
-							'amount'=>[],
-						],
-						'gets'=>[
-							'translation'=>[
-								'class' => 'gtsBTranslation',
-								'where' => [
-									'id' => 'translation_id',
-								],
-								'query'=>'object',
-							],
-							'sum_translation'=>[
-								'class' => 'gtsBPayment',
-								'where' => [
-									'translation_id' => 'translation_id',
-								],
-								'query'=>'sum',
-								'field'=>'amount',
-							],
-							
-							/*'order'=>[
-								'switch'=>[
-									'zakaz'=>[
-										'fields'=>[
-											'payment_type_id'=>1,
-										],
-										'get'=>[
-											'class' => 'BaseOtchet',
-											'where' => [
-												'sk_order_id' => 'order_id',
-											],
-											'query'=>'object',
-										],
-									],
-								],
-								
-							],
-							'sum_order'=>[
-								'class' => 'gtsBPayment',
-								'where' => [
-									'payment_type_id'=>'payment_type_id',
-									'order_id' => 'order_id',
-								],
-								'query'=>'sum',
-								'field'=>'amount',
-							],*/
-						],
-						'sets'=>[
-							/*'order'=>[
-								'switch'=>[
-									'zakaz'=>[
-										'fields'=>[
-											'payment_type_id'=>1,
-										],
-										'sets'=>[
-											'informacia_po_oplatam'=>'
-												{set $ostatok_order = $order.price - $sum_order}
-												{if $ostatok_order == 0}Оплачено{else}{$ostatok_order}{/if}
-											',
-											'sum_closed'=>'
-												{set $ostatok_order = $order.price - $sum_order}
-												{if $ostatok_order == 0}1{else}0{/if}
-											',
-										],
-									],
-								],
-							],*/
-							'translation'=>[
-								'sum_closed'=>'
-									{set $ostatok = $translation.sum - $sum_translation}
-									{if $ostatok == 0}1{else}0{/if}
-								',
-							],
-						],
-					],
-				],
-				
-			],
-		],
-	];
+		
+	]; //в pro версии только будут.
 	/**
      * @param modX $modx
      * @param array $config
@@ -382,93 +142,10 @@ class getTableProcessor
 		}
 		return $this->success('Выполнено успешно');
 	}
-	public function run_command($type, $bn, $beforeCommand, $data = array(), $table = [])
-	{
-		////$this->getTables->addDebug($this->parent_old_row,'run_command $parent_old_row ');
-		////$this->getTables->addDebug($this->old_rows,'run_command $old_row ');
-		////$this->getTables->addDebug($beforeCommand['test_data'],'run_command $test_data1 ');
-		$new_values = [];
-		foreach($this->new_values as $nv){
-			if($nv['action'] == "create" or $nv['action'] == "update" or $nv['action'] == "autosave"){
-				$new_values[$nv['class']][$nv['field']] = [$nv['value']];
-			}
-		}
-		$test_data = $this->pdoTools->getChunk('@INLINE '.$beforeCommand['test_data'],[
-								'action'=>$this->action,
-								'old_rows' => $this->old_rows,
-								'parent_old_row' => $this->parent_old_row,
-								'data' => $data,
-								'new_values' => $new_values,
-								]);
-		
-		$test_data = trim($test_data);
-		////$this->getTables->addDebug($test_data,$type.'run_command $test_data ');
-		if(strpos($test_data, 'return error') !== false){
-			return $this->error(trim(str_replace('return error','',$test_data)));
-		}
-		if($beforeCommand['sets']){
-			foreach($beforeCommand['sets'] as $ks=>$set){
-				if(empty($set['field'])) $set['field'] = $ks;
-				if($set['pdoTools']){
-					$add_gen = [
-							'action'=>$this->action,
-							'old_rows' => $this->old_rows,
-							'parent_old_row' => $this->parent_old_row,
-							'data' => $data,
-							'new_values' => $new_values,
-							];
-					$pdoConfig = $this->gen_pdoConfig($set['pdoTools'],$table['sub_default'],$table['sub_where'], $data, $add_gen);
-					$this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
-					$rows = $this->pdoTools->run();
-				}
-				$set_value = $this->pdoTools->getChunk('@INLINE '.$set['set_value'],[
-							'test_data'=>$test_data,
-							'action'=>$this->action,
-							'old_rows' => $this->old_rows,
-							'parent_old_row' => $this->parent_old_row,
-							'data' => $data,
-							'new_values' => $new_values,
-							'rows' => $rows,
-							]);
-				$set_value = trim($set_value);
-				////$this->getTables->addDebug($set_value,'run_command $set_value ');
-				if(strpos($set_value, 'skip set') !== false) continue;
-				$query = [];
-				foreach($set['query'] as $qfield=>$qv){
-					switch($qv){
-						case 'current_id':
-							$query[$qfield] = $this->old_rows['0']['id'];
-							break;
-						case 'parent_id':
-							$query[$qfield] = $this->parent_old_row['id'];
-							break;
-					}
-				}
-				
-				if(!empty($query) and !empty($set['class'])){
-					////$this->getTables->addDebug($set,'command $set');
-					////$this->getTables->addDebug($query,'command $query !'.$set_value);
-					if($obj = $this->modx->getObject($set['class'],$query)){
-						$obj->{$set['field']} = $set_value;
-						if($obj->save()){
-							$this->new_values[] = [
-								'action'=>$this->action,
-								'operation'=>"commands $type",
-								'description'=>"commands $type $bn set $ks",
-								'class'=>$set['class'],
-								'id'=>$obj->id,
-								'field'=>$ks,
-								'value'=>$set_value,
-								];
-						}
-					}
-				}
-			}
-		}
-		return $this->success('Выполнено успешно');
-	}
+	
 	public function walkFunc(&$item, $key, $sub_default){
-        $item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
+        //может не безопасная функция. И пропроверять надо что $item строка.
+		$item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
     }
 	
 	
@@ -483,21 +160,6 @@ class getTableProcessor
 		foreach($table['edits'] as $edit){
 			if($edit['type'] == 'view') continue;
 			$edit_tables[$edit['class']][] = $edit;
-		}
-		
-		//проверка что данные можно редактировать. Хз знает зачем. И собираем данные для лога и комманд. 
-		//Обновление. Сейчас придумал тригеры и они будут собирать и проверять все. 
-		if($table['commands']){
-			$resp = $this->check_rows($table, $data);
-			if(!$resp['success']) return $resp;
-		}
-		
-		//beforeSave command
-		if(isset($table['commands']['before'])){
-			foreach($table['commands']['before'] as $bn=>$beforeCommand){
-				$resp = $this->run_command('before', $bn, $beforeCommand, $data, $table);
-				if(!$resp['success']) return $resp;
-			}
 		}
 		
 		switch($action){
@@ -524,13 +186,6 @@ class getTableProcessor
 				break;
 		}
 		
-		//afterSave command
-		if(isset($table['commands']['after'])){
-			foreach($table['commands']['after'] as $an=>$afterCommand){
-				$resp = $this->run_command('after', $an, $afterCommand, $data, $table);
-				if(!$resp['success']) return $resp;
-			}
-		}
 		return $response;
     }
 	public function gen_pdoConfig($pdoConfig, $tsub_default = [], $tsub_where =[], $data = array(), $add_gen = [])
@@ -664,15 +319,6 @@ class getTableProcessor
 			if($obj->remove()){
 				$resp = $this->run_triggers($table['class'], 'after', 'remove', [], $object_old);
 				if(!$resp['success']) return $resp;
-				
-				$this->new_values[] = [
-					'action'=>$this->action,
-					'operation'=>"remove",
-					'class'=>$table['class'],
-					'id'=>$id,
-					//'field'=>$ks,
-					//'value'=>$set_value,
-					];
 				$saved[] = $this->success('Удалено успешно',$saved);
 			} 
 		}
@@ -732,16 +378,6 @@ class getTableProcessor
 					$saved[] = $this->error('runProcessor ',$this->modx->error->failure($modx_response->getMessage()));
 					$data['id'] = false;
 				}else{
-					foreach($set_data as $set_field=>$set_value){
-						$this->new_values[] = [
-							'action'=>$this->action,
-							'operation'=>"update",
-							'class'=>$class,
-							'id'=>$obj->id,
-							'field'=>$set_field,
-							'value'=>$set_value,
-						];
-					}
 					$saved[] = $this->success('runProcessor ',$modx_response->response);
 					$data['id'] = $modx_response->response['object']['id'];
 					$object_new = $modx_response->response['object'];
@@ -777,17 +413,6 @@ class getTableProcessor
 						$object_new = $obj->toArray();
 						$resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new);
 						if(!$resp['success']) return $resp;
-						
-						foreach($set_data as $set_field=>$set_value){
-							$this->new_values[] = [
-								'action'=>$this->action,
-								'operation'=>"update",
-								'class'=>$class,
-								'id'=>$obj->id,
-								'field'=>$set_field,
-								'value'=>$set_value,
-							];
-						}
 						$saveobj['success'] = true;
 						$data['id'] = $obj->id;
 					}
@@ -837,16 +462,6 @@ class getTableProcessor
 							if($obj1->remove()){
 								$resp = $this->run_triggers($class, 'after', 'remove', [], $object_old);
 								if(!$resp['success']) return $resp;
-								
-								$this->new_values[] = [
-									'action'=>$this->action,
-									'operation'=>"remove",
-									'description'=>"multiple",
-									'class'=>$class,
-									'id'=>$id,
-									//'field'=>$ks,
-									//'value'=>$set_value,
-								];
 							}
 							
 						}
@@ -860,18 +475,6 @@ class getTableProcessor
 										$object_old = $obj2->toArray();
 										$resp = $this->run_triggers($class, 'after', 'create', [$edit['field']=>1], $object_old, $object_old);
 										if(!$resp['success']) return $resp;
-										
-										foreach($search_fields2 as $set_field=>$set_value){
-											$this->new_values[] = [
-												'action'=>$this->action,
-												'operation'=>"update",
-												'description'=>"multiple",
-												'class'=>$class,
-												'id'=>$obj2->id,
-												'field'=>$set_field,
-												'value'=>$set_value,
-											];
-										}
 										$saveobj['success'] = true;
 									}
 								}
@@ -930,15 +533,6 @@ class getTableProcessor
 								$object_new = $obj2->toArray();
 								$resp = $this->run_triggers($class, 'after', $type, [$edit['field']=>1], $object_old,$object_new);
 								if(!$resp['success']) return $resp;
-								
-								$this->new_values[] = [
-									'action'=>$this->action,
-									'operation'=>"update",
-									'class'=>$class,
-									'id'=>$obj2->id,
-									'field'=>$edit['value_field'],
-									'value'=>$data[$edit['field']],
-								];
 								$saveobj['success'] = true;
 							}
 						}
