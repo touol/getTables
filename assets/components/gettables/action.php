@@ -1,9 +1,9 @@
 <?php
 if (empty($_REQUEST['action']) and empty($_REQUEST['gts_action'])) {
-    $message = 'Access denied action.php';
+	$message = 'Access denied action.php';
 	echo json_encode(
 			['success' => false,
-            'message' => $message,]
+			'message' => $message,]
 			);
 	return;
 }

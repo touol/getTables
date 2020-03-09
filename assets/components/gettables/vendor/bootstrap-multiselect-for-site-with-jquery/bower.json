@@ -4,29 +4,29 @@
   "homepage": "http://davidstutz.de/bootstrap-multiselect/",
   "version": "0.9.15",
   "keywords": [
-      "js",
-      "css",
-      "less",
-      "bootstrap",
-      "jquery",
-      "multiselect"
+	  "js",
+	  "css",
+	  "less",
+	  "bootstrap",
+	  "jquery",
+	  "multiselect"
   ],
   "main": [
-    "./dist/js/bootstrap-multiselect.js",
-    "./dist/css/bootstrap-multiselect.css",
-    "./dist/less/bootstrap-multiselect.less"
+	"./dist/js/bootstrap-multiselect.js",
+	"./dist/css/bootstrap-multiselect.css",
+	"./dist/less/bootstrap-multiselect.less"
   ],
   "dependencies": {
-    "jquery": ">= 1.11.0",
-    "bootstrap": ">= 2.3.2"
+	"jquery": ">= 1.11.0",
+	"bootstrap": ">= 2.3.2"
   },
   "ignore": [
-    "docs/.*",
-    "tests/.*",
-    "*.html",
-    "*.git*",
-    "*.md",
-    "*.png",
-    "*.php"
+	"docs/.*",
+	"tests/.*",
+	"*.html",
+	"*.git*",
+	"*.md",
+	"*.png",
+	"*.php"
   ]
 }

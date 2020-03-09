@@ -2,19 +2,19 @@
 
 class getTable
 {
-    public $modx;
+	public $modx;
 	/** @var pdoFetch $pdoTools */
-    public $pdoTools;
+	public $pdoTools;
 	
 	public $getTables;
 
 	/**
-     * @param modX $modx
-     * @param array $config
-     */
-    function __construct(getTables & $getTables, array $config = [])
-    {
-        $this->getTables =& $getTables;
+	 * @param modX $modx
+	 * @param array $config
+	 */
+	function __construct(getTables & $getTables, array $config = [])
+	{
+		$this->getTables =& $getTables;
 		$this->modx =& $this->getTables->modx;
 		$this->pdoTools =& $this->getTables->pdoTools;
 		
@@ -22,22 +22,22 @@ class getTable
 			
 		], $config);
 		
-    }
+	}
 	
 	public function setConfig($config)
-    {
+	{
 		$this->config = array_merge($this->config, $config);
 	}
 	
 	public function getCSS_JS()
-    {
+	{
 		return [
 			'frontend_gettable_css' => '',//$this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.gettabs.css')
 			'frontend_gettable_js' => '',//$this->modx->getOption('gettables_frontend_gettabs_js',null,'[[+jsUrl]]gettables.gettabs.js'),
 		];
 	}
 	public function checkAccsess($action)
-    {
+	{
 		switch($action){
 			case 'fetch':
 				if($this->config['isAjax']) return false;
@@ -48,8 +48,8 @@ class getTable
 		}
 	}
 	
-    public function handleRequest($action, $data = array())
-    {
+	public function handleRequest($action, $data = array())
+	{
 		$class = get_class($this);
 		
 		if($action == "fetch" and !$this->config['isAjax'])
@@ -100,15 +100,15 @@ class getTable
 		}else{
 			return $this->error("Метод $action в классе $class не найден!");
 		}*/
-    }
+	}
 	/*public function filter($action, $table, $data)
-    {
+	{
 		$table = $this->generateData($table);
 		$html = $table['tbody']['inner'];
 		return $this->success('',array('html'=>$html));
 	}*/
 	public function subtable($action, $table, $data)
-    {
+	{
 		$current_action = $table['actions'][$action];
 		//$this->getTables->addDebug($table,'subtable  $table');
 		/*
@@ -169,11 +169,11 @@ class getTable
 		return $this->success('',array('sub_content'=>$sub_content));
 	}
 	public function walkFunc(&$item, $key, $sub_default){
-        $item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
-    }
+		$item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
+	}
 	
 	public function generateData($table,$pdoConfig =[])
-    {
+	{
 		$table = $this->addFilterTable($table);
 		if(empty($table['paginator']) or ($table['paginator'] !== false and $pdoConfig['limit'] != 1)){
 			$paginator = true;
@@ -348,7 +348,7 @@ class getTable
 		return $table;
 	}
 	public function refresh($action, $table, $data)
-    {
+	{
 		$table2 = $this->generateData($table);
 		//$this->getTables->addDebug($table2,'refresh  table 2');
 		$html = '';
@@ -360,8 +360,8 @@ class getTable
 	}
 	
 	public function fetch($table = array())
-    {
-        
+	{
+		
 		if(!$this->config['isAjax']){
 			$this->getStyleChunks();
 		}
@@ -445,9 +445,9 @@ class getTable
 		}else{
 			return $this->error("Нет конфига row!");
 		}
-    }
+	}
 	public function addFilterTable($table)
-    {
+	{
 		$query = [];
 		
 		if($table['sub_where'] and $_REQUEST['sub_where_current']){
@@ -807,7 +807,7 @@ class getTable
 		return $compile_actions;
 	}
 	public function compileTopBar($actions)
-    {
+	{
 		$topBar = [];
 		foreach($actions as $a){
 			if($a['topBar']){
@@ -830,7 +830,7 @@ class getTable
 		return $topBar;
 	}
 	public function compile($table)
-    {
+	{
 		if($table['class'] == 'TV') $table['class'] = 'modTemplateVarResource';
 		$class = $table['class'] ? $table['class'] : 'modResource';
 		$name = $table['name'] ? $table['name'] : $class;
@@ -1074,10 +1074,10 @@ class getTable
 		if(!empty($table['sub_default'])) $table_compile['sub_default'] = $table['sub_default'];
 		if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
 		return $table_compile;
-    }
+	}
 	
 	public function compileActionButtons($actions_row)
-    {
+	{
 		//$this->pdoTools->addTime("getTable compileActionButtons actions_row ".print_r($actions_row,1));
 		$buttons = [];
 		foreach($actions_row as $ak=>$ar){
@@ -1125,7 +1125,7 @@ class getTable
 		return $buttons;
 	}
 	public function addAndSortFilter($filters,$addFilter)
-    {
+	{
 		$filter_position = count($filters);
 		foreach($addFilter as $f){
 			if(empty($f['where'])) continue;
@@ -1160,7 +1160,7 @@ class getTable
 		return $filters;
 	}
 	public function getStyleChunks()
-    {
+	{
 		if($this->config['frontend_framework_style'] != 'bootstrap_v3'){
 			if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_'.$this->config['frontend_framework_style']))){
 				if($this->config['getTableOuterTpl'] == 'getTable.outer.tpl'){
@@ -1200,29 +1200,29 @@ class getTable
 				}
 			}
 		}
-    }
+	}
 	
-    public function error($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function error($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => false,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => false,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 	
-    public function success($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function success($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => true,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => true,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 }

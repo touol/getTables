@@ -2,19 +2,19 @@
 
 class getSelect
 {
-    public $modx;
+	public $modx;
 	/** @var pdoFetch $pdoTools */
-    public $pdoTools;
+	public $pdoTools;
 	
 	public $getTables;
 	public $debug = [];
 	/**
-     * @param modX $modx
-     * @param array $config
-     */
-    function __construct(getTables & $getTables, array $config = [])
-    {
-        $this->getTables =& $getTables;
+	 * @param modX $modx
+	 * @param array $config
+	 */
+	function __construct(getTables & $getTables, array $config = [])
+	{
+		$this->getTables =& $getTables;
 		$this->modx =& $this->getTables->modx;
 		$this->pdoTools =& $this->getTables->pdoTools;
 		
@@ -24,10 +24,10 @@ class getSelect
 			
 		], $config);
 		
-    }
+	}
 
-    public function handleRequest($action, $data = array())
-    {
+	public function handleRequest($action, $data = array())
+	{
 		$class = get_class($this);
 		if($action != 'autocomplect' and $this->config['isAjax'])
 			return $this->error("Доступ запрешен $class $action");
@@ -48,9 +48,9 @@ class getSelect
 			default:
 				return $this->error("Метод $action в классе $class не найден!");
 		}
-    }
+	}
 	public function autocomplect($data)
-    {
+	{
 		$hash = $data['hash'];
 		$select_name = $data['select_name'];
 		if(!$select = $this->getTables->getClassCache('getSelect',$select_name)){
@@ -99,7 +99,7 @@ class getSelect
 		return $this->success('',array('html'=>implode("\r\n",$output)));
 	}
 	public function compile($selects)
-    {
+	{
 		if(empty($selects)) return $this->error("Пустой selects! getSelect compile");
 		$compile = [];
 		foreach($selects as $name=>&$select){
@@ -177,11 +177,11 @@ class getSelect
 			
 		}
 		return $this->success('',array('selects'=>$compile));
-    }
+	}
 	
 	public function pdoUsersConfig($sp = array())
-    {
-        $class = 'modUser';
+	{
+		$class = 'modUser';
 		$profile = 'modUserProfile';
 		$member = 'modUserGroupMember';
 		//$this->pdoTools->addTime('select sp'.print_r($sp,1));
@@ -310,29 +310,29 @@ class getSelect
 		// Merge all properties and run!
 		//$this->pdoTools->addTime('Query parameters ready');
 		return array_merge($default, $sp);
-    }
+	}
 	
-    public function error($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function error($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => false,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => false,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 	
-    public function success($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function success($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => true,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => true,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 }

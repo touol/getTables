@@ -4,6 +4,6 @@
   {/foreach}
 </tr>
 <tr {foreach $tr.data as $k=>$v} data-{$k}="{$v}" {/foreach} class="get-sub-row hidden" >
-    <td class=""></td>
-    <td class="get-sub-content" colspan="{count($tr.tds)-1}"></td>
+	<td class=""></td>
+	<td class="get-sub-content" colspan="{count($tr.tds)-1}"></td>
 </tr>

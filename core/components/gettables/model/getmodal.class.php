@@ -2,19 +2,19 @@
 
 class getModal
 {
-    public $modx;
+	public $modx;
 	/** @var pdoFetch $pdoTools */
-    public $pdoTools;
+	public $pdoTools;
 	
 	public $getTables;
 	public $debug = [];
 	/**
-     * @param modX $modx
-     * @param array $config
-     */
-    function __construct(getTables & $getTables, array $config = [])
-    {
-        $this->getTables =& $getTables;
+	 * @param modX $modx
+	 * @param array $config
+	 */
+	function __construct(getTables & $getTables, array $config = [])
+	{
+		$this->getTables =& $getTables;
 		$this->modx =& $this->getTables->modx;
 		$this->pdoTools =& $this->getTables->pdoTools;
 		
@@ -24,9 +24,9 @@ class getModal
 			
 		], $config);
 		
-    }
+	}
 	public function checkAccsess($action)
-    {
+	{
 		switch($action){
 			case 'fetchTableModal':
 				return true;
@@ -35,8 +35,8 @@ class getModal
 				return false;
 		}
 	}
-    public function handleRequest($action, $data = array())
-    {
+	public function handleRequest($action, $data = array())
+	{
 		$class = get_class($this);
 		if($data['sub_where_current']){
 			$_REQUEST['sub_where_current'] = $table['sub_where_current'] = $data['sub_where_current'];
@@ -63,21 +63,21 @@ class getModal
 		}else{
 			return $this->error("Метод $action в классе $class не найден!");
 		}*/
-    }
+	}
 
 	public function fetchTableModal($data)
-    {
+	{
 		//echo json_encode($data).'! '.$data['data']['button_data']['action'].'!';
 		//$data = $data['data'];
 		//$this->getTables->addDebug($data,'fetchTableModal  $data');
 		$table_action = !empty($data['button_data']['action'])
-            ? (string)$data['button_data']['action']
-            : false;
+			? (string)$data['button_data']['action']
+			: false;
 		$table_name = !empty($data['table_data']['name'])
-            ? (string)$data['table_data']['name']
-            : false;
+			? (string)$data['table_data']['name']
+			: false;
 		$tr_data = !empty($data['tr_data']) ? $data['tr_data'] : [];
-           
+		   
 		if(!$table_action) return $this->error("Нет table_action!");
 		
 		if(!$table_name) return $this->error("Нет table_name!");
@@ -119,9 +119,9 @@ class getModal
 		$html = $this->pdoTools->getChunk($this->config[$modal['tpl']], ['modal'=>$modal]);
 		
 		return $this->success('',array('html'=>$html));
-    }
+	}
 	public function defaultFieldSet($edits)
-    {
+	{
 		foreach($edits as &$edit){
 			if($edit['default'] and empty($edit['value'])){
 				$edit['force'] = $edit['default'];
@@ -141,9 +141,9 @@ class getModal
 			}
 		}
 		return $edits;
-    }
+	}
 	public function generateEditsData($edits,$tr_data,$table)
-    {
+	{
 		$pdoConfig = $table['pdoTools'];
 		//$this->getTables->addDebug($table['pdoTools'],'$table[pdoTools] ');
 		$pdoConfig['limit'] = 1;
@@ -192,10 +192,10 @@ class getModal
 			}
 		}
 		return $edits;
-    }
+	}
 	
 	public function getStyleChunks()
-    {
+	{
 		/*if($this->config['frontend_framework_style'] != 'bootstrap_v3' and $this->config['getTabsTpl'] == 'getTabs.tpl'){
 			if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_'.$this->config['frontend_framework_style']))){
 				if($chunk = $this->modx->getObject('modChunk', array('name' => $propSet->getTabsTpl))){
@@ -203,29 +203,29 @@ class getModal
 				}
 			}
 		}*/
-    }
+	}
 	
-    public function error($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function error($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => false,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => false,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 	
-    public function success($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function success($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => true,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => true,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 }

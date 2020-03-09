@@ -1,9 +1,9 @@
 <?php
 class getTableProcessor
 {
-    public $modx;
+	public $modx;
 	/** @var pdoFetch $pdoTools */
-    public $pdoTools;
+	public $pdoTools;
 	
 	public $getTables;
 	public $getTable;
@@ -18,12 +18,12 @@ class getTableProcessor
 		
 	]; //в pro версии только будут.
 	/**
-     * @param modX $modx
-     * @param array $config
-     */
-    function __construct(getTable & $getTable, array $config = [])
-    {
-        $this->getTable =& $getTable;
+	 * @param modX $modx
+	 * @param array $config
+	 */
+	function __construct(getTable & $getTable, array $config = [])
+	{
+		$this->getTable =& $getTable;
 		$this->getTables =& $this->getTable->getTables;
 		$this->modx =& $this->getTables->modx;
 		$this->pdoTools =& $this->getTables->pdoTools;
@@ -32,7 +32,7 @@ class getTableProcessor
 			
 		], $config);
 		
-    }
+	}
 	public function run_triggers($class, $type, $method, $fields, $object_old, $object_new =[])
 	{
 		$triggers = $this->triggers;
@@ -144,13 +144,13 @@ class getTableProcessor
 	}
 	
 	public function walkFunc(&$item, $key, $sub_default){
-        //может не безопасная функция. И пропроверять надо что $item строка.
+		//может не безопасная функция. И пропроверять надо что $item строка.
 		$item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
-    }
+	}
 	
 	
-    public function run($action, $table, $data = array())
-    {
+	public function run($action, $table, $data = array())
+	{
 		
 		if(!isset($table['actions'][$action]) and $action !="autosave") return $this->error("Action $action не найдено! ",$table);
 		$this->current_action = $table['actions'][$action];
@@ -187,9 +187,9 @@ class getTableProcessor
 		}
 		
 		return $response;
-    }
+	}
 	public function gen_pdoConfig($pdoConfig, $tsub_default = [], $tsub_where =[], $data = array(), $add_gen = [])
-    {
+	{
 		//$pdoConfig = $table['pdoTools'];
 		if(!empty($tsub_default)){
 			$sub_default = $add_gen;
@@ -211,7 +211,7 @@ class getTableProcessor
 		return $pdoConfig;
 	}
 	public function check_rows($table, $data = array())
-    {
+	{
 		$trs_data = [];
 		if($data['trs_data']){
 			$trs_data = $data['trs_data'];
@@ -260,7 +260,7 @@ class getTableProcessor
 		return $this->success('');
 	}
 	public function autosave($table, $edit_tables, $data = array())
-    {
+	{
 		if(empty($data['tr_data'])) return $this->error('tr_data пусто');
 
 		if(!(int)$data['tr_data']['id']){
@@ -271,7 +271,7 @@ class getTableProcessor
 		return $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
 	}
 	public function sets($table, $edit_tables, $data = array())
-    {
+	{
 		
 		$saved = [];
 		if(empty($data['trs_data'])) return $this->error('trs_data пусто');
@@ -300,7 +300,7 @@ class getTableProcessor
 	}
 	
 	public function remove($table, $edit_tables, $data = array())
-    {
+	{
 		$saved = [];
 		if(empty($data['trs_data'])) return $this->error('trs_data пусто');
 		foreach($data['trs_data'] as $tr_data){
@@ -334,7 +334,7 @@ class getTableProcessor
 		}
 	}
 	/*public function checkUpdateAccess($id,$table)
-    {
+	{
 		////$this->getTables->addDebug($table['pdoTools'],'checkUpdateAccess $table[pdoTools] ');
 		$pdoConfig = $table['pdoTools'];
 		////$this->getTables->addDebug($table['pdoTools'],'$table[pdoTools] ');
@@ -351,7 +351,7 @@ class getTableProcessor
 	}*/
 	
 	public function update($table, $edit_tables, $data = array(), $create = false, $tr_data = [])
-    {
+	{
 		$saved = [];
 		
 		////$this->getTables->addDebug($edit_tables,'update $edit_tables ');
@@ -552,27 +552,27 @@ class getTableProcessor
 			return $this->error($error,$saved);
 		}
 	}
-    public function error($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function error($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => false,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => false,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 	
-    public function success($message = '', $data = array())
-    {
-        if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
+	public function success($message = '', $data = array())
+	{
+		if(is_array($message)) $message = $this->modx->lexicon($message['lexicon'], $message['data']);
 		$response = array(
-            'success' => true,
-            'message' => $message,
-            'data' => $data,
-        );
+			'success' => true,
+			'message' => $message,
+			'data' => $data,
+		);
 
-        return $response;
-    }
+		return $response;
+	}
 }

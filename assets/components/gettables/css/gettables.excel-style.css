@@ -39,102 +39,102 @@
 /*get-table v-style от Валентина*/
 
 .get-table .navbar-collapse .btn-primary { 
-    position: relative;
-    top: 7px;
-    right: 10px;
+	position: relative;
+	top: 7px;
+	right: 10px;
 }
 .get-table .navbar { 
-     margin-bottom: 0px;  
+	 margin-bottom: 0px;  
 }
 .get-table .breadcrumb{
-    margin-bottom: 0px;
+	margin-bottom: 0px;
 }
 .get-table .gts-config{
-    padding: 10px 10px;
-    margin-bottom: 10px;
+	padding: 10px 10px;
+	margin-bottom: 10px;
 }
 
 .get-table .row{
-    margin: 0;
-    padding-right: 10px;
-    padding-left: 10px;
+	margin: 0;
+	padding-right: 10px;
+	padding-left: 10px;
 }
 .get-table .get-table-topline-first{
-    margin: 0;
-    padding: 0;
-    width: auto;
+	margin: 0;
+	padding: 0;
+	width: auto;
 }
 .get-table .get-table-topline-multiple{
-    margin: 0;
-    padding: 0;
-    margin-left: 15px;
+	margin: 0;
+	padding: 0;
+	margin-left: 15px;
 }
 .get-table .get-table-topline-filters{ 
 }
 .get-table .get-table-topline-filters .row{
-    padding-right: 0px;
-    padding-left: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
 }
 .get-table .get-table-topline-filters > .row > .col-md-3 {
-    padding: 0;
+	padding: 0;
 }
 .get-table .get-table-topline-filters  .form-group{
 /*    padding: 0;*/
 }
 .input-group .form-control, .input-group-addon, .input-group-btn {
  
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis; 
+	position: relative;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis; 
 }
 .get-table .gts-form > .row{
-    margin-bottom: 30px;
+	margin-bottom: 30px;
 }
 .get-table .pull-right{
-    line-height: 30px;
+	line-height: 30px;
 }
 .get-table .form-inline{
-    padding: 3px 0px;
+	padding: 3px 0px;
 }
 /*таблица*/
 .get-table .table {
-    width: 100%;
-    max-width: 100%;
-     margin-bottom: 0px; 
+	width: 100%;
+	max-width: 100%;
+	 margin-bottom: 0px; 
 }
 .get-table .table tr td[data-name="checkbox"],
 .get-table .table tr td[data-name="id"]{
-    padding: 0 5px;
+	padding: 0 5px;
 }
 .get-table .table tr td[data-name="sum_closed"]{
-    text-align: center;
+	text-align: center;
 }
 .get-table .table thead tr{
-    background-color: #e6e6e6;
+	background-color: #e6e6e6;
 }
 .get-table .table thead tr th{
-    text-align: center;
+	text-align: center;
 }
 .get-table .table>tbody>tr>td, .get-table .table>tbody>tr>th, .get-table .table>tfoot>tr>td, .get-table .table>tfoot>tr>th, .get-table .table>thead>tr>td, .get-table .table>thead>tr>th {
-    padding: 0px 5px;
-    line-height: 1.42857143; 
-    border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    vertical-align: middle;
+	padding: 0px 5px;
+	line-height: 1.42857143; 
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	vertical-align: middle;
 }
 .get-table .table .form-control{
-    box-shadow: none;
-    border: 0;
-    background-color: transparent;
+	box-shadow: none;
+	border: 0;
+	background-color: transparent;
 }
 .get-table .table .form-group {
-    margin-bottom: 0; 
-    display: inline-block;
+	margin-bottom: 0; 
+	display: inline-block;
 }
 .get-table .table .form-group .input-group .input-group-addon{
-    background: transparent;
-    border: none;
+	background: transparent;
+	border: none;
 }
 .table>tbody>tr.hit>td,
 .table>tbody>tr.hit>th,
@@ -148,7 +148,7 @@
 .table>thead>tr.hit>th, 
 .table>thead>tr>td.hit, 
 .table>thead>tr>th.hit { 
-    background-color: #60cc2fe6;
+	background-color: #60cc2fe6;
 }
 .table>tbody>tr.attention>td, 
 .table>tbody>tr.attention>th, 
@@ -162,32 +162,32 @@
 .table>thead>tr.attention>th,
 .table>thead>tr>td.attention,
 .table>thead>tr>th.attention {
-    background-color: rgba(252, 3, 3, 0.8);
+	background-color: rgba(252, 3, 3, 0.8);
 }
 
 .get-table .table select.get-table-autosave{
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .get-table .table .form-group .input-group .input-group-addon input[type="number"]{
-    background-color: transparent;
-    border: none;
-    text-align: center;
+	background-color: transparent;
+	border: none;
+	text-align: center;
 } 
 
 .get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all{
-    background-color: rgba(99, 229, 44, 0.0);
-    transition: background-color 0.3s;
+	background-color: rgba(99, 229, 44, 0.0);
+	transition: background-color 0.3s;
 }
 .get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:hover{
-    background-color: #cec9c9
+	background-color: #cec9c9
 }
 
 .get-table .table .attention .form-group .input-group .input-group-btn .get-autocomplect-all:hover{
-     background-color: rgb(222, 50, 50); 
+	 background-color: rgb(222, 50, 50); 
 }
 .get-table .table .hit .form-group .input-group .input-group-btn .get-autocomplect-all:hover{
-     background-color: rgba(66, 190, 14, 0.9); 
+	 background-color: rgba(66, 190, 14, 0.9); 
 }
 
 
@@ -195,8 +195,8 @@
 
 .get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:active,
 .get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:focus{
-    border: 0;
-    outline: none;
-    box-shadow: none;
+	border: 0;
+	outline: none;
+	box-shadow: none;
 }
 /*end get-table v-style от Валентина*/
