@@ -1,7 +1,8 @@
 --------------------
 getTables
 --------------------
-Author: John Doe <john@doe.com>
+Author: Alexandr Tuniekov <touols@yandex.ru>
 --------------------
 
-A basic Extra for MODx Revolution.
+Компонент редактируемых таблиц для фронта(пока) MODX на основе 
+bootstrap и pdoTools.

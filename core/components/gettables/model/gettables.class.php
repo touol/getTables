@@ -14,11 +14,11 @@
 */
 class getTables
 {
-	public $version = '1.0.4-pl';
+    public $version = '1.0.4-pl';
 	/** @var modX $modx */
-	public $modx;
+    public $modx;
 	/** @var pdoFetch $pdoTools */
-	public $pdoTools;
+    public $pdoTools;
 	
 	public $models;
 	
@@ -27,16 +27,16 @@ class getTables
 	public $config = array();
 	
 	public $registryAppName = [];
-	
+    
 	/**
-	 * @param modX $modx
-	 * @param array $config
-	 */
-	function __construct(modX &$modx, array $config = [])
-	{
-		$this->modx =& $modx;
-		$corePath = MODX_CORE_PATH . 'components/gettables/';
-		$assetsUrl = MODX_ASSETS_URL . 'components/gettables/';
+     * @param modX $modx
+     * @param array $config
+     */
+    function __construct(modX &$modx, array $config = [])
+    {
+        $this->modx =& $modx;
+        $corePath = MODX_CORE_PATH . 'components/gettables/';
+        $assetsUrl = MODX_ASSETS_URL . 'components/gettables/';
 		
 		
 		$this->config = array_merge([
@@ -51,7 +51,9 @@ class getTables
 			'ctx' => 'web',
 			
 			'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
-			
+			'getTableNavTpl' => 'getTable.nav.tpl',
+			'getTableEditRowTpl' => 'getTable.EditRow.tpl',
+			'getTableFilterTpl' => 'getTable.Filter.tpl',
 		], $config);
 		
 		$this->models['getTabs']['class'] = 'gettabs.class.php';
@@ -60,8 +62,8 @@ class getTables
 		$this->models['getSelect']['class'] = 'getselect.class.php';
 		
 		
-		//$this->modx->addPackage('gettables', $this->config['modelPath']);
-		$this->modx->lexicon->load('gettables:default');
+        //$this->modx->addPackage('gettables', $this->config['modelPath']);
+        $this->modx->lexicon->load('gettables:default');
 		
 		$this->getModels();
 		
@@ -72,66 +74,67 @@ class getTables
 				$pdoConfig = ['return'=>'data','limit'=>60];
 				if (!empty($this->config['loadModels'])) {
 					$pdoConfig['loadModels'] = $this->config['loadModels'];
+					$pdoConfig['decodeJSON'] = false;
 				}
 				$this->pdoTools->setConfig($pdoConfig);
 				
 			}
 			$this->config['pdoClear'] = $this->pdoTools->config;
-		}
+        }
 		
 		$this->config['hash'] = sha1(json_encode($this->config));
 		
 		$this->pdoTools->addTime('__construct');
-	}
+    }
 	
 	public function addDebug($debug = [],$mes = '')
-	{
+    {
 		if($this->config['debug']) $this->debugs[] = ['mes'=>$mes,'debug'=>$debug];
 	}
 	public function getModels()
-	{
+    {
 		
 		
 		if (empty($this->config['loadModels'])) {
-			return;
-		}
+            return;
+        }
 		
 		
-		$time = microtime(true);
-		$models = array();
-		if (strpos(ltrim($this->config['loadModels']), '{') === 0) {
-			$tmp = json_decode($this->config['loadModels'], true);
-			foreach ($tmp as $k => $v) {
-				if (!is_array($v)) {
-					$v = array(
-						'path' => trim($v),
-					);
-				}
-				$v = array_merge(array(
-					'path' => MODX_CORE_PATH . 'components/' . strtolower($k) . '/model/',
-					'prefix' => null,
-				), $v);
-				if (strpos($v['path'], MODX_CORE_PATH) === false) {
-					$v['path'] = MODX_CORE_PATH . ltrim($v['path'], '/');
-				}
-				$models[$k] = $v;
-			}
-		} else {
-			$tmp = array_map('trim', explode(',', $this->config['loadModels']));
-			foreach ($tmp as $v) {
-				$parts = explode(':', $v, 2);
-				$models[$parts[0]] = array(
-					'path' => MODX_CORE_PATH . 'components/' . strtolower($parts[0]) . '/model/',
-					'prefix' => count($parts) > 1 ? $parts[1] : null,
-				);
-			}
-		}
+        $time = microtime(true);
+        $models = array();
+        if (strpos(ltrim($this->config['loadModels']), '{') === 0) {
+            $tmp = json_decode($this->config['loadModels'], true);
+            foreach ($tmp as $k => $v) {
+                if (!is_array($v)) {
+                    $v = array(
+                        'path' => trim($v),
+                    );
+                }
+                $v = array_merge(array(
+                    'path' => MODX_CORE_PATH . 'components/' . strtolower($k) . '/model/',
+                    'prefix' => null,
+                ), $v);
+                if (strpos($v['path'], MODX_CORE_PATH) === false) {
+                    $v['path'] = MODX_CORE_PATH . ltrim($v['path'], '/');
+                }
+                $models[$k] = $v;
+            }
+        } else {
+            $tmp = array_map('trim', explode(',', $this->config['loadModels']));
+            foreach ($tmp as $v) {
+                $parts = explode(':', $v, 2);
+                $models[$parts[0]] = array(
+                    'path' => MODX_CORE_PATH . 'components/' . strtolower($parts[0]) . '/model/',
+                    'prefix' => count($parts) > 1 ? $parts[1] : null,
+                );
+            }
+        }
 		
 		$this->models = array_merge($this->models,$models);
 	}
 	
 	public function initialize()
-	{
+    {
 		
 		if(!$this->config['isAjax'] and !$this->config['registerCSS_JS']){
 			$this->saveCache();
@@ -155,7 +158,7 @@ class getTables
 		$this->pdoTools->addTime('cacheConfig');
 	}
 	public function getClassCache($gts_class,$gts_name)
-	{
+    {
 		/*if(isset($_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name]))
 			return $_SESSION['getTables'][$this->config['hash']][$gts_class][$gts_name];*/
 		/*$this->cacheConfig();
@@ -173,17 +176,17 @@ class getTables
 		return false;
 	}
 	/*public function clearCache()
-	{
+    {
 		unset($_SESSION['getTables']);
 	}*/
 	/*public function setClassCache($gts_class,$gts_name, $gts_config)
-	{
+    {
 		$this->config[$gts_class][$gts_name] = $gts_config;
 		$this->saveCache();
 		return true;
 	}*/
 	public function setClassConfig($gts_class, $gts_name, $gts_config)
-	{
+    {
 		if(!$this->config[$gts_class][$gts_name]) $this->config[$gts_class][$gts_name] = [];
 		if($gts_name == 'all'){
 			$this->config[$gts_class] = array_merge($this->config[$gts_class], $gts_config);
@@ -196,7 +199,7 @@ class getTables
 		//$this->registryAppName[$gts_class][] = $gts_name;
 	}
 	public function loadFromCache($hash)
-	{
+    {
 		/*if(!empty($_SESSION['getTables'][$hash]))
 			$this->config = $_SESSION['getTables'][$hash];*/
 		$this->cacheConfig();
@@ -205,14 +208,14 @@ class getTables
 			$this->config = $cashed;
 	}
 	public function saveCache()
-	{
+    {
 		/*if(!empty($this->config['hash']))
 			$_SESSION['getTables'][$this->config['hash']] = $this->config;*/
 		$this->cacheConfig();
 		$this->modx->cacheManager->set($this->config['cacheElementKey'], $this->config, $this->config['cacheExpires'], $this->config['cacheOptions']);
 	}
 	public function initFromCache()
-	{
+    {
 		if(!$this->config['compile']){
 			$this->cacheConfig();
 			//$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $hash;
@@ -221,7 +224,7 @@ class getTables
 		}
 	}
 	public function getRegistryAppName($gts_class, $gts_name)
-	{
+    {
 		$i = 1; $gts_name_temp = $gts_name;
 		if(empty($this->registryAppName[$gts_class])){
 			//$this->pdoTools->addTime("getRegistryAppName1 gts_name=$gts_name gts_name_temp=$gts_name_temp");
@@ -246,7 +249,7 @@ class getTables
 	
 	
 	public function getCSS_JS()
-	{
+    {
 		
 		return [
 			'jquery_js' => $this->modx->getOption('gettables_load_jquery',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/js/jquery.min.js'),
@@ -264,7 +267,7 @@ class getTables
 		];
 	}
 	public function makePlaceholders($config)
-	{
+    {
 		$placeholders = [];
 		foreach($config as $k=>$v){
 			$placeholders['pl'][] = "[[+$k]]";
@@ -273,7 +276,7 @@ class getTables
 		return $placeholders;
 	}
 	public function registerCSS_JS()
-	{
+    {
 		$this->pdoTools->addTime('registerCSS_JS');
 		$config = $this->config;
 		$placeholders = $this->makePlaceholders($config);
@@ -313,7 +316,7 @@ class getTables
 			}
 		}
 		// Register JS
-		$jss = array();
+        $jss = array();
 		if($CSS_JS['load_jquery']) $jss[] = $CSS_JS['jquery_js'];
 		if($config['load_frontend_framework_style']) $jss[] = $CSS_JS['frontend_framework_style_js'];
 		$jss[] = $CSS_JS['frontend_framework_js'];
@@ -327,11 +330,11 @@ class getTables
 		}
 		
 		foreach($jss as $js){
-			if (!empty($js) && preg_match('/\.js/i', $js)) {
+            if (!empty($js) && preg_match('/\.js/i', $js)) {
 				if (preg_match('/\.js$/i', $js)) {
-					$js .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
-				}
-				$this->modx->regClientScript(str_replace($placeholders['pl'], $placeholders['vl'], $js));
+                    $js .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
+                }
+                $this->modx->regClientScript(str_replace($placeholders['pl'], $placeholders['vl'], $js));
 			}
 		}
 		$data = array(
@@ -355,29 +358,29 @@ class getTables
 		$this->config['registerCSS_JS'] = true;
 	}
 	
-	/**
-	 * Handle frontend requests with actions
-	 *
-	 * @param $action
-	 * @param array $data
-	 *
-	 * @return array|bool|string
-	 */
-	public function handleRequest($action, $data = array())
-	{
-		//$this->pdoTools->addTime("getTables handleRequest $action");
+    /**
+     * Handle frontend requests with actions
+     *
+     * @param $action
+     * @param array $data
+     *
+     * @return array|bool|string
+     */
+    public function handleRequest($action, $data = array())
+    {
+        //$this->pdoTools->addTime("getTables handleRequest $action");
 		$this->pdoTools->addTime("handleRequest $action");
 		
 		$ctx = !empty($data['ctx'])
-			? (string)$data['ctx']
-			: 'web';
-		if ($ctx != 'web') {
-			$this->modx->switchContext($ctx);
-		}
+            ? (string)$data['ctx']
+            : 'web';
+        if ($ctx != 'web') {
+            $this->modx->switchContext($ctx);
+        }
 		if(isset($this->config['permission'][$action]))
 			if(!$this->modx->hasPermission($this->config['permission'][$action])) return $this->error(['lexicon'=>'access_denied']);
 		
-		
+        
 		
 		
 		
@@ -392,7 +395,7 @@ class getTables
 			$this->pdoTools->loadModels();
 		} 
 		
-		$this->initialize();
+        $this->initialize();
 
 		$actions = explode("/",$action);
 		$class = $actions[0];
@@ -438,7 +441,7 @@ class getTables
 			$class = get_class($this);
 			$response = $this->error("Ошибка {$class} handleRequest!");
 		}
-		if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['showLog'])) {
+        if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['showLog'])) {
 			$response['log'] = '<pre class="getTablesLog" style="width:900px;">' . print_r($this->pdoTools->getTime(), 1) . '</pre>';
 		}
 		if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['debug'])) {
@@ -447,18 +450,18 @@ class getTables
 		
 		$response = $this->config['isAjax'] ? json_encode($response) : $response;
 		return $response;
-	}
+    }
 	
 	public function getService($class)
-	{
-		$response = $this->loadService($class);
+    {
+        $response = $this->loadService($class);
 		if(is_array($response) and $response['success'])
 			return $this->models[$class]['service'];
 		return false;
-	}
+    }
 	public function loadService($class)
-	{
-		if(!$this->models[$class]['service']){
+    {
+        if(!$this->models[$class]['service']){
 			if($this->models[$class]['class']){
 				require_once($this->models[$class]['class']);
 				$this->models[$class]['service'] = new $class($this, $this->config);
@@ -472,11 +475,11 @@ class getTables
 			return $this->error("Компонент или класс $class не найден!");
 		}
 		return array('success'=> true);
-	}
+    }
 
-	public function error($message = '', $data = array())
-	{
-		if(is_array($message)){
+    public function error($message = '', $data = array())
+    {
+        if(is_array($message)){
 			if(isset($message['data'])){
 				$message = $this->modx->lexicon($message['lexicon'], $message['data']);
 			}else{
@@ -484,17 +487,17 @@ class getTables
 			}
 		}
 		$response = array(
-			'success' => false,
-			'message' => $message,
-			'data' => $data,
-		);
+            'success' => false,
+            'message' => $message,
+            'data' => $data,
+        );
 
-		return $response;
-	}
+        return $response;
+    }
 	
-	public function success($message = '', $data = array())
-	{
-		if(is_array($message)){
+    public function success($message = '', $data = array())
+    {
+        if(is_array($message)){
 			if(isset($message['data'])){
 				$message = $this->modx->lexicon($message['lexicon'], $message['data']);
 			}else{
@@ -502,11 +505,11 @@ class getTables
 			}
 		}
 		$response = array(
-			'success' => true,
-			'message' => $message,
-			'data' => $data,
-		);
+            'success' => true,
+            'message' => $message,
+            'data' => $data,
+        );
 
-		return $response;
-	}
+        return $response;
+    }
 }

@@ -201,10 +201,10 @@
 					mockHandler.responseText = xhr.responseText;
                     // Don't override the handler status/statusText if it's specified by the config
                     if (isDefaultSetting(mockHandler, 'status')) {
-						mockHandler.status = xhr.status;
+					    mockHandler.status = xhr.status;
                     }
                     if (isDefaultSetting(mockHandler, 'statusText')) {
-						mockHandler.statusText = xhr.statusText;
+					    mockHandler.statusText = xhr.statusText;
                     }
 
 					this.responseTimer = setTimeout(process, mockHandler.responseTime || 0);
