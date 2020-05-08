@@ -341,7 +341,7 @@ class getTable
         
         
         $table['tbody']['trs'] = $trs;
-        $this->getTables->addDebug($table,'generateData $table');
+        //$this->getTables->addDebug($table,'generateData $table');
         //echo "getTable generateData inner <pre>".print_r($table['tbody']['inner'],1)."</pre>";
         return $table;
     }
@@ -909,13 +909,15 @@ class getTable
         $defaultFieldSet = [];
         
         //$this->pdoTools->addTime("table compile {ignore}".print_r($table,1)."{/ignore}");
-        foreach($table['defaultFieldSet'] as $df=>$dfv){
-            if(is_array($dfv)){
-                if(!isset($dfv['class'])) $dfv['class'] = $class;
-                if($dfv['class'] = 'TV') $dfv['class'] = 'modTemplateVarResource';
-                $defaultFieldSet[$df] = $dfv;
-            }else{
-                $defaultFieldSet[$df] = ['class'=>$class,'value'=>$dfv];
+        if(is_array($table['defaultFieldSet'])){
+            foreach($table['defaultFieldSet'] as $df=>$dfv){
+                if(is_array($dfv)){
+                    if(!isset($dfv['class'])) $dfv['class'] = $class;
+                    if($dfv['class'] = 'TV') $dfv['class'] = 'modTemplateVarResource';
+                    $defaultFieldSet[$df] = $dfv;
+                }else{
+                    $defaultFieldSet[$df] = ['class'=>$class,'value'=>$dfv];
+                }
             }
         }
         //$this->pdoTools->addTime("table compile table[actions] {ignore}111".print_r($table,1)."{/ignore}");

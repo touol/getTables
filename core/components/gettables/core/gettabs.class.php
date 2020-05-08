@@ -28,9 +28,16 @@ class getTabs
 	
 	public function getCSS_JS()
     {
+		
 		return [
-			'frontend_gettabs_css' => '',//$this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.gettabs.css')
-			'frontend_gettabs_js' => '',//$this->modx->getOption('gettables_frontend_gettabs_js',null,'[[+jsUrl]]gettables.gettabs.js'),
+			'js'=>[
+				'frontend_gettabs_js' => '',//$this->modx->getOption('gettables_frontend_gettabs_js',null,'[[+jsUrl]]gettables.gettabs.js'),
+			],
+			'css'=>[
+				'frontend_gettabs_css' => '',//$this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.gettabs.css'),
+			],
+			'load'=>[
+			],
 		];
 	}
 

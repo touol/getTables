@@ -456,7 +456,7 @@
                     button_data = $(this).data();
                     table_data = $table.data();
                     $trs_check = $table.children('table').children('tbody').children('.get-table-tr').find('.get-table-check-row:checked');
-                    console.info('$trs',$('table').children('tbody').children('.get-table-tr'));
+                    //console.info('$trs',$('table').children('tbody').children('.get-table-tr'));
                     
                     trs_data = [];
                     $trs = [];
@@ -467,8 +467,8 @@
                     getTables.sendData.$trs = $trs;
                     
                     getTables.sendData.$GtsApp = $table;
-                    console.info('$trs_check',$trs_check);
-                    console.info('trs_data',trs_data);
+                    //console.info('$trs_check',$trs_check);
+                    //console.info('trs_data',trs_data);
                     if (typeof(button_data.modal) != "undefined"){
                         getTables.Modal.load(button_data,table_data,trs_data);
                     }else{
@@ -640,7 +640,7 @@
             var callbacks = getTables.Table.callbacks;
             
             callbacks.update.response.success = function (response) {
-                console.log('callbacks.update.response.success',getTables.sendData);
+                //console.log('callbacks.update.response.success',getTables.sendData);
                 getTables.Table.refresh();
                 $('.gts_modal').modal('hide');
             };
@@ -874,7 +874,7 @@
                     hash = $table.data('hash');
                     if($autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
-                        console.info("hash",hash);
+                        //console.info("hash",hash);
                     } 
                     $menu = $autocomplect.find('.get-autocomplect-menu');
                     if($menu.is(':visible')){

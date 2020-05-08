@@ -662,7 +662,7 @@ class getTableProcessor
 		////$this->getTables->addDebug($edit_tables,'update $edit_tables ');
 		foreach($table['edits'] as $edit){
 			if(isset($data[$edit['field']])){
-                if($edit['field'] == "textarea"){
+                if($edit['type'] == "textarea"){
                     if(!$edit['skip_sanitize']){
                         $temp = json_decode($data[$edit['field']],1);
                         if(json_last_error() == JSON_ERROR_NONE){

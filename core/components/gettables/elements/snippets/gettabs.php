@@ -4,7 +4,9 @@
 /** @var getTables $getTables */
 //$getTables = $modx->getService('getTables', 'getTables', MODX_CORE_PATH . 'components/gettables/model/', $scriptProperties);
 
-if (!$modx->loadClass('gettables', MODX_CORE_PATH . 'components/gettables/model/', false, true)) {
+$gettables_core_path = $modx->getOption('gettables_core_path',null, MODX_CORE_PATH . 'components/gettables/core/');
+$gettables_core_path = str_replace('[[+core_path]]', MODX_CORE_PATH, $gettables_core_path);
+if (!$modx->loadClass('gettables', $gettables_core_path, false, true)) {
     return 'Could not load getTables class!';
 }
 //echo "<pre>".print_r($scriptProperties,1)."<pre>";
