@@ -36,7 +36,8 @@ class getSelect
             case 'compile':
                 return $this->compile($data);
                 break;
-            case 'autocomplect':
+			case 'autocomplect':
+				$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->autocomplect($data);
                 break;
             /*case 'fetch':

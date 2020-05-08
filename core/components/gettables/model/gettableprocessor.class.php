@@ -11,7 +11,7 @@ class getTableProcessor
 	public $debug = [];
 	public $old_rows = [];
 	public $old_row_ids;
-	public $new_values = [];
+
 	public $parent_old_row = [];
 	public $parent_old_row_id;
 	public $triggers = [
@@ -445,91 +445,7 @@ class getTableProcessor
 		}
 		return $this->success('Выполнено успешно');
 	}
-	public function run_command($type, $bn, $beforeCommand, $data = array(), $table = [])
-	{
-		////$this->getTables->addDebug($this->parent_old_row,'run_command $parent_old_row ');
-		////$this->getTables->addDebug($this->old_rows,'run_command $old_row ');
-		////$this->getTables->addDebug($beforeCommand['test_data'],'run_command $test_data1 ');
-		$new_values = [];
-		foreach($this->new_values as $nv){
-			if($nv['action'] == "create" or $nv['action'] == "update" or $nv['action'] == "autosave"){
-				$new_values[$nv['class']][$nv['field']] = [$nv['value']];
-			}
-		}
-		$test_data = $this->pdoTools->getChunk('@INLINE '.$beforeCommand['test_data'],[
-								'action'=>$this->action,
-								'old_rows' => $this->old_rows,
-								'parent_old_row' => $this->parent_old_row,
-								'data' => $data,
-								'new_values' => $new_values,
-								]);
-		
-		$test_data = trim($test_data);
-		////$this->getTables->addDebug($test_data,$type.'run_command $test_data ');
-		if(strpos($test_data, 'return error') !== false){
-			return $this->error(trim(str_replace('return error','',$test_data)));
-		}
-		if($beforeCommand['sets']){
-			foreach($beforeCommand['sets'] as $ks=>$set){
-				if(empty($set['field'])) $set['field'] = $ks;
-				if($set['pdoTools']){
-					$add_gen = [
-							'action'=>$this->action,
-							'old_rows' => $this->old_rows,
-							'parent_old_row' => $this->parent_old_row,
-							'data' => $data,
-							'new_values' => $new_values,
-							];
-					$pdoConfig = $this->gen_pdoConfig($set['pdoTools'],$table['sub_default'],$table['sub_where'], $data, $add_gen);
-					$this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
-					$rows = $this->pdoTools->run();
-				}
-				$set_value = $this->pdoTools->getChunk('@INLINE '.$set['set_value'],[
-							'test_data'=>$test_data,
-							'action'=>$this->action,
-							'old_rows' => $this->old_rows,
-							'parent_old_row' => $this->parent_old_row,
-							'data' => $data,
-							'new_values' => $new_values,
-							'rows' => $rows,
-							]);
-				$set_value = trim($set_value);
-				////$this->getTables->addDebug($set_value,'run_command $set_value ');
-				if(strpos($set_value, 'skip set') !== false) continue;
-				$query = [];
-				foreach($set['query'] as $qfield=>$qv){
-					switch($qv){
-						case 'current_id':
-							$query[$qfield] = $this->old_rows['0']['id'];
-							break;
-						case 'parent_id':
-							$query[$qfield] = $this->parent_old_row['id'];
-							break;
-					}
-				}
-				
-				if(!empty($query) and !empty($set['class'])){
-					////$this->getTables->addDebug($set,'command $set');
-					////$this->getTables->addDebug($query,'command $query !'.$set_value);
-					if($obj = $this->modx->getObject($set['class'],$query)){
-						$obj->{$set['field']} = $set_value;
-						if($obj->save()){
-							$this->new_values[] = [
-								'action'=>$this->action,
-								'operation'=>"commands $type",
-								'description'=>"commands $type $bn set $ks",
-								'class'=>$set['class'],
-								'id'=>$obj->id,
-								'field'=>$ks,
-								'value'=>$set_value,
-								];
-						}
-					}
-				}
-			}
-		}
-		return $this->success('Выполнено успешно');
-	}
+	
 	public function walkFunc(&$item, $key, $sub_default){
         $item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
     }
@@ -538,7 +454,9 @@ class getTableProcessor
     public function run($action, $table, $data = array())
     {
 		
-		if(!isset($table['actions'][$action]) and $action !="autosave") return $this->error("Action $action не найдено! ",$table);
+        if(!(isset($table['actions'][$action]) or ($action == "autosave" and !empty($table['autosave'])))) 
+            return $this->error("Action $action не найдено! ",$table);
+
 		$this->current_action = $table['actions'][$action];
 		$this->action = $action;
 		$edit_tables = [];
@@ -550,18 +468,10 @@ class getTableProcessor
 		
 		//проверка что данные можно редактировать. Хз знает зачем. И собираем данные для лога и комманд. 
 		//Обновление. Сейчас придумал тригеры и они будут собирать и проверять все. 
-		if($table['commands']){
+		//if($table['commands']){
 			$resp = $this->check_rows($table, $data);
 			if(!$resp['success']) return $resp;
-		}
-		
-		//beforeSave command
-		if(isset($table['commands']['before'])){
-			foreach($table['commands']['before'] as $bn=>$beforeCommand){
-				$resp = $this->run_command('before', $bn, $beforeCommand, $data, $table);
-				if(!$resp['success']) return $resp;
-			}
-		}
+		//}
 		
 		switch($action){
 			case 'update':
@@ -587,13 +497,6 @@ class getTableProcessor
 				break;
 		}
 		
-		//afterSave command
-		if(isset($table['commands']['after'])){
-			foreach($table['commands']['after'] as $an=>$afterCommand){
-				$resp = $this->run_command('after', $an, $afterCommand, $data, $table);
-				if(!$resp['success']) return $resp;
-			}
-		}
 		return $response;
     }
 	public function gen_pdoConfig($pdoConfig, $tsub_default = [], $tsub_where =[], $data = array(), $add_gen = [])
@@ -646,7 +549,7 @@ class getTableProcessor
 				$this->old_rows = $rows;
 			}
 		}
-		if($data['parent_current']){
+		/*if($data['parent_current']){
 			
 			//$this->getTables->addDebug($data['parent_current'],'run $data  parent_current');
 			if($old_table_parent = $this->getTables->getClassCache('getTable',$data['parent_current']['name'])){
@@ -664,7 +567,7 @@ class getTableProcessor
 					$this->parent_old_row = $rows[0];
 				}
 			}
-		}
+		}*/
 		return $this->success('');
 	}
 	public function autosave($table, $edit_tables, $data = array())
@@ -750,34 +653,36 @@ class getTableProcessor
 			return $this->error($error,$saved);
 		}
 	}
-	/*public function checkUpdateAccess($id,$table)
-    {
-		////$this->getTables->addDebug($table['pdoTools'],'checkUpdateAccess $table[pdoTools] ');
-		$pdoConfig = $table['pdoTools'];
-		////$this->getTables->addDebug($table['pdoTools'],'$table[pdoTools] ');
-		$pdoConfig['limit'] = 1;
-		$pdoConfig['return'] = 'ids';
-		$pdoConfig['where']['id'] = $id;
-		
-		$this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
-		
-		$ids = $this->pdoTools->run();
-		////$this->getTables->addDebug($this->pdoTools->config,$ids.' checkUpdateAccess $this->pdoTools->config ');
-		if($ids == $id) return true;
-		return false;		
-	}*/
+
 	
 	public function update($table, $edit_tables, $data = array(), $create = false, $tr_data = [])
     {
 		$saved = [];
 		
 		////$this->getTables->addDebug($edit_tables,'update $edit_tables ');
-		
+		foreach($table['edits'] as $edit){
+			if(isset($data[$edit['field']])){
+                if($edit['field'] == "textarea"){
+                    if(!$edit['skip_sanitize']){
+                        $temp = json_decode($data[$edit['field']],1);
+                        if(json_last_error() == JSON_ERROR_NONE){
+                            $temp = $this->getTables->sanitize($temp); //Санация записей в базу
+                            $data[$edit['field']] = json_encode($temp, JSON_PRETTY_PRINT);
+                        }else{
+                            $data[$edit['field']] = $this->getTables->sanitize($data[$edit['field']]); //Санация записей в базу
+                        }
+                    }
+                }else{
+                    $data[$edit['field']] = $this->getTables->sanitize($data[$edit['field']]); //Санация записей в базу
+                }
+			}
+		}
+
 		$class = $table['class'];
 		if($edit_tables[$class]){
 			$set_data = [];
 			foreach($edit_tables[$class] as $edit){
-				if($data[$edit['field']] !==null)
+				if($data[$edit['field']] !== null)
 					$set_data[$edit['field']] = $data[$edit['field']];
 			}
 			foreach($table['defaultFieldSet'] as $df=>$dfv){
@@ -789,22 +694,13 @@ class getTableProcessor
 			
 			if(isset($this->current_action['processors'][$class])){
 				if(empty($set_data['context_key'])) $set_data['context_key'] = 'web';
-				//$saved[] = $this->error('runProcessor ',$set_data);
+                //добавить триггер before
+                //$saved[] = $this->error('runProcessor ',$set_data);
 				$modx_response = $this->modx->runProcessor($this->current_action['processors'][$class], $set_data);
 				if ($modx_response->isError()) {
 					$saved[] = $this->error('runProcessor ',$this->modx->error->failure($modx_response->getMessage()));
 					$data['id'] = false;
 				}else{
-					foreach($set_data as $set_field=>$set_value){
-						$this->new_values[] = [
-							'action'=>$this->action,
-							'operation'=>"update",
-							'class'=>$class,
-							'id'=>$obj->id,
-							'field'=>$set_field,
-							'value'=>$set_value,
-						];
-					}
 					$saved[] = $this->success('runProcessor ',$modx_response->response);
 					$data['id'] = $modx_response->response['object']['id'];
 					$object_new = $modx_response->response['object'];
@@ -841,16 +737,6 @@ class getTableProcessor
 						$resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new);
 						if(!$resp['success']) return $resp;
 						
-						foreach($set_data as $set_field=>$set_value){
-							$this->new_values[] = [
-								'action'=>$this->action,
-								'operation'=>"update",
-								'class'=>$class,
-								'id'=>$obj->id,
-								'field'=>$set_field,
-								'value'=>$set_value,
-							];
-						}
 						$saveobj['success'] = true;
 						$data['id'] = $obj->id;
 					}
@@ -901,15 +787,6 @@ class getTableProcessor
 								$resp = $this->run_triggers($class, 'after', 'remove', [], $object_old);
 								if(!$resp['success']) return $resp;
 								
-								$this->new_values[] = [
-									'action'=>$this->action,
-									'operation'=>"remove",
-									'description'=>"multiple",
-									'class'=>$class,
-									'id'=>$id,
-									//'field'=>$ks,
-									//'value'=>$set_value,
-								];
 							}
 							
 						}
@@ -924,17 +801,6 @@ class getTableProcessor
 										$resp = $this->run_triggers($class, 'after', 'create', [$edit['field']=>1], $object_old, $object_old);
 										if(!$resp['success']) return $resp;
 										
-										foreach($search_fields2 as $set_field=>$set_value){
-											$this->new_values[] = [
-												'action'=>$this->action,
-												'operation'=>"update",
-												'description'=>"multiple",
-												'class'=>$class,
-												'id'=>$obj2->id,
-												'field'=>$set_field,
-												'value'=>$set_value,
-											];
-										}
 										$saveobj['success'] = true;
 									}
 								}
@@ -994,14 +860,6 @@ class getTableProcessor
 								$resp = $this->run_triggers($class, 'after', $type, [$edit['field']=>1], $object_old,$object_new);
 								if(!$resp['success']) return $resp;
 								
-								$this->new_values[] = [
-									'action'=>$this->action,
-									'operation'=>"update",
-									'class'=>$class,
-									'id'=>$obj2->id,
-									'field'=>$edit['value_field'],
-									'value'=>$data[$edit['field']],
-								];
 								$saveobj['success'] = true;
 							}
 						}

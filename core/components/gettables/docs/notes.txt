@@ -1,0 +1,176 @@
+js форматы запросов:
+    1) фильтер 
+        {
+        "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+        "table_name": "gtsBTranslation",
+        "id": "",
+        "date": {
+            "from": "2020-05-01",
+            "to": ""
+        },
+        "nds_id": "",
+        "purpose_id": "",
+        "send_org_id": "",
+        "org_id": "",
+        "contract_t_id": "",
+        "sum_closed": "",
+        "page": "1",
+        "limit": "60",
+        "gts_action": "getTable/filter",
+        "ctx": "",
+        "action": "getTable/filter"
+        }
+    2) модалка
+        {
+        "hash": "4f8c4313c238282738b12113b30377049e11ecad",
+        "table_name": "gtsBTranslation",
+        "id": "",
+        "date": "2020-05-08",
+        "period_id": "5",
+        "debet_id": "1",
+        "sum": "2000",
+        "nds_id": "1",
+        "account_id": "1",
+        "purpose_id": "2",
+        "send_org_id": "",
+        "org_id": "",
+        "contract_t_id": "1",
+        "staff_id": "29",
+        "comment": "",
+        "sum_closed": "",
+        "gts_action": "getTable/create",
+        "ctx": "",
+        "action": "getTable/create"
+        }
+    3) autosave
+        {
+        "gts_action": "getTable/autosave",
+        "hash": "4f8c4313c238282738b12113b30377049e11ecad",
+        "table_name": "gtsBTranslation",
+        "table_data": {
+            "hash": "4f8c4313c238282738b12113b30377049e11ecad",
+            "name": "gtsBTranslation"
+        },
+        "td": {
+            "field": "sum",
+            "value": "1999.99"
+        },
+        "tr_data": {
+            "org_id": "0",
+            "id": "2131"
+        },
+        "action": "getTable/autosave"
+        }
+    4) subtable
+        4.1) фильтер
+            {
+            "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+            "table_name": "gtsBPayment",
+            "sub_where_current": "{\"translation_id\":\"2124\"}",
+            "parent_current": "{\"name\":\"gtsBTranslation\",\"tr_data\":{\"org_id\":\"972\",\"id\":\"2124\"}}",
+            "payment_type_id": [
+                "2"
+            ],
+            "date": {
+                "from": "2020-01-01",
+                "to": ""
+            },
+            "page": "1",
+            "limit": "60",
+            "order_id": "",
+            "gts_action": "getTable/filter",
+            "ctx": "",
+            "action": "getTable/filter"
+            }
+        4.2) модалка
+            {
+            "gts_action": "getModal/fetchTableModal",
+            "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+            "table_data": {
+                "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+                "parent_current": {
+                "name": "gtsBTranslation",
+                "tr_data": {
+                    "org_id": "972",
+                    "id": "2124"
+                }
+                },
+                "sub_where_current": {
+                "translation_id": "2124"
+                },
+                "name": "gtsBPayment"
+            },
+            "button_data": {
+                "modal": "getModal/fetchTableModal",
+                "action": "getTable/create",
+                "name": "create"
+            },
+            "action": "getModal/fetchTableModal"
+            }
+
+            {
+            "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+            "table_name": "gtsBPayment",
+            "sub_where_current": "{\"translation_id\":\"2124\"}",
+            "parent_current": "{\"name\":\"gtsBTranslation\",\"tr_data\":{\"org_id\":\"972\",\"id\":\"2124\"}}",
+            "id": "",
+            "translation_id": "2124",
+            "date": "2020-05-08",
+            "payment_type_id": "1",
+            "order_id": "2",
+            "amount": "3000.00",
+            "comment": "",
+            "user_id": "1",
+            "gts_action": "getTable/create",
+            "ctx": "",
+            "action": "getTable/create"
+            }
+        4.3) autosave
+            {
+            "gts_action": "getTable/autosave",
+            "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+            "table_name": "gtsBPayment",
+            "table_data": {
+                "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+                "parent_current": {
+                "name": "gtsBTranslation",
+                "tr_data": {
+                    "org_id": "972",
+                    "id": "2124"
+                }
+                },
+                "sub_where_current": {
+                "translation_id": "2124"
+                },
+                "name": "gtsBPayment"
+            },
+            "td": {
+                "field": "amount",
+                "value": "10"
+            },
+            "tr_data": {
+                "id": "830"
+            },
+            "action": "getTable/autosave"
+            }
+        4.4) subtable
+            {
+            "gts_action": "getTable/subtable",
+            "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+            "table_name": "gtsBTranslation",
+            "table_data": {
+                "hash": "3886dcc047ad939b5685fe33365d155f269fb3a9",
+                "name": "gtsBTranslation"
+            },
+            "button_data": {
+                "js_action": "sub_show",
+                "subtable_name": "gtsBPayment",
+                "action": "getTable/subtable",
+                "name": "subtable"
+            },
+            "tr_data": {
+                "org_id": "972",
+                "id": "2124"
+            },
+            "action": "getTable/subtable"
+            }

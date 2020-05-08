@@ -38,20 +38,25 @@ class getModal
     public function handleRequest($action, $data = array())
     {
         $class = get_class($this);
+		
+		$this->getTables->REQUEST = $_REQUEST;
         if($data['sub_where_current']){
-            $_REQUEST['sub_where_current'] = $table['sub_where_current'] = $data['sub_where_current'];
-            $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
+            $table['sub_where_current'] = $data['sub_where_current'];
+            $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
         }else if($data['table_data']['sub_where_current']){
-            $_REQUEST['sub_where_current'] = $table['sub_where_current'] = json_encode($data['table_data']['sub_where_current']);
-            $data['sub_where_current'] = $data['table_data']['sub_where_current'];
+            $table['sub_where_current'] = json_encode($data['table_data']['sub_where_current']);
+            $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = $data['table_data']['sub_where_current'];
         } 
         if($data['parent_current']){
             $data['parent_current'] = json_decode($data['parent_current'],1);
         }else if($data['table_data']['parent_current']){
             $data['parent_current'] = $data['table_data']['parent_current'];
         }
+		$this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
+
         switch($action){
-            case 'fetchTableModal':
+			case 'fetchTableModal':
+				$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->fetchTableModal($data);
                 break;
             default:

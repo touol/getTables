@@ -27,7 +27,7 @@ class getTables
 	public $config = array();
 	
 	public $registryAppName = [];
-    
+    public $REQUEST = [];
 	/**
      * @param modX $modx
      * @param array $config
@@ -476,8 +476,25 @@ class getTables
 		}
 		return array('success'=> true);
     }
+	
+	public function sanitize($data)
+    {
+		$sanitizePatterns = $this->modx->sanitizePatterns;
+		$sanitizePatterns['fenom_syntax'] = '#\{(\$|\/|\w+(\s|\(|\|)|\(|\')#';
+		if(is_array($data)){
+			return $this->modx->sanitize($data, $sanitizePatterns);
+		}else{
+			return str_replace($sanitizePatterns,'',$data);
+		}
+		
+	}
 
-    public function error($message = '', $data = array())
+	/*public function isJson($string) {
+		json_decode($string);
+		return (json_last_error() == JSON_ERROR_NONE);
+	}*/
+
+	public function error($message = '', $data = array())
     {
         if(is_array($message)){
 			if(isset($message['data'])){

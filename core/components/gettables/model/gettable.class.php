@@ -63,20 +63,22 @@ class getTable
         if($this->config['isAjax'] and $selects = $this->getTables->getClassCache('getSelect','all')){
             $this->config['selects'] = $selects;
         }  
-        
+		
+		$this->getTables->REQUEST = $_REQUEST;
         if($data['sub_where_current']){
-            $_REQUEST['sub_where_current'] = $table['sub_where_current'] = $data['sub_where_current'];
-            $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
+            $table['sub_where_current'] = $data['sub_where_current'];
+            $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
         }else if($data['table_data']['sub_where_current']){
-            $_REQUEST['sub_where_current'] = $table['sub_where_current'] = json_encode($data['table_data']['sub_where_current']);
-            $data['sub_where_current'] = $data['table_data']['sub_where_current'];
+            $table['sub_where_current'] = json_encode($data['table_data']['sub_where_current']);
+            $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = $data['table_data']['sub_where_current'];
         } 
         if($data['parent_current']){
             $data['parent_current'] = json_decode($data['parent_current'],1);
         }else if($data['table_data']['parent_current']){
             $data['parent_current'] = $data['table_data']['parent_current'];
         }
-        
+		$this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
+		
         switch($action){
             case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave':
                 require_once('gettableprocessor.class.php');
@@ -84,29 +86,21 @@ class getTable
                 return $getTableProcessor->run($action, $table, $data);
                 break;
                 
-            case 'refresh':
+			case 'refresh':
+				$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->refresh($action, $table, $data);
                 break;
-            case 'filter':
+			case 'filter':
+				$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->refresh($action, $table, $data);
                 break;
-            case 'subtable':
+			case 'subtable':
+				$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->subtable($action, $table, $data);
                 break;
         }
         return $this->error("Метод $action в классе $class не найден!");
-        /*if(method_exists($this,$action)){
-            return $this->$action($data);
-        }else{
-            return $this->error("Метод $action в классе $class не найден!");
-        }*/
     }
-    /*public function filter($action, $table, $data)
-    {
-        $table = $this->generateData($table);
-        $html = $table['tbody']['inner'];
-        return $this->success('',array('html'=>$html));
-    }*/
     public function subtable($action, $table, $data)
     {
         $current_action = $table['actions'][$action];
@@ -178,8 +172,8 @@ class getTable
         if(empty($table['paginator']) or ($table['paginator'] !== false and $pdoConfig['limit'] != 1)){
             $paginator = true;
             $table['pdoTools']['setTotal'] = true;//offset
-            if(!empty($_REQUEST['limit'])) $table['pdoTools']['limit'] = (int)$_REQUEST['limit'];
-            if(!empty($_REQUEST['page'])) $table['pdoTools']['offset'] = ((int)$_REQUEST['page'] - 1)*$table['pdoTools']['limit'];
+            if(!empty($this->getTables->REQUEST['limit'])) $table['pdoTools']['limit'] = (int)$this->getTables->REQUEST['limit'];
+            if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools']['limit'];
         }
         //echo "getTable generateData table ".print_r($table,1);
         //$this->pdoTools->addTime("getTable generateData table ".print_r($table,1));
@@ -203,8 +197,8 @@ class getTable
             }else{
                 $table['page']['max'] = 1;
             }
-            if(!empty($_REQUEST['page'])){
-                $table['page']['current'] = (int)$_REQUEST['page'];
+            if(!empty($this->getTables->REQUEST['page'])){
+                $table['page']['current'] = (int)$this->getTables->REQUEST['page'];
             }else{
                 $table['page']['current'] = 1;
             }
@@ -407,10 +401,10 @@ class getTable
                     $table_compile = $this->compile($table);
                     $table_compile['width'] = 100;
                     $table_compile['style'] = 1;
-                    if(!empty($_REQUEST['width'])){
-                        $table_compile['width'] = $_REQUEST['width'];
+                    if(!empty($this->getTables->REQUEST['width'])){
+                        $table_compile['width'] = $this->getTables->REQUEST['width'];
                     }
-                    if(!empty($_REQUEST['subtable_in_all_page'])){
+                    if(!empty($this->getTables->REQUEST['subtable_in_all_page'])){
                         $table_compile['subtable_in_all_page'] = true;
                     }else{
                         $table_compile['subtable_in_all_page'] = false;
@@ -426,12 +420,7 @@ class getTable
                             //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
                             $subtable['pdoTools']['class'] = $subtable['class'];
                             
-                            //$table['subtable']['name'] = $this->getTables->getRegistryAppName('getTable',$name);
-                            //$this->pdoTools->addTime("getTable fetch table subtable $name".$table['subtable']['name'].print_r($table['subtable'],1));
-
                             $subtable_compile = $this->compile($subtable);
-                            //$table_compile['width'] = 100;
-                            //if(!empty($_REQUEST['width'])) $table_compile['width'] = $_REQUEST['width'];
                             if($table_compile['subtable_in_all_page']) $subtable_compile['in_all_page'] = true;
                             $this->getTables->setClassConfig('getTable',$sub_name, $subtable_compile);
                         }
@@ -454,8 +443,8 @@ class getTable
     {
         $query = [];
         
-        if($table['sub_where'] and $_REQUEST['sub_where_current']){
-            $sub_where_current = json_decode($_REQUEST['sub_where_current'],1);
+        if($table['sub_where'] and $this->getTables->REQUEST['sub_where_current']){
+			$sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
             foreach($sub_where_current as $field =>$v){
                 if($table['sub_where'][$field]){
                     $query[$field] = (int)$v;
@@ -482,7 +471,7 @@ class getTable
             
             //$this->pdoTools->addTime("getTable addFilterTable filter ".print_r($filter,1));
             
-            if(($filter['default'] or $filter['edit']['default']) and empty($_REQUEST[$filter['edit']['field']])){
+            if(($filter['default'] or $filter['edit']['default']) and empty($this->getTables->REQUEST[$filter['edit']['field']])){
                 if($filter['default']){
                     if(is_string($filter['default'])){
                         switch($filter['edit']['type']){
@@ -552,8 +541,8 @@ class getTable
                             //$filter['value'] = $filter['edit']['force']['user_id'];
                         }
                         $filter['section'] = ""; continue;
-                    }else if(!empty($_REQUEST[$filter['edit']['field']]) or $_REQUEST[$filter['edit']['field']]==='0'){
-                        $filter['value'] = $_REQUEST[$filter['edit']['field']];
+                    }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']]==='0'){
+                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
                         if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
                             $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
                         }
@@ -561,14 +550,14 @@ class getTable
                     }
                 }
                 //$this->pdoTools->addTime("getTable addFilterTable query force ".print_r($query,1));
-            }else if(!empty($_REQUEST[$filter['edit']['field']]) or $_REQUEST[$filter['edit']['field']]==='0'){
+            }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']]==='0'){
                 
                 switch($filter['edit']['type']){
                     case 'date':
-                        $date = $_REQUEST[$filter['edit']['field']];
+                        $date = $this->getTables->REQUEST[$filter['edit']['field']];
                         break;
                     default:
-                        $filter['value'] = $_REQUEST[$filter['edit']['field']];
+                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
                         if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
                             if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
                                 $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';

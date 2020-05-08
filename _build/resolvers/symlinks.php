@@ -7,7 +7,7 @@ if ($transport->xpdo) {
 
     $dev = MODX_BASE_PATH . 'Extras/getTables/';
     /** @var xPDOCacheManager $cache */
-    $cache = $modx->getCacheManager();
+    /*$cache = $modx->getCacheManager();
     if (file_exists($dev) && $cache) {
         if (!is_link($dev . 'assets/components/gettables')) {
             $cache->deleteTree(
@@ -23,7 +23,7 @@ if ($transport->xpdo) {
             );
             symlink(MODX_CORE_PATH . 'components/gettables/', $dev . 'core/components/gettables');
         }
-    }
+    }*/
 }
 
 return true;
