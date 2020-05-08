@@ -367,7 +367,7 @@ class getTables
 		$csss[] = $CSS_JS['css']['frontend_message_css']; 
 		if(!empty($CSS_JS['css']['frontend_gettabs_css'])) $csss[] = $CSS_JS['css']['frontend_gettabs_css'];
 		
-		if(!empty($CSS_JS['css']['gfrontend_excel_style'])) $csss[] = $CSS_JS['css']['frontend_excel_style'];
+		if(!empty($CSS_JS['css']['frontend_excel_style'])) $csss[] = $CSS_JS['css']['frontend_excel_style'];
 		
 		if($config['add_css']){
 			foreach(explode(",",$config['add_css']) as $acss){
@@ -527,17 +527,94 @@ class getTables
 		}
 		return array('success'=> true);
     }
+	/**
+     * Sanitize values of an array using regular expression patterns.
+     *
+     * @static
+     * @param array $target The target array to sanitize.
+     * @param array|string $patterns A regular expression pattern, or array of
+     * regular expression patterns to apply to all values of the target.
+     * @param integer $depth The maximum recursive depth to sanitize if the
+     * target contains values that are arrays.
+     * @param integer $nesting The maximum nesting level in which to dive
+     * @return array The sanitized array.
+     */
+    public function modx_sanitize(array &$target, array $patterns= array(), $depth= 99, $nesting= 10) {
+        foreach ($target as $key => &$value) {
+            if (is_array($value) && $depth > 0) {
+                $this->modx_sanitize($value, $patterns, $depth-1);
+            } elseif (is_string($value)) {
+                if (!empty($patterns)) {
+                    $iteration = 1;
+                    $nesting = ((integer) $nesting ? (integer) $nesting : 10);
+                    while ($iteration <= $nesting) {
+                        $matched = false;
+                        foreach ($patterns as $pattern) {
+                            $patternIterator = 1;
+                            $patternMatches = preg_match($pattern, $value);
+                            if ($patternMatches > 0) {
+                                $matched = true;
+                                while ($patternMatches > 0 && $patternIterator <= $nesting) {
+                                    $value= preg_replace($pattern, '', $value);
+                                    $patternMatches = preg_match($pattern, $value);
+                                }
+                            }
+                        }
+                        if (!$matched) {
+                            break;
+                        }
+                        $iteration++;
+                    }
+                }
+                /*if (get_magic_quotes_gpc()) {
+                    $target[$key]= stripslashes($value);
+                } else {
+                    $target[$key]= $value;
+                }*/
+				$target[$key]= $value;
+            }
+        }
+        return $target;
+	}
+	
+	public function modx_sanitize_string($value, array $patterns= array(), $depth= 99, $nesting= 10) {
+        if (is_string($value)) {
+			if (!empty($patterns)) {
+				$iteration = 1;
+				$nesting = ((integer) $nesting ? (integer) $nesting : 10);
+				while ($iteration <= $nesting) {
+					$matched = false;
+					foreach ($patterns as $pattern) {
+						$patternIterator = 1;
+						$patternMatches = preg_match($pattern, $value);
+						if ($patternMatches > 0) {
+							$matched = true;
+							while ($patternMatches > 0 && $patternIterator <= $nesting) {
+								$value= preg_replace($pattern, '', $value);
+								$patternMatches = preg_match($pattern, $value);
+							}
+						}
+					}
+					if (!$matched) {
+						break;
+					}
+					$iteration++;
+				}
+			}
+		}
+		return $value;
+    }
 	
 	public function sanitize($data)
     {
 		$sanitizePatterns = $this->modx->sanitizePatterns;
 		$sanitizePatterns['fenom_syntax'] = '@\{(.*?)\}@si';
 		if(is_array($data)){
-			return $this->modx->sanitize($data, $sanitizePatterns);
+			return $this->modx_sanitize($data, $sanitizePatterns);
+			//return preg_replace($sanitizePatterns,'',$data);
 		}else{
-			return preg_replace($sanitizePatterns,'',$data);
+			return $this->modx_sanitize_string($data, $sanitizePatterns);
 		}
-		
 	}
 
 	/*public function isJson($string) {
