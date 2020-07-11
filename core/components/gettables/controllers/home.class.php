@@ -22,24 +22,28 @@ class getTablesHomeManagerController extends modExtraManagerController
             $this->modx->log(1, 'getTablesHomeManagerController Could not load getTables class! '.$gettables_core_path);
             return false;
         }
-        if(empty($_REQUEST['configs'])){
+        if(empty($_REQUEST['config'])){
             //return 'Could not configs!';
-            $this->modx->log(1, 'getTablesHomeManagerController Could not configs!');
+            $this->modx->log(1, 'getTablesHomeManagerController Could not config!');
             return false;
+        }
+        if($this->gtsPro = $this->modx->getService('getTablesPro', 'getTablesPro', MODX_CORE_PATH . 'components/gettablespro/model/')){
+            if($gtsPConfig = $this->modx->getObject('gtsPConfig',['name'=>$_REQUEST['config']])){
+                $config = json_decode($gtsPConfig->config,1);
+            }
+        }
+        if(!is_array($config)){
+            $config = json_decode($this->modx->getOption($_REQUEST['config']),1);
         } 
-        $opt_config = json_decode($this->modx->getOption($_REQUEST['configs']),1);
-        if(!is_array($opt_config)){
+        
+        if(!is_array($config)){
             //return 'Could not load configs!';
             $this->modx->log(1, 'getTablesHomeManagerController Could not load configs!');
             return false;
         } 
-        $opt_config['ctx'] = 'mgr';
-        /*$opt_config['load'] =[
-            'load_jquery' => 1,
-            'load_frontend_framework_style' => 1,
-        ];*/
+        $config['ctx'] = 'mgr';
 
-        $this->getTables = new getTables($this->modx, $opt_config);
+        $this->getTables = new getTables($this->modx, $config);
         if (!$this->getTables) {
             $this->modx->log(1, 'getTablesHomeManagerController Could not create getTables!');
             return false;
