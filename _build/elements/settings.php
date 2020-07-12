@@ -109,4 +109,16 @@ return [
         'value' => '[[+cssUrl]]gettables.excel-style.css',
         'area' => 'gettables_main',
     ],
+
+    'load_frontend_add_lib' => [
+        'xtype' => 'combo-boolean',
+        'value' => false,
+        'area' => 'gettables_main',
+    ],
+    'load_mgr_add_lib' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_main',
+    ],
+
 ];

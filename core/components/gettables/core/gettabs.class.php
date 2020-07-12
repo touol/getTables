@@ -84,6 +84,15 @@ class getTabs
 			if($idx == 1) $tab['active'] = 'active';
 			$idx++;
 			
+			if(isset($tab['table'])){
+				$response = $this->getTables->handleRequest('getTable/fetch',$tab['table']);
+
+				if(!$response['success']){
+					$tab['content'] = $response['message'];
+				}else{
+					$tab['content'] = $response['data']['html'];
+				}
+			}
 			if(isset($tab['chunk'])) $tab['content'] = $this->pdoTools->getChunk($tab['chunk']);
 			
 			$tabs[$n] = $tab;

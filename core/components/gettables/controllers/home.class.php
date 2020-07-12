@@ -8,7 +8,7 @@ class getTablesHomeManagerController extends modExtraManagerController
 {
     /** @var getTables $getTables */
     public $getTables;
-
+    public $error = "";
 
     /**
      *
@@ -19,17 +19,16 @@ class getTablesHomeManagerController extends modExtraManagerController
         $gettables_core_path = $this->modx->getOption('gettables_core_path',null, MODX_CORE_PATH . 'components/gettables/core/');
         $gettables_core_path = str_replace('[[+core_path]]', MODX_CORE_PATH, $gettables_core_path);
         if (!$this->modx->loadClass('gettables', $gettables_core_path, false, true)) {
-            $this->modx->log(1, 'getTablesHomeManagerController Could not load getTables class! '.$gettables_core_path);
-            return false;
+            $this->error .= 'getTablesHomeManagerController Could not load getTables class! '.$gettables_core_path ."<br/>\r\n";
         }
         if(empty($_REQUEST['config'])){
-            //return 'Could not configs!';
-            $this->modx->log(1, 'getTablesHomeManagerController Could not config!');
-            return false;
+            $this->error .= 'getTablesHomeManagerController Could not config!' ."<br/>\r\n";
         }
-        if($this->gtsPro = $this->modx->getService('getTablesPro', 'getTablesPro', MODX_CORE_PATH . 'components/gettablespro/model/')){
-            if($gtsPConfig = $this->modx->getObject('gtsPConfig',['name'=>$_REQUEST['config']])){
-                $config = json_decode($gtsPConfig->config,1);
+        if(is_dir(MODX_CORE_PATH . 'components/gettablespro/model/')){
+            if($this->gtsPro = $this->modx->getService('getTablesPro', 'getTablesPro', MODX_CORE_PATH . 'components/gettablespro/model/')){
+                if($gtsPConfig = $this->modx->getObject('gtsPConfig',['name'=>$_REQUEST['config']])){
+                    $config = json_decode($gtsPConfig->config,1);
+                }
             }
         }
         if(!is_array($config)){
@@ -37,20 +36,19 @@ class getTablesHomeManagerController extends modExtraManagerController
         } 
         
         if(!is_array($config)){
-            //return 'Could not load configs!';
-            $this->modx->log(1, 'getTablesHomeManagerController Could not load configs!');
-            return false;
+            $this->error .= 'getTablesHomeManagerController Could not load config! Check config json!' ."<br/>\r\n";
         } 
         $config['ctx'] = 'mgr';
 
         $this->getTables = new getTables($this->modx, $config);
-        if (!$this->getTables) {
-            $this->modx->log(1, 'getTablesHomeManagerController Could not create getTables!');
-            return false;
+        if ($this->getTables) {
+            $this->getTables->pdoTools->addTime('getTables loaded.');
+            $this->getTables->initFromCache();
+            $this->getTables->pdoTools->addTime('getTables init from cache.');
+        }else{
+            $this->error .= 'getTablesHomeManagerController Could not create getTables!' ."<br/>\r\n";
         }
-        $this->getTables->pdoTools->addTime('getTables loaded.');
-        $this->getTables->initFromCache();
-        $this->getTables->pdoTools->addTime('getTables init from cache.');
+        if($this->error) $this->modx->log(1, $this->error);
 
         parent::initialize();
     }
@@ -61,7 +59,18 @@ class getTablesHomeManagerController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        return ['gettables:manager', 'gettables:default'];
+        
+        $LanguageTopics = ['gettables:manager', 'gettables:default'];
+        if(empty($this->error)){
+            if(!empty($this->getTables->config['loadModels'])){
+                $models = explode(",",$this->getTables->config['loadModels']);
+                foreach($models as $model){
+                    $LanguageTopics[] = trim($model).':manager';
+                    $LanguageTopics[] = trim($model).':default';
+                }
+            }
+        }
+        return $LanguageTopics;
     }
 
 
@@ -79,6 +88,12 @@ class getTablesHomeManagerController extends modExtraManagerController
      */
     public function getPageTitle()
     {
+        if(empty($this->error)){
+            if(!empty($this->getTables->config['loadModels'])){
+                $models = explode(",",$this->getTables->config['loadModels']);
+                return $this->modx->lexicon($models[0]);
+            }
+        }
         return $this->modx->lexicon('gettables');
     }
 
@@ -109,6 +124,8 @@ class getTablesHomeManagerController extends modExtraManagerController
         getTables.config.connector_url = "' . $this->getTables->config['connectorUrl'] . '";
         Ext.onReady(function() {MODx.load({ xtype: "gettables-page-home"});});
         </script>');*/
+        if(!empty($this->error)) return;
+
         $this->getTables->pdoTools->addTime('registerCSS_JS');
         $CSS_JS = $this->getTables->prepareCSS_JS();
         $this->addHtml(
@@ -143,6 +160,10 @@ class getTablesHomeManagerController extends modExtraManagerController
      */
     public function getTemplateFile()
     {
+        if(!empty($this->error)){
+            $this->content .=  '<div id="gettables-panel-home-div">'.$this->error.'</div>';
+            return '';
+        }
         if($this->getTables->config['tabs'])
             $response = $this->getTables->handleRequest('getTabs/fetch');
         if($this->getTables->config['table'])

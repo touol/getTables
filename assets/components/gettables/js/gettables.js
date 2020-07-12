@@ -841,7 +841,28 @@
     };
     
     $(document).ready(function ($) {
+        /*if (typeof($.fn.datepicker) != 'function') {
+            $.getScript(getTablesConfig.jsUrl + 'lib/jquery-ui-1.11.4.custom/jquery-ui.min.js', function () {
+                $('<link/>', {
+                    rel: 'stylesheet',
+                    type: 'text/css',
+                    href: getTablesConfig.jsUrl + 'lib/jquery-ui-1.11.4.custom/jquery-ui.min.css'
+                 }).appendTo('head');
+            });
+            $.getScript(getTablesConfig.jsUrl + 'lib/jquery-ui-1.11.4.custom/datepicker-ru.js', function () {
+            });
+        }
+        if (typeof($.fn.multiselect) != 'function') {
+            $.getScript(getTablesConfig.jsUrl + 'lib/bootstrap-multiselect/js/bootstrap-multiselect.js', function () {
+                $('<link/>', {
+                    rel: 'stylesheet',
+                    type: 'text/css',
+                    href: getTablesConfig.jsUrl + 'lib/bootstrap-multiselect/css/bootstrap-multiselect.css'
+                 }).appendTo('head');
+            });
+        }*/
         getTables.initialize();
+        
         var html = $('html');
         html.removeClass('no-js');
         if (!html.hasClass('js')) {
