@@ -721,6 +721,8 @@ class getTable
                             }else{
                                 $this->pdoTools->addTime("В getTable нет действия {$ta[1]}. Действие  $k =>".print_r($actions[$k]));
                             }
+                        }else{
+                            $compile_actions[$k] = $actions[$k];
                         }
                     }
                 }

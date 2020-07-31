@@ -177,10 +177,10 @@ class getTablesHomeManagerController extends modExtraManagerController
 
         $log = '';
         if ($this->modx->user->hasSessionContext('mgr') && !empty($this->getTables->config['showLog'])) {
-            $log .= $response['log'];
+            $log .= "<div style='width:500px;'>".$response['log']."</div>";
         }
 
-        $this->content .=  '<div id="gettables-panel-home-div">'.$output.$log.'</div>';
+        $this->content .=  '<div id="gettables-panel-home-div" style="height: 700px;overflow-y: scroll;">'.$output.$log.'</div>';
         return '';
     }
 
