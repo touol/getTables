@@ -467,6 +467,7 @@ class getTables
 		if($this->config['isAjax'] and $this->config['loadModels']){
 			$this->pdoTools->config['loadModels'] = $this->config['loadModels'];
 			$this->pdoTools->loadModels();
+			$this->getModels();
 		} 
 		
         $this->initialize();
