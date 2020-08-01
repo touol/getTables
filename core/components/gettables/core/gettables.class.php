@@ -212,10 +212,10 @@ class getTables
 			$this->config = $_SESSION['getTables'][$hash];*/
 		$this->cacheConfig();
 		$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $hash;
-		file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",$this->config['cacheElementKey']." ".json_encode($this->config['cacheOptions']));
+		//file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",$this->config['cacheElementKey']." ".json_encode($this->config['cacheOptions']));
 		if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions'])){
 			$this->config = $cashed;
-			file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",json_encode($cashed));
+			//file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",json_encode($cashed));
 			return true;
 		}
 		return false;
