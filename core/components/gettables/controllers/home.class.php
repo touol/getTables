@@ -180,7 +180,15 @@ class getTablesHomeManagerController extends modExtraManagerController
             $log .= "<div style='width:500px;'>".$response['log']."</div>";
         }
 
-        $this->content .=  '<div id="gettables-panel-home-div" style="height: 600px;overflow-y: scroll;">'.$output.$log.'</div>';
+        $this->content .=  '
+        <style>
+        * {
+            -webkit-box-sizing: initial !important;
+            -moz-box-sizing: initial !important;
+            box-sizing: initial !important;
+        }
+        </style>
+        <div id="gettables-panel-home-div" style="height: 600px;overflow-y: scroll;">'.$output.$log.'</div>';
         return '';
     }
 
