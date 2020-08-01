@@ -1,5 +1,9 @@
 Changelog for getTables.
 
+1.4.13-alpha
+==============
+- решение проблеммы с modx->cacheManager на beget.com
+
 1.4.5-alpha
 ==============
 - Правки в интеграция в админку MODX.

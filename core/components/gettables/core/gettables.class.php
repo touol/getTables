@@ -212,8 +212,13 @@ class getTables
 			$this->config = $_SESSION['getTables'][$hash];*/
 		$this->cacheConfig();
 		$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $hash;
-		if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions']))
+		file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",$this->config['cacheElementKey']." ".json_encode($this->config['cacheOptions']));
+		if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions'])){
 			$this->config = $cashed;
+			file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",json_encode($cashed));
+			return true;
+		}
+		return false;
 	}
 	public function saveCache()
     {
@@ -458,12 +463,12 @@ class getTables
 		
 		
 		
-		if(isset($data['hash'])){
+		/*if(isset($data['hash'])){
 			$this->loadFromCache($data['hash']);
-		}
+		}*/
 		$this->config['isAjax'] = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
 		//$this->pdoTools->addTime("getTables handleRequest action $action data {ignore}".print_r($data,1)."{/ignore}");
-		$table['pdoTools']['loadModels'] = $table['loadModels'];
+		//$table['pdoTools']['loadModels'] = $table['loadModels'];
 		if($this->config['isAjax'] and $this->config['loadModels']){
 			$this->pdoTools->config['loadModels'] = $this->config['loadModels'];
 			$this->pdoTools->loadModels();
