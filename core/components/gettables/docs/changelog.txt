@@ -1,5 +1,9 @@
 Changelog for getTables.
 
+1.4.14-alpha
+==============
+- fix css для админки.(Когда-нибудь сделать лучше)
+
 1.4.13-alpha
 ==============
 - решение проблеммы с modx->cacheManager на beget.com
