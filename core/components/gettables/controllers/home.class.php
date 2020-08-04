@@ -187,6 +187,16 @@ class getTablesHomeManagerController extends modExtraManagerController
             -moz-box-sizing: initial !important;
             box-sizing: initial !important;
         }
+        .modal * {
+            -webkit-box-sizing: border-box !important;
+            -moz-box-sizing: border-box !important;
+            box-sizing: border-box !important;
+        }
+        #gettables-panel-home-div * {
+            -webkit-box-sizing: border-box !important;
+            -moz-box-sizing: border-box !important;
+            box-sizing: border-box !important;
+        }
         </style>
         <div id="gettables-panel-home-div" style="height: 600px;overflow-y: scroll;">'.$output.$log.'</div>';
         return '';
