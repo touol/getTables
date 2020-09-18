@@ -9,12 +9,12 @@ if (empty($_REQUEST['action']) and empty($_REQUEST['gts_action'])) {
 }
 
 
-//решение проблеммы с modx->cacheManager на beget.com
-/*define('MODX_API_MODE', true);
-require dirname(dirname(dirname(dirname(__FILE__)))) . '/index.php';*/
-require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
+//решение проблеммы с modx->cacheManager на beget.com. Но как оказалось запрещает доступ не админам.
+define('MODX_API_MODE', true);
+require dirname(dirname(dirname(dirname(__FILE__)))) . '/index.php';
+/*require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
 require_once MODX_CORE_PATH.'config/'.MODX_CONFIG_KEY.'.inc.php';
-require_once MODX_CONNECTORS_PATH.'index.php';
+require_once MODX_CONNECTORS_PATH.'index.php';*/
 
 $_REQUEST['action'] = $_REQUEST['action'] ? $_REQUEST['action'] : $_REQUEST['gts_action'];
 
@@ -60,4 +60,5 @@ if(!empty($_REQUEST['hash'])){
 }
 $response = $getTables->handleRequest($_REQUEST['action'],$_REQUEST);
 
-echo $response;
+echo json_encode($response);
+exit;

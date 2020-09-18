@@ -62,18 +62,18 @@
                     <input type="hidden" class="get-autocomplect-hidden-id" 
                             value="{$filter.edit.value}" data-field="{$filter.edit.field}" name="{$filter.edit.field}" 
                             />
-                    <span class="input-group-addon {if $filter.edit.hide_id}hidden{/if}" style="width:20%;padding: 0;">
+                    <span class="input-group-prepend" style="width: 20%;{if $filter.edit.hide_id}display:none;{/if}">
                         <input type="number" class="get-autocomplect-id" 
                             value="{$edit.value}"  
                             placeholder="id" min="0"
-                            style="width:100%;height: 30px;padding: 0;"/>
+                            style="width:100%;"/>
                     </span>
-                    <input type="search" class="form-control get-autocomplect-content" value="{$filter.edit.content}" placeholder="{$filter.edit.placeholder}"/>
-                    <div class="input-group-btn">
+                    <input type="text" class="form-control get-autocomplect-content" value="{$filter.edit.content}" placeholder="{$filter.edit.placeholder}"/>
+                    <div class="input-group-append">
                       <button class="btn get-autocomplect-all">
-                          <span class="caret"></span>
+                          <span class="fa fa-caret-down"></span>
                       </button>
-                    </div>
+                     </div>
                   </div>
                   <ul class="dropdown-menu get-autocomplect-menu" role="menu">
                       

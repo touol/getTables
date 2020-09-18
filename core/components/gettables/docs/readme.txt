@@ -4,7 +4,7 @@ getTables
 Author: Alexandr Tuniekov <touols@yandex.ru>
 --------------------
 
-Компонент редактируемых таблиц для фронта(пока) MODX на основе 
+Компонент редактируемых таблиц для фронта и беккенда MODX на основе 
 bootstrap и pdoTools.
 
 Данный компонент задумывается в 2 версиях getTables и getTablesPro.

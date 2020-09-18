@@ -38,8 +38,8 @@ class getModal
     public function handleRequest($action, $data = array())
     {
         $class = get_class($this);
-		
-		$this->getTables->REQUEST = $_REQUEST;
+        
+        $this->getTables->REQUEST = $_REQUEST;
         if($data['sub_where_current']){
             $table['sub_where_current'] = $data['sub_where_current'];
             $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
@@ -52,11 +52,11 @@ class getModal
         }else if($data['table_data']['parent_current']){
             $data['parent_current'] = $data['table_data']['parent_current'];
         }
-		$this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
+        $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
 
         switch($action){
-			case 'fetchTableModal':
-				$data = $this->getTables->sanitize($data); //Санация $data
+            case 'fetchTableModal':
+                $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->fetchTableModal($data);
                 break;
             default:

@@ -63,8 +63,8 @@ class getTable
         if($this->config['isAjax'] and $selects = $this->getTables->getClassCache('getSelect','all')){
             $this->config['selects'] = $selects;
         }  
-		
-		$this->getTables->REQUEST = $_REQUEST;
+        
+        $this->getTables->REQUEST = $_REQUEST;
         if($data['sub_where_current']){
             $table['sub_where_current'] = $data['sub_where_current'];
             $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
@@ -77,8 +77,8 @@ class getTable
         }else if($data['table_data']['parent_current']){
             $data['parent_current'] = $data['table_data']['parent_current'];
         }
-		$this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
-		
+        $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
+        
         switch($action){
             case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave':
                 require_once('gettableprocessor.class.php');
@@ -86,16 +86,16 @@ class getTable
                 return $getTableProcessor->run($action, $table, $data);
                 break;
                 
-			case 'refresh':
-				$data = $this->getTables->sanitize($data); //Санация $data
+            case 'refresh':
+                $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->refresh($action, $table, $data);
                 break;
-			case 'filter':
-				$data = $this->getTables->sanitize($data); //Санация $data
+            case 'filter':
+                $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->refresh($action, $table, $data);
                 break;
-			case 'subtable':
-				$data = $this->getTables->sanitize($data); //Санация $data
+            case 'subtable':
+                $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->subtable($action, $table, $data);
                 break;
         }
@@ -360,9 +360,6 @@ class getTable
     public function fetch($table = array())
     {
         
-        if(!$this->config['isAjax']){
-            $this->getStyleChunks();
-        }
         //$this->getTables->addDebug($table,'fetch  $table');
         //$this->getTables->addDebug($this->config,'fetch  $this->config');
         //$this->pdoTools->addTime("getTable fetch table ".print_r($this->config,1));
@@ -444,7 +441,7 @@ class getTable
         $query = [];
         
         if($table['sub_where'] and $this->getTables->REQUEST['sub_where_current']){
-			$sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
+            $sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
             foreach($sub_where_current as $field =>$v){
                 if($table['sub_where'][$field]){
                     $query[$field] = (int)$v;
@@ -620,12 +617,17 @@ class getTable
     
     
     public function compileActions($actions){
+        if($this->config['frontend_framework_style'] == 'bootstrap_v3'){
+            $icon_prefix = 'glyphicon glyphicon';
+        }else{
+            $icon_prefix = 'fa fa';
+        }
         $default_actions = [
             'create' =>[
                 'action'=>'getTable/create',
                 'title'=>'Создать',
                 'cls' => '',
-                'icon' => 'glyphicon glyphicon-plus',
+                'icon' => "$icon_prefix-plus",
                 'topBar' => [],
                 //'multiple' => $this->modx->lexicon('modextra_items_update'),
                 //'row' => [],
@@ -633,13 +635,14 @@ class getTable
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
                 ],
+
                 //'processors'=>['modResource'=>'resource/create'],
             ],
             'update' =>[
                 'action'=>'getTable/update',
                 'title'=>'Изменить',
                 'cls' => '',
-                'icon' => 'glyphicon glyphicon-edit',
+                'icon' => "$icon_prefix-edit",//'glyphicon glyphicon-edit',
                 //'topBar' => [],
                 //'multiple' => $this->modx->lexicon('modextra_items_update'),
                 'row' => [],
@@ -653,7 +656,7 @@ class getTable
                 'action'=>'getTable/remove',
                 'title'=>'Удалить',
                 'cls' => 'btn-danger',
-                'icon' => 'glyphicon glyphicon-trash',
+                'icon' => "$icon_prefix-trash", //'glyphicon glyphicon-trash',
                 //'topBar' => [],
                 'multiple' => ['title'=>'Удалить выбранное'],
                 'row' => [],
@@ -663,26 +666,7 @@ class getTable
                 'title'=>['Включить','Выключить'],
                 'multiple'=>['Включить','Выключить'],
                 'cls' => ['btn-danger','btn-success'],
-                'icon' => 'glyphicon glyphicon-off',
-                /*[
-                    'enable' =>
-                    [
-                        'action'=>'getTable/enable',
-                        'title'=>'Включить',
-                        'cls' => 'btn-danger',
-                        'icon' => 'glyphicon glyphicon-off',
-                        //'topBar' => [],
-                        'multiple' => ['title'=>'Включить выбранное'],
-                    ],
-                    'disable' =>[
-                        'action'=>'getTable/disable',
-                        'title'=>'Выключить',
-                        'cls' => 'btn-success',
-                        'icon' => 'glyphicon glyphicon-off',
-                        //'topBar' => [],
-                        'multiple' => ['title'=>'Выключить выбранное'],
-                    ],
-                ],*/
+                'icon' => $icon_prefix == 'fa fa' ? "$icon_prefix-power-off" : 'glyphicon glyphicon-off',
                 'field' => 'published',
                 'row' => [],
             ],
@@ -690,11 +674,28 @@ class getTable
                 'action'=>"getTable/subtable",
                 'title'=>['Открыть','Закрыть'],
                 //'multiple'=>['Включить','Выключить'],
-                'cls' => ['get-sub-show ','get-sub-hide hidden'],//['btn-danger','btn-success'],
-                'icon' => ['glyphicon glyphicon-eye-open','glyphicon glyphicon-eye-close'],
+                'cls' => ['get-sub-show ','get-sub-hide'],//['btn-danger','btn-success'],
+                'icon' => [$icon_prefix == 'fa fa' ? "$icon_prefix-eye" : 'glyphicon glyphicon-eye-open'
+                    ,$icon_prefix == 'fa fa' ? "$icon_prefix-eye-slash" : 'glyphicon glyphicon-eye-close'],
+                    //['glyphicon glyphicon-eye-open','glyphicon glyphicon-eye-close'],
                 //'field' => 'published',
                 'row' => [],
                 //'where'=>['parent'=>'id'],
+
+            ],
+            'a' =>[
+                'action'=>"getTable/a",
+                'row' => [],
+                'icon' => '',
+                'tag' =>'a',
+                'href' => '',
+            ],
+            'custom' =>[
+                'action'=>"getTable/custom",
+                'row' => [],
+                'icon' => '',
+                'tag' =>'a',
+                'attr' => '',
             ],
             
         ];
@@ -730,6 +731,7 @@ class getTable
             
             //$compile_actions = $actions;
         }
+        
         //$this->pdoTools->addTime("table compile_actions {ignore}".print_r($compile_actions,1)."{/ignore}");
         foreach($compile_actions as $k=>&$a){
             if(!empty($a['permission'])){
@@ -746,6 +748,7 @@ class getTable
                             'cls' => $a['cls'][0],
                             'html' => $html[0],
                             'field'=> $a['field'],
+                            'title'=> $a['title'][0],
                             'data' =>[
                                 'name'=>'subtable',
                                 'action'=>$a['action'],
@@ -757,6 +760,8 @@ class getTable
                             'cls' => $a['cls'][1],
                             'field'=> $a['field'],
                             'html' => $html[1],
+                            'title'=> $a['title'][1],
+                            'style'=>'display:none;',
                             'data' =>[
                                 'name'=>'subtable',
                                 'action'=>$a['action'],
@@ -792,6 +797,7 @@ class getTable
                             'cls' => $a['cls'][0],
                             'html' => $html[0],
                             'field'=> $a['field'],
+                            'title'=> $a['title'][0],
                             'data' =>[
                                 'name'=>'toggle',
                                 'action'=>$a['action'],
@@ -803,6 +809,7 @@ class getTable
                             'cls' => $a['cls'][1],
                             'field'=> $a['field'],
                             'html' => $html[1],
+                            'title'=> $a['title'][1],
                             'data' =>[
                                 'name'=>'toggle',
                                 'action'=>$a['action'],
@@ -829,7 +836,7 @@ class getTable
                     $a['row']['buttons'] = $a['buttons'];
                 } 
             }else{
-                if(!isset($a['buttons'])){
+                if(!isset($a['buttons']) and $a['action'] != "getTable/a" and $a['action'] != "getTable/custom"){
                     $html = '';
                     $html = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'];
                     $html .= $a['text'] ? $a['text'] : '';
@@ -837,6 +844,7 @@ class getTable
                         $k =>[
                             'cls' => $a['cls'],
                             'html' => $html,
+                            'title'=> $a['title'],
                             'data' =>[
                                 'name'=>$k,
                                 'action'=>$a['action'],
@@ -847,6 +855,11 @@ class getTable
                         $a['buttons'][$k]['data']['modal'] = $a['modal']['action'];
                     }
                     if(isset($a['row'])) $a['row']['buttons'] = $a['buttons'];
+                }else{
+                    $a['buttons'] = [];
+                    if($a['icon']) $a['html'] = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'];
+                    if($a['href']) $a['attr'] .= ' href="'.$a['href'].'"';
+                    if(isset($a['row'])) $a['row']['buttons'] = [];
                 }
                 if(isset($a['topBar'])){
                     $ttopBar = [
@@ -877,12 +890,16 @@ class getTable
         foreach($actions as $a){
             if($a['topBar']){
                 $buttons = [];
-                foreach($a['topBar']['buttons'] as $arbk=>$arb){
-                    $str_data = "";
-                    foreach($arb['data'] as $arbdk=>$arbdv){
-                        $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
-                    } 
-                    $buttons[] ='<button type = "button" class="btn get-table-'.$a['topBar']['bcls'].' '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                if(empty($a['topBar']['buttons'])){
+                    $buttons[] ='<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                }else{
+                    foreach($a['topBar']['buttons'] as $arbk=>$arb){
+                        $str_data = "";
+                        foreach($arb['data'] as $arbdk=>$arbdv){
+                            $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
+                        } 
+                        $buttons[] ='<button type = "button" class="btn get-table-'.$a['topBar']['bcls'].' '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                    }
                 }
                 $a['topBar']['content'] = implode(' ',$buttons);
                 $topBar[$a['topBar']['section']][] = $a['topBar'];
@@ -928,9 +945,14 @@ class getTable
         $actions = $this->compileActions($actions);
         $actions_row = [];
         foreach($actions as $k=>$a){
-            if(isset($a['row'])) $actions_row[$k] = [
-                'buttons'=> $a['row']['buttons'],
-            ];
+            if(isset($a['row'])){
+                //$actions_row[$k] = ['buttons'=> $a['row']['buttons'],];
+                if(empty($a['buttons'])){
+                    $actions_row[$k] ='<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                }else{
+                    $actions_row[$k] = $this->compileActionButtons($a);
+                }
+            } 
             if(isset($a['modal'])) $modal[$a['action']] = $a['modal'];
         }
         
@@ -1077,10 +1099,15 @@ class getTable
                 $td['actions'] = $this->compileActions($value['actions']);
                 $buttons = [];
                 foreach($td['actions'] as $k=>$a){
-                    $buttons[$k]['buttons'] = $a['buttons'];
+                    //$buttons[$k]['buttons'] = $a['buttons'];
+                    if(empty($a['buttons'])){
+                        $buttons[$k] ='<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                    }else{
+                        $buttons[$k] = $this->compileActionButtons($a);
+                    }
                 }
                 //$this->pdoTools->addTime("getTable compileActions td actions ".print_r($td['actions'],1));
-                $buttons = $this->compileActionButtons($buttons);
+                //$buttons = $this->compileActionButtons($buttons);
                 $td['edit']['buttons'] = implode('&nbsp;',$buttons);
             }
             $ths[] = $th;
@@ -1096,12 +1123,12 @@ class getTable
         //$this->pdoTools->addTime("getTable compile table body_tr".print_r($body_tr['data'],1));
         if(!empty($actions_row)){
             //собираем кнопки
-            $buttons = $this->compileActionButtons($actions_row);
+            //$buttons = $this->compileActionButtons($actions_row);
              //text-right
             $ths[] = ['cls'=>'text-right','name'=>'actions','content'=> "Действия"];
-            $tds[] = ['cls'=>'text-right','name'=>'actions','content'=> implode('&nbsp;',$buttons),'style'=>'white-space: nowrap;'];
+            $tds[] = ['cls'=>'text-right','name'=>'actions','content'=> implode('&nbsp;',$actions_row),'style'=>'white-space: nowrap;'];
         }
-        //$this->pdoTools->addTime("getTable compile buttons {ignore}".print_r($buttons,1)."{/ignore}");
+        $this->pdoTools->addTime("getTable compile buttons {ignore}".print_r($actions_row,1)."{/ignore}");
         
         $topBar = $this->compileTopBar($actions);
         //$this->pdoTools->addTime("getTable compileTopBar topBar {ignore}".print_r($topBar,1)."{/ignore}");
@@ -1143,29 +1170,28 @@ class getTable
         return $table_compile;
     }
     
-    public function compileActionButtons($actions_row)
+    public function compileActionButtons($a)
     {
-        //$this->pdoTools->addTime("getTable compileActionButtons actions_row ".print_r($actions_row,1));
-        $buttons = [];
-        foreach($actions_row as $ak=>$ar){
-            
-            if($ar['name'] == 'subtable'){
+        $this->pdoTools->addTime("getTable compileActionButtons $a ".print_r($a,1));
+        $buttons = []; 
+            if($a['action'] == "getTable/subtable"){
                 $buttons_toggle = [];
                 $field = '';
-                foreach($ar['buttons'] as $arbk=>$arb){
+                foreach($a['row']['buttons'] as $arbk=>$arb){
                     $str_data = "";
                     foreach($arb['data'] as $arbdk=>$arbdv){
                         $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
                     }
                     $field = $arb['field'];
-                    $buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                    $buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.
+                    ' title="'.$arb['title'].'" style="'.$arb['style'].'"> '.$arb['html'].'</button>';
                 }
                 $buttons[] = $buttons_toggle['sub_show'];
                 $buttons[] = $buttons_toggle['sub_hide'];
-            }else if($ar['name'] == 'toggle'){
+            }else if($a['action'] == "getTable/toggle"){
                 $buttons_toggle = [];
                 $field = '';
-                foreach($ar['buttons'] as $arbk=>$arb){
+                foreach($a['row']['buttons'] as $arbk=>$arb){
                     $str_data = "";
                     foreach($arb['data'] as $arbdk=>$arbdv){
                         $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
@@ -1173,13 +1199,13 @@ class getTable
                     $field = $arb['field'];
                     $t = '';
                     if($arbk != 'enable') $t = '!';
-                    $buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row {if '.$t.'$'.$field.'}hidden{/if} '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                    $buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.' style="{if '.$t.'$'.$field.'}display:none;{/if}" title="'.$arb['title'].'"> '.$arb['html'].'</button>';
                     
                 }
                 $buttons[] = $buttons_toggle['enable'];
                 $buttons[] = $buttons_toggle['disable'];
             }else{
-                foreach($ar['buttons'] as $arbk=>$arb){
+                foreach($a['row']['buttons'] as $arbk=>$arb){
                     $str_data = "";
                     foreach($arb['data'] as $arbdk=>$arbdv){
                         $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
@@ -1187,9 +1213,9 @@ class getTable
                     $buttons[] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
                 }
             }
-        }
-        //$this->pdoTools->addTime("getTable compileActionButtons buttons ".print_r($buttons,1));
-        return $buttons;
+        
+        $this->pdoTools->addTime("getTable compileActionButtons buttons ".print_r($buttons,1));
+        return implode('&nbsp;',$buttons);
     }
     public function addAndSortFilter($filters,$addFilter)
     {
@@ -1225,28 +1251,6 @@ class getTable
         }
         //$this->pdoTools->addTime("getTable addAndSortFilter ".print_r($filters,1));
         return $filters;
-    }
-    public function getStyleChunks()
-    {
-        if($this->config['frontend_framework_style'] != 'bootstrap_v3'){
-            if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_'.$this->config['frontend_framework_style']))){
-                if($this->config['getTableOuterTpl'] == 'getTable.outer.tpl'){
-                    if($chunk = $this->modx->getObject('modChunk', array('name' => $propSet->getTableOuterTpl))){
-                        $this->config['getTableOuterTpl'] = $propSet->getTableOuterTpl;
-                    }
-                }
-                if($this->config['getTableRowTpl'] == 'getTable.outer.tpl'){
-                    if($chunk = $this->modx->getObject('modChunk', array('name' => $propSet->getTableRowTpl))){
-                        $this->config['getTableRowTpl'] = $propSet->getTableRowTpl;
-                    }
-                }
-                if($this->config['getTableModalCreateUpdateTpl'] == 'getTable.Modal.CreateUpdate.tpl'){
-                    if($chunk = $this->modx->getObject('modChunk', array('name' => $propSet->getTableModalCreateUpdateTpl))){
-                        $this->config['getTableModalCreateUpdateTpl'] = $propSet->getTableModalCreateUpdateTpl;
-                    }
-                }
-            }
-        }
     }
     
     public function error($message = '', $data = array())

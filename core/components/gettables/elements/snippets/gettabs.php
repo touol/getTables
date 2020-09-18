@@ -17,8 +17,8 @@ if (!$getTables) {
 }
 
 $getTables->pdoTools->addTime('getTables loaded.');
-$getTables->initFromCache();
-$getTables->pdoTools->addTime('getTables init from cache.');
+$getTables->initialize();
+
 
 $response = $getTables->handleRequest('getTabs/fetch');
 

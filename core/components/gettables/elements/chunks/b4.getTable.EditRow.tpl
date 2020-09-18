@@ -68,19 +68,18 @@
                             value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" 
                             {if $edit.readonly}readonly{/if}
                             />
-                    <span class="input-group-addon  {if $edit.hide_id}hidden{/if}" style="width:20%;padding: 0;">
+                    <span class="input-group-prepend" style="width: 20%;{if $edit.hide_id}display:none;{/if}">
                         <input type="number" class="get-autocomplect-id" 
                             value="{$edit.value}"  
                             placeholder="id" min="0"
-                            {if $edit.readonly}readonly{/if}
-                            style="width:100%;height: 30px;padding: 0;"/>
+                            style="width:100%;"/>
                     </span>
-                    <input type="search" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"
+                    <input type="text" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"
                     {if $edit.readonly}readonly{/if}
                     />
-                    <div class="input-group-btn">
+                    <div class="input-group-append">
                       <button class="btn get-autocomplect-all">
-                          <span class="caret"></span>
+                          <span class="fa fa-caret-down"></span>
                       </button>
                     </div>
                   </div>

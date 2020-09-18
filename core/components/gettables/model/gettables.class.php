@@ -76,9 +76,9 @@ class getTables
                     }
 
                     $config_js = preg_replace(array('/^\n/', '/\t{5}/'), '', '
-							getTables = {};
-							getTablesConfig = ' . $this->modx->toJSON($this->config) . ';
-					');
+                            getTables = {};
+                            getTablesConfig = ' . $this->modx->toJSON($this->config) . ';
+                    ');
 
 
                     $this->modx->regClientStartupScript("<script type=\"text/javascript\">\n" . $config_js . "\n</script>", true);
@@ -86,12 +86,12 @@ class getTables
 
                         if (!empty($js) && preg_match('/\.js/i', $js)) {
                             $this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
-							<script type="text/javascript">
-								if(typeof jQuery == "undefined") {
-									document.write("<script src=\"' . $this->config['jsUrl'] . 'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
-								}
-							</script>
-							'), true);
+                            <script type="text/javascript">
+                                if(typeof jQuery == "undefined") {
+                                    document.write("<script src=\"' . $this->config['jsUrl'] . 'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
+                                }
+                            </script>
+                            '), true);
                             $this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
 
                         }

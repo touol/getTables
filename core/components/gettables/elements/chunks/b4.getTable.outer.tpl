@@ -5,7 +5,7 @@
         data-parent_current='{$parent_current}'
     {/if}
     data-hash="{$hash}" class="get-table {$cls} {if $in_all_page}in_all_page{/if}" style="{if $width}width:{$width}%;{/if}">
-    <div class="form-inline">
+    <div class="form-inline float-sm-right">
         
     {*if $style}
         <form class="gts-config">
@@ -22,8 +22,8 @@
         </form>
     {/if*}
     {if $parent_current}
-        <button class="pull-right get-table-in_all_page"><span class="glyphicon glyphicon-resize-full"></span></button>
-        <button class="pull-right get-table-close-subtable">X</button>
+        <button class="get-table-in_all_page"><span class="fa fa-expand"></span></button>
+        <button class="get-table-close-subtable">X</button>
     {/if}
     </div>
     <form class="gts-form">
@@ -56,10 +56,8 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <br/>
-                <div class="form-inline get-table-nav">
+                <div class="form-inline get-table-nav" style="font-size:10px;">
                 {if $page.total}
-                    
                     {$page.content}
                 {/if}
                 </div>
@@ -71,16 +69,16 @@
                         {$topBar['topBar/topline/filters/search']['content']}
                         <span class="input-group-btn">
                           <button class="btn btn-primary get-table-search" type="submit" name="gts_action" value="getTable/filter">
-                            <span class="glyphicon glyphicon-search"></span>
+                            <span class="fa fa-search"></span>
                           </button>
                             <button class="btn btn-danger get-table-reset" type="reset">
-                               <span class="glyphicon glyphicon-remove"></span>
+                               X
                            </button>
                         </span>
                       </div>
                 {else}
                     <button class="btn btn-primary get-table-search hidden" type="submit" name="gts_action" value="getTable/filter">
-                    <span class="glyphicon glyphicon-search"></span>
+                        <span class="fa fa-search"></span>
                     </button>
                 {/if}
             </div>

@@ -708,8 +708,8 @@
                 $sub_row.find('.get-sub-content').html(response.data.sub_content);
                 $sub_row.removeClass('hidden');
                 
-                $row.find('.get-sub-show').addClass('hidden');
-                $row.find('.get-sub-hide').removeClass('hidden');
+                $row.find('.get-sub-show').hide();
+                $row.find('.get-sub-hide').show();
                 
                 $('.get-date').each(function(){
                     $(this).datepicker();
@@ -740,8 +740,8 @@
             $sub_row.find('.get-sub-content').html('');
             $sub_row.addClass('hidden');
             
-            $row.find('.get-sub-show').removeClass('hidden');
-            $row.find('.get-sub-hide').addClass('hidden');
+            $row.find('.get-sub-show').show();
+            $row.find('.get-sub-hide').hide();
             
             return;
             /*var callbacks = getTables.Table.callbacks;

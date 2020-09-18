@@ -129,29 +129,29 @@ class getTablesHomeManagerController extends modExtraManagerController
         $this->getTables->pdoTools->addTime('registerCSS_JS');
         $CSS_JS = $this->getTables->prepareCSS_JS();
         $this->addHtml(
-			'<script type="text/javascript">getTablesConfig = ' . $CSS_JS['data'] . ';</script>', true
-		);
-		//$this->modx->log(1, 'getTablesHomeManagerController CSS_JS! '.print_r($CSS_JS,1));
+            '<script type="text/javascript">getTablesConfig = ' . $CSS_JS['data'] . ';</script>', true
+        );
+        //$this->modx->log(1, 'getTablesHomeManagerController CSS_JS! '.print_r($CSS_JS,1));
         foreach($CSS_JS['css'] as $css){
-			if (!empty($css) && preg_match('/\.css/i', $css)) {
-				if (preg_match('/\.css$/i', $css)) {
-					$css .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
-				}
-				$this->addCss(str_replace($CSS_JS['placeholders']['pl'], $CSS_JS['placeholders']['vl'], $css));
-			}
-		}
+            if (!empty($css) && preg_match('/\.css/i', $css)) {
+                if (preg_match('/\.css$/i', $css)) {
+                    $css .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
+                }
+                $this->addCss(str_replace($CSS_JS['placeholders']['pl'], $CSS_JS['placeholders']['vl'], $css));
+            }
+        }
         foreach($CSS_JS['js'] as $js){
             if (!empty($js) && preg_match('/\.js/i', $js)) {
-				if (preg_match('/\.js$/i', $js)) {
+                if (preg_match('/\.js$/i', $js)) {
                     $js .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
                 }
                 $this->addLastJavascript(str_replace($CSS_JS['placeholders']['pl'], $CSS_JS['placeholders']['vl'], $js));
-			}
-		}
-		
-		
+            }
+        }
+        
+        
 
-		
+        
     }
 
 

@@ -1,12 +1,12 @@
 <?php
 
 return [
-	'core_path' => [
+    'core_path' => [
         'xtype' => 'textfield',
         'value' => '[[+core_path]]components/gettables/core/',
         'area' => 'gettables_main',
     ],
-	'frontend_jquery_js' => [
+    'frontend_jquery_js' => [
         'xtype' => 'textfield',
         'value' => '[[+assetsUrl]]vendor/bootstrap_v3_3_6/js/jquery.min.js',
         'area' => 'gettables_main',
