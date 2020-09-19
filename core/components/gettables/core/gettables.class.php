@@ -117,8 +117,10 @@ class getTables
         }
         
         $this->config['hash'] = sha1(json_encode($this->config));
-
-        
+		if(!empty($config['toJSON'])){
+			unset($config['toJSON']);
+			$this->pdoTools->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
+		}
 
         $this->pdoTools->addTime('__construct');
     }
