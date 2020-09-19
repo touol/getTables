@@ -71,8 +71,8 @@
                         </div>
                     {case 'checkbox'}
                         <label>
-                            <input type="checkbox" class="get-table-checkbox-hidden" {if $edit.value} checked{/if} {if $edit.readonly}readonly{/if}>
-                            <input type="hidden" value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" {if $edit.readonly}readonly{/if}/>
+                            <input type="checkbox" class="get-table-checkbox-hidden" {if $edit.value} checked{/if} {if $edit.readonly}disabled="disabled"{/if}>
+                            <input type="hidden" value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" {if $edit.readonly}disabled="disabled"{/if}/>
                             {$edit.label}
                         </label>
                     {case 'select'}

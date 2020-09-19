@@ -31,11 +31,11 @@
             style="height: 34px;" {if $edit.readonly}readonly{/if}>{$edit.value}</textarea>
         <span class="error_{$edit.field}"></span>
     {case 'checkbox'}
-        {if $edit.only_view}
+        {if $edit.only_view or $edit.readonly}
             {if $edit.value}Да{else}Нет{/if}
         {else}
-        <input type="checkbox" class="get-table-checkbox-hidden" {if $edit.value} checked{/if} {if $edit.readonly}readonly{/if}>
-        <input type="hidden" value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" class="get-table-autosave" {if $edit.readonly}readonly{/if}/>
+        <input type="checkbox" class="get-table-checkbox-hidden" {if $edit.value} checked{/if}>
+        <input type="hidden" value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" class="get-table-autosave"/>
         {/if}
     {case 'select'}
         {switch $edit.select.type}
