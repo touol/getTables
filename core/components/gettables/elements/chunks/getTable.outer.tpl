@@ -56,10 +56,8 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <br/>
                 <div class="form-inline get-table-nav">
                 {if $page.total}
-                    
                     {$page.content}
                 {/if}
                 </div>
