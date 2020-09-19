@@ -183,8 +183,8 @@ class getTable
         
         
         $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools'],$pdoConfig,$table['query']);
-        
-        //$this->pdoTools->addTime("getTable generateData this->pdoTools->config ".print_r($this->pdoTools->config,1));
+        //file_put_contents(__DIR__ ."/". "222_initialize.txt",json_encode($this->pdoTools->config,JSON_PRETTY_PRINT));
+        //$this->pdoTools->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));
         //$this->getTables->addDebug($this->pdoTools->config,'generateData this->pdoTools->config');
         $rows = $this->pdoTools->run();
         
@@ -1128,7 +1128,7 @@ class getTable
             $ths[] = ['cls'=>'text-right','name'=>'actions','content'=> "Действия"];
             $tds[] = ['cls'=>'text-right','name'=>'actions','content'=> implode('&nbsp;',$actions_row),'style'=>'white-space: nowrap;'];
         }
-        $this->pdoTools->addTime("getTable compile buttons {ignore}".print_r($actions_row,1)."{/ignore}");
+        //$this->pdoTools->addTime("getTable compile buttons {ignore}".print_r($actions_row,1)."{/ignore}");
         
         $topBar = $this->compileTopBar($actions);
         //$this->pdoTools->addTime("getTable compileTopBar topBar {ignore}".print_r($topBar,1)."{/ignore}");
@@ -1172,7 +1172,7 @@ class getTable
     
     public function compileActionButtons($a)
     {
-        $this->pdoTools->addTime("getTable compileActionButtons $a ".print_r($a,1));
+        //$this->pdoTools->addTime("getTable compileActionButtons $a ".print_r($a,1));
         $buttons = []; 
             if($a['action'] == "getTable/subtable"){
                 $buttons_toggle = [];
@@ -1214,7 +1214,7 @@ class getTable
                 }
             }
         
-        $this->pdoTools->addTime("getTable compileActionButtons buttons ".print_r($buttons,1));
+        //$this->pdoTools->addTime("getTable compileActionButtons buttons ".print_r($buttons,1));
         return implode('&nbsp;',$buttons);
     }
     public function addAndSortFilter($filters,$addFilter)

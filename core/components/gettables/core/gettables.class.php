@@ -238,7 +238,7 @@ class getTables
         //file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",$this->config['cacheElementKey']." ".json_encode($this->config['cacheOptions']));
         if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions'])){
             $this->config = $cashed;
-            //file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",json_encode($cashed));
+            //file_put_contents(__DIR__ ."/". $this->config['cacheElementKey'].".txt",json_encode($cashed,JSON_PRETTY_PRINT));
             return true;
         }
         return false;
@@ -270,6 +270,7 @@ class getTables
             $this->saveCache();
             $this->registerCSS_JS();
             //$this->pdoTools->addTime("initialize getTabsTpl".print_r($this->config['getTabsTpl'],1));
+            //file_put_contents(__DIR__ ."/". $this->config['cacheElementKey']."_initialize.txt",json_encode($this->config,JSON_PRETTY_PRINT));
         }
     }
     
