@@ -2,6 +2,10 @@ Changelog for getTables.
 
 1.5.0-alpha
 ==============
+- Исправлен запуск сторонних action.
+
+1.5.0-alpha
+==============
 - Адаптация для bootstrap v4.
 
 1.4.15-alpha

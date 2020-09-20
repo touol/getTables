@@ -589,7 +589,9 @@ class getTables
                 $this->models[$class]['service'] = new $class($this, $this->config);
             }else{
                 if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path'],$this->config)) {
-                    return $this->error("Компонент $class не найден!");
+                    if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path']."$class/",$this->config)) {
+                        return $this->error("Компонент $class не найден!");
+                    }
                 }
             }
         }
