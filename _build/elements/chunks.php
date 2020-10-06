@@ -29,6 +29,10 @@ return [
         'file' => 'getTabs',
         'description' => '',
     ],
+    'getTable.action.tpl' => [
+        'file' => 'getTable.action',
+        'description' => '',
+    ],
     
     
     'b4.getTable.outer.tpl' => [

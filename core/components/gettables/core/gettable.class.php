@@ -626,80 +626,89 @@ class getTable
             'create' =>[
                 'action'=>'getTable/create',
                 'title'=>'Создать',
-                'cls' => '',
+                'cls' => 'btn',
                 'icon' => "$icon_prefix-plus",
                 'topBar' => [],
-                //'multiple' => $this->modx->lexicon('modextra_items_update'),
-                //'row' => [],
                 'modal' => [
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
                 ],
-
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
                 //'processors'=>['modResource'=>'resource/create'],
             ],
             'update' =>[
                 'action'=>'getTable/update',
                 'title'=>'Изменить',
-                'cls' => '',
+                'cls' => 'btn',
                 'icon' => "$icon_prefix-edit",//'glyphicon glyphicon-edit',
-                //'topBar' => [],
-                //'multiple' => $this->modx->lexicon('modextra_items_update'),
                 'row' => [],
                 'modal' => [
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
                 ],
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
                 //'processors'=>['modResource'=>'resource/update'],
             ],
             'remove' =>[
                 'action'=>'getTable/remove',
                 'title'=>'Удалить',
-                'cls' => 'btn-danger',
+                'cls' => 'btn btn-danger',
                 'icon' => "$icon_prefix-trash", //'glyphicon glyphicon-trash',
                 //'topBar' => [],
                 'multiple' => ['title'=>'Удалить выбранное'],
                 'row' => [],
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
             ],
             'toggle' =>[
                 'action'=>"getTable/toggle",
                 'title'=>['Включить','Выключить'],
                 'multiple'=>['Включить','Выключить'],
-                'cls' => ['btn-danger','btn-success'],
+                'cls' => ['btn btn-danger','btn btn-success'],
                 'icon' => $icon_prefix == 'fa fa' ? "$icon_prefix-power-off" : 'glyphicon glyphicon-off',
                 'field' => 'published',
                 'row' => [],
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
             ],
             'subtable' =>[
                 'action'=>"getTable/subtable",
                 'title'=>['Открыть','Закрыть'],
-                //'multiple'=>['Включить','Выключить'],
-                'cls' => ['get-sub-show ','get-sub-hide'],//['btn-danger','btn-success'],
+                'cls' => ['btn get-sub-show ','btn get-sub-hide'],
                 'icon' => [$icon_prefix == 'fa fa' ? "$icon_prefix-eye" : 'glyphicon glyphicon-eye-open'
                     ,$icon_prefix == 'fa fa' ? "$icon_prefix-eye-slash" : 'glyphicon glyphicon-eye-close'],
-                    //['glyphicon glyphicon-eye-open','glyphicon glyphicon-eye-close'],
-                //'field' => 'published',
                 'row' => [],
-                //'where'=>['parent'=>'id'],
-
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
             ],
             'a' =>[
                 'action'=>"getTable/a",
-                'row' => [],
-                'icon' => '',
-                'tag' =>'a',
-                'href' => '',
-            ],
-            'custom' =>[
-                'action'=>"getTable/custom",
+                'cls'=>'btn',
                 'row' => [],
                 'icon' => '',
                 'tag' =>'a',
                 'attr' => '',
+                'href' => '',
+                'style' => '',
+            ],
+            'custom' =>[
+                'action'=>"getTable/custom",
+                'cls'=>'btn',
+                'row' => [],
+                'icon' => '',
+                'tag' =>'a',
+                'attr' => '',
+                'style' => '',
             ],
             
         ];
-        //<button class="btn btn-danger"><i class="glyphicon glyphicon-download-alt"></i> Скачать</button>
         $compile_actions = [];
         if(empty($actions)){
             $compile_actions = [];//$default_actions;
@@ -738,6 +747,8 @@ class getTable
                 if (!$this->modx->hasPermission($a['permission'])){ unset($actions[$k]); continue;}
             }
             
+            if(empty($a['tag'])) $a['tag'] = 'button';
+
             if($a['action'] == "getTable/subtable" and !empty($a['subtable_name'])){
                 if(empty($a['buttons'])){
                     $html = [];
@@ -891,14 +902,21 @@ class getTable
             if($a['topBar']){
                 $buttons = [];
                 if(empty($a['topBar']['buttons'])){
-                    $buttons[] ='<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                    $buttons[] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+                    //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
                 }else{
                     foreach($a['topBar']['buttons'] as $arbk=>$arb){
                         $str_data = "";
                         foreach($arb['data'] as $arbdk=>$arbdv){
                             $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
                         } 
-                        $buttons[] ='<button type = "button" class="btn get-table-'.$a['topBar']['bcls'].' '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                        $a['cls'] = ' get-table-'.$a['topBar']['bcls'].' '.$arb['cls'];
+                        $a['attr'] .= ' '.$str_data;
+                        $a['title'] = $arb['title'];
+                        $a['html'] = $arb['html'];
+                        $buttons[] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+                        //'<button type = "button" class="btn get-table-'.$a['topBar']['bcls'].' '.$arb['cls'].'" '.
+                        //$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
                     }
                 }
                 $a['topBar']['content'] = implode(' ',$buttons);
@@ -948,7 +966,8 @@ class getTable
             if(isset($a['row'])){
                 //$actions_row[$k] = ['buttons'=> $a['row']['buttons'],];
                 if(empty($a['buttons'])){
-                    $actions_row[$k] ='<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                    $actions_row[$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+                    //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
                 }else{
                     $actions_row[$k] = $this->compileActionButtons($a);
                 }
@@ -1101,7 +1120,8 @@ class getTable
                 foreach($td['actions'] as $k=>$a){
                     //$buttons[$k]['buttons'] = $a['buttons'];
                     if(empty($a['buttons'])){
-                        $buttons[$k] ='<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                        $buttons[$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+                        //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
                     }else{
                         $buttons[$k] = $this->compileActionButtons($a);
                     }
@@ -1183,8 +1203,17 @@ class getTable
                         $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
                     }
                     $field = $arb['field'];
-                    $buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.
-                    ' title="'.$arb['title'].'" style="'.$arb['style'].'"> '.$arb['html'].'</button>';
+                    $ta = [];
+                    $ta['cls'] = ' get-table-row '.$arb['cls'];
+                    $ta['attr'] = $a['attr'] . ' '.$str_data;
+                    $ta['title'] = $arb['title'];
+                    $ta['html'] = $arb['html'];
+                    $ta['style'] = $arb['style'];
+                    $ta['tag'] = $a['tag'];
+                    $buttons_toggle[$arbk] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $ta);
+
+                    //$buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.
+                    //' title="'.$arb['title'].'" style="'.$arb['style'].'"> '.$arb['html'].'</button>';
                 }
                 $buttons[] = $buttons_toggle['sub_show'];
                 $buttons[] = $buttons_toggle['sub_hide'];
@@ -1199,7 +1228,16 @@ class getTable
                     $field = $arb['field'];
                     $t = '';
                     if($arbk != 'enable') $t = '!';
-                    $buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.' style="{if '.$t.'$'.$field.'}display:none;{/if}" title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                    $ta = [];
+                    $ta['cls'] = ' get-table-row '.$arb['cls'];
+                    $ta['attr'] = $a['attr'] . ' '.$str_data;
+                    $ta['title'] = $arb['title'];
+                    $ta['html'] = $arb['html'];
+                    $ta['style'] = $arb['style'].' {if '.$t.'$'.$field.'}display:none;{/if}';
+                    $ta['tag'] = $a['tag'];
+                    $buttons_toggle[$arbk] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $ta);
+                    //$buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.
+                    //$str_data.' style="{if '.$t.'$'.$field.'}display:none;{/if}" title="'.$arb['title'].'"> '.$arb['html'].'</button>';
                     
                 }
                 $buttons[] = $buttons_toggle['enable'];
@@ -1210,7 +1248,15 @@ class getTable
                     foreach($arb['data'] as $arbdk=>$arbdv){
                         $str_data .= ' data-'.$arbdk.'="'.$arbdv.'"';
                     } 
-                    $buttons[] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
+                    $a['cls'] = ' get-table-row '.$arb['cls'];
+                    $a['attr'] .= ' '.$str_data;
+                    $a['title'] = $arb['title'];
+                    $a['html'] .= $arb['html'];
+                    
+                    $buttons[] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+
+                    //$buttons[] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.
+                    //$str_data.' title="'.$arb['title'].'"> '.$arb['html'].'</button>';
                 }
             }
         

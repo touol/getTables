@@ -1,0 +1,1 @@
+<{$tag} class="{$cls}" {$attr} title="{$title}" style="{$style}">{$html}</{$tag}>

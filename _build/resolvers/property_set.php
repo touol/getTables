@@ -79,7 +79,15 @@ if ($transport->xpdo) {
                         'area' => '',
                         'value' => 'getTabs.tpl',
                     ),
-                    
+                    'getTableActionTpl' => array(
+                        'name' => 'getTableActionTpl',
+                        'desc' => 'getTableActionTpl',
+                        'type' => 'textfield',
+                        'options' => array(),
+                        'lexicon' => '',
+                        'area' => '',
+                        'value' => 'getTable.action.tpl',
+                    ),
 
                 ),
             ));
@@ -160,6 +168,15 @@ if ($transport->xpdo) {
                         'lexicon' => '',
                         'area' => '',
                         'value' => 'b4.getTabs.tpl',
+                    ),
+                    'getTableActionTpl' => array(
+                        'name' => 'getTableActionTpl',
+                        'desc' => 'getTableActionTpl',
+                        'type' => 'textfield',
+                        'options' => array(),
+                        'lexicon' => '',
+                        'area' => '',
+                        'value' => 'getTable.action.tpl',
                     ),
 
                 ),

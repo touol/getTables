@@ -526,24 +526,28 @@ class getTableProcessor
         $trs_data = [];
         if($data['trs_data']){
             $trs_data = $data['trs_data'];
-        }else{
+        }elseif($data['tr_data']){
             $trs_data[] = $data['tr_data'];
         }
-        
+        if($data['id']){
+            $trs_data[] = ['id'=>$data['id']];
+        }
         if($this->action != "create"){
             $pdoConfig = $this->gen_pdoConfig($table['pdoTools'],$table['sub_default'],$table['sub_where'], $data);
             ////$this->getTables->addDebug($sub_default,'run $sub_default ');
-            ////$this->getTables->addDebug($pdoConfig,'run $pdoConfig ');
+            
             $ids = [];
             foreach($trs_data as $tr_data){
                 $ids[] = $tr_data['id'];
             }
             $pdoConfig['where'][$table['class'].".id:IN"] = $ids;
             $pdoConfig['limit'] = 1;
+            $pdoConfig['sortby'] = [$table['class'].'.id'=>'ASC'];
             $this->old_row_ids = $ids;
+            $this->getTables->addDebug($pdoConfig,'run $pdoConfig ');
             $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
             $rows = $this->pdoTools->run();
-            if(count($rows) == 0){
+            if(!is_array($rows) or count($rows) == 0){
                 return $this->error('Строка таблицы не найдена!');
             }else{
                 $this->old_rows = $rows;
