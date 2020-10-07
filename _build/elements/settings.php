@@ -120,5 +120,24 @@ return [
         'value' => true,
         'area' => 'gettables_main',
     ],
-
+    'load_frontend_ace' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_editor',
+    ],
+    'load_mgr_ace' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_editor',
+    ],
+    'load_frontend_ckeditor' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_editor',
+    ],
+    'load_mgr_ckeditor' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_editor',
+    ],
 ];

@@ -1,5 +1,13 @@
 /*get-table технические стили*/
+.ace_editor {
+    font: 12px/normal 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
+}
 
+.ace_editor[readonly], .ace_editor[readonly] div {
+    background: brown;
+    user-select: none;
+    cursor: not-allowed;
+}
 /*get-table subtable во всю страницу*/
 .in_all_page{
     position: fixed;
@@ -117,14 +125,14 @@
 .get-table .table thead tr th{
     text-align: center;
 }
-.get-table .table>tbody>tr>td, .get-table .table>tbody>tr>th, .get-table .table>tfoot>tr>td, .get-table .table>tfoot>tr>th, .get-table .table>thead>tr>td, .get-table .table>thead>tr>th {
+.get-table .table>tbody>.get-table-tr>td, .get-table .table>tbody>.get-table-tr>th, .get-table .table>tfoot>.get-table-tr>td, .get-table .table>tfoot>.get-table-tr>th, .get-table .table>thead>.get-table-tr>td, .get-table .table>thead>.get-table-tr>th {
     padding: 0px 5px;
     line-height: 1.42857143; 
     border-top: 1px solid #ddd;
     border-left: 1px solid #ddd;
     vertical-align: middle;
 }
-.get-table .table .form-control{
+.get-table-tr .form-control{
     box-shadow: none;
     border: 0;
     background-color: transparent;

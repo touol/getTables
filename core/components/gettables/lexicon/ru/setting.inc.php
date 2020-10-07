@@ -1,6 +1,7 @@
 <?php
 
 $_lang['area_gettables_main'] = 'Основные';
+$_lang['area_gettables_editor'] = 'Редакторы';
 
 $_lang['setting_gettables_core_path'] = 'core_path';
 $_lang['setting_gettables_core_path_desc'] = 'Путь до классов gettables';
@@ -70,3 +71,15 @@ $_lang['setting_gettables_load_frontend_add_lib_desc'] = 'Загружать jqu
 
 $_lang['setting_gettables_load_mgr_add_lib'] = 'Загружать jquery-ui-datepicker и bootstrap-multiselect для админки?';
 $_lang['setting_gettables_load_mgr_add_lib_desc'] = 'Загружать jquery-ui-datepicker и bootstrap-multiselect для админки?';
+
+$_lang['setting_gettables_load_frontend_ace'] = 'Загружать ACE для фронтэнда?';
+$_lang['setting_gettables_load_load_frontend_ace_desc'] = 'Загружать ACE для фронтэнда?';
+
+$_lang['setting_gettables_load_mgr_ace'] = 'Загружать ACE для админки?';
+$_lang['setting_gettables_load_mgr_ace_desc'] = 'Загружать ACE для админки?';
+
+$_lang['setting_gettables_load_frontend_ckeditor'] = 'Загружать ckeditor для фронтэнда?';
+$_lang['setting_gettables_load_frontend_ckeditor_desc'] = 'Загружать ckeditor для фронтэнда?';
+
+$_lang['setting_gettables_load_mgr_ckeditor'] = 'Загружать ckeditor для админки?';
+$_lang['setting_gettables_load_mgr_ckeditor_desc'] = 'Загружать ckeditor для админки?';

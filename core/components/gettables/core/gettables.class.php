@@ -54,7 +54,7 @@ class getTables
             
             'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
             
-            'getTableOuterTpl' => 'getTable.outer.tpl',
+           /* 'getTableOuterTpl' => 'getTable.outer.tpl',
             'getTableNavTpl' => 'getTable.nav.tpl',
             'getTableRowTpl' => 'getTable.row.tpl',
             'getTableEditRowTpl' => 'getTable.EditRow.tpl',
@@ -62,7 +62,7 @@ class getTables
             'getTableFilterTpl' => 'getTable.Filter.tpl',
             'getTabsTpl' => 'getTabs.tpl',
             
-            
+            */
             
         ], $config);
         
@@ -267,6 +267,7 @@ class getTables
         if(!$this->config['isAjax'] and !$this->config['registerCSS_JS']){
             $this->initFromCache();
             $this->getStyleChunks();
+            
             $this->saveCache();
             $this->registerCSS_JS();
             //$this->pdoTools->addTime("initialize getTabsTpl".print_r($this->config['getTabsTpl'],1));
@@ -325,7 +326,9 @@ class getTables
                 'frontend_message_js' => $this->modx->getOption('gettables_frontend_message_js',null,'[[+jsUrl]]gettables.message.js'),
                 'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.js',
                 'add_lib_datepicker_ru' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/datepicker-ru.js',
-                'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/js/bootstrap-multiselect.js'
+                'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
+                'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
+                'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
             ],
             'css'=>[
                 'frontend_framework_style_css' => $this->modx->getOption('gettables_frontend_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
@@ -338,6 +341,8 @@ class getTables
                 'load_frontend_jquery' => $this->modx->getOption('gettables_load_frontend_jquery','',0),
                 'load_frontend_framework_style' => $this->modx->getOption('gettables_load_frontend_framework_style',null,0),
                 'load_add_lib' => $this->modx->getOption('gettables_load_frontend_add_lib','',0),
+                'load_ace' => $this->modx->getOption('gettables_load_frontend_ace','',0),
+                'load_ckeditor' => $this->modx->getOption('gettables_load_frontend_ckeditor','',0),
             ],
             'mgr'=>[
                 'js'=>[
@@ -348,6 +353,8 @@ class getTables
                     'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.js',
                     'add_lib_datepicker_ru' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/datepicker-ru.js',
                     'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
+                    'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
+                    'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
                 ],
                 'css'=>[
                     'frontend_framework_style_css' => $this->modx->getOption('gettables_mgr_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
@@ -360,6 +367,8 @@ class getTables
                     'load_frontend_jquery' => $this->modx->getOption('gettables_load_mgr_jquery','',0),
                     'load_frontend_framework_style' => $this->modx->getOption('gettables_load_mgr_framework_style',null,0),
                     'load_add_lib' => $this->modx->getOption('gettables_load_mgr_add_lib','',0),
+                    'load_ace' => $this->modx->getOption('gettables_load_mgr_ace','',0),
+                    'load_ckeditor' => $this->modx->getOption('gettables_load_mgr_ckeditor','',0),
                 ],
             ],
         ];
@@ -462,7 +471,8 @@ class getTables
             $jss[] = $CSS_JS['js']['add_lib_datepicker'];
             $jss[] = $CSS_JS['js']['add_lib_datepicker_ru'];
             $jss[] = $CSS_JS['js']['add_lib_multiselect'];
-        } 
+        }
+         
 
         if($config['add_js']){
             foreach(explode(",",$config['add_js']) as $ajs){
@@ -480,6 +490,15 @@ class getTables
         );
         $data['hash'] = $this->config['hash'];
         
+        if($CSS_JS['load']['load_ace']){
+            $jss[] = $CSS_JS['js']['ace'];
+            $data['load_ace'] = 1;
+        } 
+        if($CSS_JS['load']['load_ckeditor']){
+            $jss[] = $CSS_JS['js']['ckeditor'];
+            $data['load_ckeditor'] = 1;
+        }
+
         $data = json_encode($data, true);
         
         return [

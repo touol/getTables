@@ -1,5 +1,9 @@
 Changelog for getTables.
 
+1.5.4-alpha
+==============
+- Добавлены редакторы для textarea: ace и ckeditor.
+
 1.5.3-alpha
 ==============
 - Чанк для action.

@@ -65,7 +65,17 @@
                             <label class="control-label" for="{$edit.field}">{$edit.label}</label>
                             <div class="controls">
                                 <textarea id="{$edit.field}" name="{$edit.field}" placeholder="{$edit.placeholder}" class="form-control"
-                                {if $edit.readonly}readonly{/if}>{$edit.value}</textarea>
+                                {if $edit.readonly}readonly{/if}
+                                {if $edit.editor == 'ace'}
+                                    data-editor="ace" data-gutter="1" 
+                                    data-editor-mode="{if $edit.editor_mode}{$edit.editor_mode}{else}xml{/if}"
+                                    data-editor-height="{if $edit.editor_height}{$edit.editor_height}{else}300{/if}"
+                                    data-editor-theme="{if $edit.editor_theme}{$edit.editor_theme}{else}idle_fingers{/if}"
+                                {/if}
+                                {if $edit.editor == 'ckeditor'}
+                                    data-editor="ckeditor" 
+                                {/if}
+                                >{$edit.value}</textarea>
                                 <span class="error_{$edit.field}"></span>
                             </div>
                         </div>

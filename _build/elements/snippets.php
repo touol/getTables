@@ -5,7 +5,7 @@ return [
         'file' => 'gettable',
         'description' => 'getTable snippet to list items',
         'properties' => [
-            'getTableOuterTpl' => [
+            /*'getTableOuterTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTable.outer.tpl',
             ],
@@ -24,13 +24,13 @@ return [
             'getTableModalCreateUpdateTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTable.Modal.CreateUpdate.tpl',
-            ],
+            ],*/
             /*
                 'getTableNavTpl' => 'getTable.nav.tpl',
             'getTableEditRowTpl' => 'getTable.EditRow.tpl',
             'getTableFilterTpl' => 'getTable.Filter.tpl',
                 */
-            'getTableFilterTpl' => [
+            /*'getTableFilterTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTable.Filter.tpl',
             ],
@@ -57,14 +57,14 @@ return [
             'outputSeparator' => [
                 'type' => 'textfield',
                 'value' => "\n",
-            ],
+            ],*/
         ],
     ],
     'getTabs' => [
         'file' => 'gettabs',
         'description' => 'getTabs snippet to list items',
         'properties' => [
-            'getTableOuterTpl' => [
+            /*'getTableOuterTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTable.outer.tpl',
             ],
@@ -84,11 +84,6 @@ return [
                 'type' => 'textfield',
                 'value' => 'getTable.Modal.CreateUpdate.tpl',
             ],
-            /*
-                'getTableNavTpl' => 'getTable.nav.tpl',
-            'getTableEditRowTpl' => 'getTable.EditRow.tpl',
-            'getTableFilterTpl' => 'getTable.Filter.tpl',
-                */
             'getTableFilterTpl' => [
                 'type' => 'textfield',
                 'value' => 'getTable.Filter.tpl',
@@ -100,7 +95,7 @@ return [
             'outputSeparator' => [
                 'type' => 'textfield',
                 'value' => "\n",
-            ],
+            ],*/
         ],
     ],
 ];

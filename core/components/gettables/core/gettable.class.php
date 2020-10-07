@@ -57,7 +57,7 @@ class getTable
         
         //$this->getTables->addDebug($data['table_name'],'handleRequest  $table_name');
         if(!$table = $this->getTables->getClassCache('getTable',$data['table_name'])){
-            return $this->error("{$data['table_name']} не найдено");
+            return $this->error("Таблица {$data['table_name']} не найдено");
         }
         
         if($this->config['isAjax'] and $selects = $this->getTables->getClassCache('getSelect','all')){
