@@ -52,17 +52,9 @@ class getTable
     {
         $class = get_class($this);
         
-        if($action == "fetch" and !$this->config['isAjax'])
-                return $this->fetch($data);
         
-        //$this->getTables->addDebug($data['table_name'],'handleRequest  $table_name');
-        if(!$table = $this->getTables->getClassCache('getTable',$data['table_name'])){
-            return $this->error("Таблица {$data['table_name']} не найдено");
-        }
         
-        if($this->config['isAjax'] and $selects = $this->getTables->getClassCache('getSelect','all')){
-            $this->config['selects'] = $selects;
-        }  
+        
         
         $this->getTables->REQUEST = $_REQUEST;
         if($data['sub_where_current']){
@@ -77,8 +69,22 @@ class getTable
         }else if($data['table_data']['parent_current']){
             $data['parent_current'] = $data['table_data']['parent_current'];
         }
+        //$this->pdoTools->addTime('REQUEST1'.print_r($this->getTables->REQUEST,1));
         $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
+        //$this->pdoTools->addTime('REQUEST2'.print_r($this->getTables->REQUEST,1));
+
+        if($action == "fetch" and !$this->config['isAjax'])
+            return $this->fetch($data);
+
+        //$this->getTables->addDebug($data['table_name'],'handleRequest  $table_name');
+        if(!$table = $this->getTables->getClassCache('getTable',$data['table_name'])){
+            return $this->error("Таблица {$data['table_name']} не найдено");
+        }
         
+        if($this->config['isAjax'] and $selects = $this->getTables->getClassCache('getSelect','all')){
+            $this->config['selects'] = $selects;
+        }  
+
         switch($action){
             case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave':
                 require_once('gettableprocessor.class.php');
@@ -555,9 +561,11 @@ class getTable
                                 $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
                             }
                             if(strpos($filter['edit']['where_field'], ':IN') !== false){
-                                if(!is_array($filter['value'])) $filter['value'] = explode(',',$filter['value']);
+                                if(!is_array($filter['value'])) $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                            }else{
+                                $query[$filter['edit']['where_field']] = $filter['value'];
                             }
-                            $query[$filter['edit']['where_field']] = $filter['value'];
+                            
                         }else{
                             $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
                         }
