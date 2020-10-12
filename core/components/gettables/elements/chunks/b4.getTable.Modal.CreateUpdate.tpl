@@ -19,7 +19,7 @@
           <div class="modal-body">
             {foreach $modal.edits as $edit}
                 {switch $edit.type}
-                    {case 'hidden'}
+                    {case 'hidden','row_view'}
                         <input type="hidden" id="{$edit.field}" name="{$edit.field}" value="{$edit.value}"/>
                     {case 'view','modal_view'}
                         <div class="form-group">

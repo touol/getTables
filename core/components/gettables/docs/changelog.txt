@@ -1,5 +1,10 @@
 Changelog for getTables.
 
+1.5.5-alpha
+==============
+- Сделаны default и force значения полей.
+- Обработка IN в фильтрах.
+
 1.5.4-alpha
 ==============
 - Добавлены редакторы для textarea: ace и ckeditor.

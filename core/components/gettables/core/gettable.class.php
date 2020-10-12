@@ -468,9 +468,9 @@ class getTable
             
             //$this->pdoTools->addTime("getTable addFilterTable filter ".print_r($filter,1));
             
-            if(($filter['default'] or $filter['edit']['default']) and empty($this->getTables->REQUEST[$filter['edit']['field']])){
+            if(($filter['default']) and empty($this->getTables->REQUEST[$filter['edit']['field']])){
                 if($filter['default']){
-                    if(is_string($filter['default'])){
+                    if(!is_array($filter['default'])){
                         switch($filter['edit']['type']){
                             case 'date':
                                 $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
@@ -480,61 +480,56 @@ class getTable
                             case 'user_id':
                                 $filter['default'] = ['user_id'=>[$this->modx->user->get('id')]];
                                 break;
-                        }
-                    }
-                    if(is_string($filter['edit']['default'])){
-                        switch($filter['edit']['type']){
-                            case 'date':
-                                $filter['edit']['default'] = ['from'=>date('Y-m-d',strtotime($filter['edit']['default']))];
+                            default:
+                                $filter['default'] = ['default'=>$filter['default']];
                                 break;
                         }
-                        switch($filter['edit']['default']){
-                            case 'user_id':
-                                $filter['edit']['default'] = ['user_id'=>[$this->modx->user->get('id')]];
-                                break;
-                        }
-                    }
-                    if(!is_array($filter['edit']['default'])) $filter['edit']['default'] = [];
-                    if(is_array($filter['default'])){
-                        $filter['edit']['default'] = array_merge($filter['edit']['default'],$filter['default']);
                     }
                 }
-                if(empty($filter['edit']['force'])){
-                    $filter['edit']['force'] = $filter['edit']['default'];
-                }else if(is_array($filter['edit']['default'])){
-                    $filter['edit']['force'] = array_merge($filter['edit']['default'],$filter['edit']['force']);
+                
+                if(empty($filter['force'])){
+                    $filter['force'] = $filter['default'];
+                }else if(is_array($filter['default'])){
+                    $filter['force'] = array_merge($filter['default'],$filter['force']);
                 }
                 //$filter['edit']['force'] = array_merge($filter['edit']['default'],$filter['edit']['force']);
                 //$this->pdoTools->addTime("getTable addFilterTable filter force ".print_r($filter,1));
             }
-            if($filter['edit']['force']){
-                if(is_string($filter['edit']['force'])){
-                    switch($filter['edit']['type']){
+            if($filter['force']){
+                if(!is_array($filter['force'])){
+                    switch($filter['type']){
                         case 'date':
-                            $filter['edit']['force'] = ['from'=>date('Y-m-d',strtotime($filter['edit']['force']))];
+                            $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
                             break;
                     }
-                    switch($filter['edit']['force']){
+                    switch($filter['force']){
                         case 'user_id':
-                            $filter['edit']['force'] = ['user_id'=>[$this->modx->user->get('id')]];
+                            $filter['force'] = ['user_id'=>[$this->modx->user->get('id')]];
+                            break;
+                        default:
+                            $filter['force'] = ['default'=>$filter['force']];
                             break;
                     }
                 }
-                if(!empty($filter['edit']['force']['from'])){
-                    $date['from'] = date('Y-m-d',strtotime($filter['edit']['force']['from']));
+                if(!empty($filter['force']['from'])){
+                    $date['from'] = date('Y-m-d',strtotime($filter['force']['from']));
                 }
-                if(is_array($filter['edit']['force']['in'])){
-                    $query[$filter['edit']['where_field']] = $filter['edit']['force']['in'];
-                    $filter['value'] = $filter['edit']['force']['in'];
+                if(!empty($filter['force']['default'])){
+                    $query[$filter['edit']['where_field']] = $filter['force']['default'];
+                    $filter['value'] = $filter['force']['default'];
+                }
+                if(is_array($filter['force']['in'])){
+                    $query[$filter['edit']['where_field']] = $filter['force']['in'];
+                    $filter['value'] = $filter['force']['in'];
                     //$date['from'] = date('Y-m-d',strtotime($filter['default']['from']));
                 }
             
-                if($filter['edit']['force']['user_id'] ){
+                if($filter['force']['user_id'] ){
                     if(!$this->modx->user->isMember('Administrator')){
                         //$this->pdoTools->addTime("getTable filter default ".print_r($filter['default'],1));
-                        if(is_array($filter['edit']['force']['modx_user_id'])) $filter['edit']['force']['user_id'] = array_merge($filter['edit']['force']['user_id'],$filter['edit']['force']['modx_user_id']);
-                        if(is_array($filter['edit']['force']['user_id']) and in_array($this->modx->user->id,$filter['edit']['force']['user_id'])){
-                            $query[$filter['edit']['where_field'].':IN'] = $filter['edit']['force']['user_id'];
+                        if(is_array($filter['force']['modx_user_id'])) $filter['force']['user_id'] = array_merge($filter['force']['user_id'],$filter['force']['modx_user_id']);
+                        if(is_array($filter['force']['user_id']) and in_array($this->modx->user->id,$filter['force']['user_id'])){
+                            $query[$filter['edit']['where_field'].':IN'] = $filter['force']['user_id'];
                             //$filter['value'] = $filter['edit']['force']['user_id'];
                         }
                         $filter['section'] = ""; continue;
@@ -547,7 +542,7 @@ class getTable
                     }
                 }
                 //$this->pdoTools->addTime("getTable addFilterTable query force ".print_r($query,1));
-            }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']]==='0'){
+            }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']] ==='0'){
                 
                 switch($filter['edit']['type']){
                     case 'date':
@@ -558,6 +553,9 @@ class getTable
                         if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
                             if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
                                 $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
+                            }
+                            if(strpos($filter['edit']['where_field'], ':IN') !== false){
+                                if(!is_array($filter['value'])) $filter['value'] = explode(',',$filter['value']);
                             }
                             $query[$filter['edit']['where_field']] = $filter['value'];
                         }else{
@@ -1057,8 +1055,10 @@ class getTable
             }else{
                 $edit['as'] = $value['as'];
             }
-            if($value['field'] == 'id') $edit['type'] = 'hidden';
-            
+            if($value['field'] == 'id') $edit['type'] = 'row_view';
+            if(!empty($value['default'])) $edit['default'] = $value['default'];
+            if(!empty($value['force'])) $edit['force'] = $value['force'];
+
             if(!empty($value['edit'])) $edit = array_merge($edit,$value['edit']);
             //$this->pdoTools->addTime("getTable fetch table_compile {$table['class']} value edit {$edit['class']}  {ignore}".print_r($value['edit'],1)."{/ignore}");
             //$this->pdoTools->addTime("getTable fetch table_compile {$table['class']} edit {$edit['class']} {ignore}".print_r($edit,1)."{/ignore}");
@@ -1129,6 +1129,10 @@ class getTable
                 //$this->pdoTools->addTime("getTable compileActions td actions ".print_r($td['actions'],1));
                 //$buttons = $this->compileActionButtons($buttons);
                 $td['edit']['buttons'] = implode('&nbsp;',$buttons);
+            }
+            if($td['edit']['type'] == 'hidden'){
+                $td['style'] = 'display:none;';
+                $th['style'] = 'display:none;';
             }
             $ths[] = $th;
             $tds[] = $td;
