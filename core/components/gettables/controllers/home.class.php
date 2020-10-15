@@ -43,7 +43,7 @@ class getTablesHomeManagerController extends modExtraManagerController
         $this->getTables = new getTables($this->modx, $config);
         if ($this->getTables) {
             $this->getTables->pdoTools->addTime('getTables loaded.');
-            $this->getTables->initFromCache();
+            $this->getTables->initialize();
             $this->getTables->pdoTools->addTime('getTables init from cache.');
         }else{
             $this->error .= 'getTablesHomeManagerController Could not create getTables!' ."<br/>\r\n";
@@ -161,7 +161,7 @@ class getTablesHomeManagerController extends modExtraManagerController
     public function getTemplateFile()
     {
         if(!empty($this->error)){
-            $this->content .=  '<div id="gettables-panel-home-div">'.$this->error.'</div>';
+            $this->content .=  '<div id="gettables-panel-home-div">Error '.$this->error.'</div>';
             return '';
         }
         if($this->getTables->config['tabs'])
