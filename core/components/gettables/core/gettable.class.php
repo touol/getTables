@@ -171,7 +171,14 @@ class getTable
     public function walkFunc(&$item, $key, $sub_default){
         $item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
     }
-    
+    public function varexport($expression, $return=FALSE) {
+        $export = var_export($expression, TRUE);
+        $export = preg_replace("/^([ ]*)(.*)/m", '$1$1$2', $export);
+        $array = preg_split("/\r\n|\n|\r/", $export);
+        $array = preg_replace(["/\s*array\s\($/", "/\)(,)?$/", "/\s=>\s$/"], [NULL, ']$1', ' => ['], $array);
+        $export = join(PHP_EOL, array_filter(["["] + $array));
+        if ((bool)$return) return $export; else echo $export;
+    }
     public function generateData($table,$pdoConfig =[])
     {
         $table = $this->addFilterTable($table);
@@ -217,6 +224,9 @@ class getTable
         $trs = [];
         $tr = $table['tbody']['tr'];
         //$this->getTables->addDebug($rows,'gen1  rows');
+        if($table['export'] == 1){
+            $this->pdoTools->addTime("getTable export ".$this->varexport($rows,1));   
+        }
         foreach($rows as $k => $row){
             //echo "getTable generateData row <pre>".print_r($row,1)."</pre>";
             
@@ -1195,6 +1205,7 @@ class getTable
             //'commands'=>$table['commands'],
             'loadModels'=>$this->config['loadModels']
         ];
+        if(!empty($table['export'])) $table_compile['export'] = $table['export'];
         if(!empty($table['autosave'])) $table_compile['autosave'] = $table['autosave'];
         if(!empty($table['sub_where'])) $table_compile['sub_where'] = $table['sub_where'];
         if(!empty($table['sub_default'])) $table_compile['sub_default'] = $table['sub_default'];
