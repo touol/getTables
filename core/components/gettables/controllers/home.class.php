@@ -198,7 +198,7 @@ class getTablesHomeManagerController extends modExtraManagerController
             box-sizing: border-box !important;
         }
         </style>
-        <div id="gettables-panel-home-div" style="height: 600px;overflow-y: scroll;">'.$output.$log.'</div>';
+        <div id="gettables-panel-home-div" style="height: 90vh;overflow-y: scroll;">'.$output.$log.'</div>';
         return '';
     }
 
