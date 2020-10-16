@@ -1,5 +1,9 @@
 Changelog for getTables.
 
+1.5.8-alpha
+==============
+- Добавлен action copy. 
+
 1.5.7-alpha
 ==============
 - Добавлена инструкция table.export для экспорта таблицы в массив. Помещается в лог pdoTools.

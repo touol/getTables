@@ -86,7 +86,7 @@ class getTable
         }  
 
         switch($action){
-            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave':
+            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy':
                 require_once('gettableprocessor.class.php');
                 $getTableProcessor = new getTableProcessor($this, $this->config);
                 return $getTableProcessor->run($action, $table, $data);
@@ -111,18 +111,6 @@ class getTable
     {
         $current_action = $table['actions'][$action];
         //$this->getTables->addDebug($table,'subtable  $table');
-        /*
-        'sub_show' =>[
-                            'cls' => $a['cls'][0],
-                            'html' => $html[0],
-                            'field'=> $a['field'],
-                            'data' =>[
-                                'name'=>'subtable',
-                                'action'=>$a['action'],
-                                'subtable_name'=> $table['subtable']['name'],
-                                'js_action'=>'sub_show'
-                            ],
-                            */
         if(empty($data['button_data']['subtable_name'])) return $this->error('subtable_name не найдено',array('button_data'=>$data['button_data']));
         
         if(!$subtable = $this->getTables->getClassCache('getTable',$data['button_data']['subtable_name'])){
@@ -720,6 +708,17 @@ class getTable
                 'row' => [],
                 'icon' => '',
                 'tag' =>'a',
+                'attr' => '',
+                'style' => '',
+            ],
+            'copy' =>[
+                'action'=>"getTable/copy",
+                'title'=>'Копировать',
+                'cls'=>'btn',
+                'row' => [],
+                'multiple' => ['title'=>'Скопировать выбранное'],
+                'icon' => $icon_prefix == 'fa fa' ? "$icon_prefix-clone" : 'glyphicon glyphicon-duplicate', //'glyphicon-glyphicon-duplicate',
+                'tag' =>'button',
                 'attr' => '',
                 'style' => '',
             ],

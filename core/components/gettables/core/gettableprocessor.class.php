@@ -492,6 +492,9 @@ class getTableProcessor
             case 'autosave':
                 $response = $this->autosave($table, $edit_tables, $data);
                 break;
+            case 'copy':
+                $response = $this->copy($table, $edit_tables, $data);
+                break;
             default:
                 $response = $this->error("Action $action не найдено! ",$table);
                 break;
@@ -499,6 +502,145 @@ class getTableProcessor
         
         return $response;
     }
+    public function copy($table, $edit_tables, $data = array())
+    {
+        
+        $saved = [];
+        if(empty($data['trs_data'])) return $this->error('trs_data пусто');
+        
+        foreach($this->old_rows as $row){
+            $old_row = $row;
+            unset($row['id']);
+            $resp = $this->update($table, $edit_tables, $row, true);
+            $saved[] = $resp;
+
+            if($resp['success']){
+                $row['id'] = $resp['data']['id'];
+                if(!empty($this->current_action['child']['subtables'])){
+                    foreach($this->current_action['child']['subtables'] as $subtable_name){
+                        $resp1 = $this->copy_subtables($subtable_name, $old_row, $row);
+                        $resp1['subtables'] = 1;
+                        $resp1['subtable_name'] = $subtable_name;
+                        $saved[] = $resp1;
+                    }
+                }
+                if(!empty($this->current_action['child']['many'])){
+                    foreach($this->current_action['child']['many'] as $child_class=>$child_alias){
+                        $resp1 = $this->copy_many($table['class'], $child_class, $child_alias, $old_row, $row);
+                        $resp1['subtables'] = 1;
+                        $resp1['subtable_name'] = $field;
+                        $saved[] = $resp1;
+                    }
+                }
+            }
+            
+        }
+        
+        $error = '';
+        foreach($saved as $s){
+            if(!$s['success']){
+                if($s['subtables']){
+                    $error = $s['subtable_name'].' '.$s['message'];
+                }else{
+                    $error = "Object {$s['class']} {$s['field']} не сохранен copy \r\n";
+                }
+            }
+        }
+        if(!$error){
+            return $this->success('Сохранено успешно',$saved);
+        }else{
+            return $this->error($error,$saved);
+        }
+    }
+
+    public function copy_many($class, $child_class, $child_alias, $old_row, $new_row)
+    {
+        $saved = [];
+        if(!$source = $this->modx->getObject($class,(int)$old_row['id']) or !$dest = $this->modx->getObject($class,(int)$new_row['id'])){
+            return $this->error('class не найдено',array('class'=>$class));
+        }
+        if(!$childs = $source->getMany($child_alias)){
+            return $this->error('child_alias не найдено',array('child_alias'=>$child_alias));
+        }
+        foreach($childs as $ch){
+            if($newchild = $this->modx->newObject($child_class,$ch->toArray())){
+                $newchild->addOne($dest);
+                $newchild->save();
+            }
+        }
+        return $this->success('Сохранено успешно',$saved);
+    }
+
+
+    public function copy_subtables($subtable_name, $old_row, $new_row)
+    {
+        
+        $saved = [];
+        if(!$subtable = $this->getTables->getClassCache('getTable',$subtable_name)){
+            return $this->error('subtable не найдено',array('subtable_name'=>$subtable_name));
+        }
+        $pdoConfig = $subtable['pdoTools'];
+        $pdoConfig['return'] = 'data';
+        $where = $pdoConfig['where'] ? $pdoConfig['where'] : [];
+        //$this->getTables->addDebug($current_action,'subtable current_action');
+        foreach($subtable['sub_where'] as $where_field=>$where_value){
+            foreach($old_row as $tr_field =>$tr_value){
+                if($tr_field == $where_value)
+                    $where[$where_field] = $tr_value;
+            }
+        }
+        
+        $pdoConfig['where'] = $where;
+        
+        if(isset($subtable['sub_default'])){
+            $sub_default = [];
+            foreach($subtable['sub_default'] as $where_field=>$where_value){
+                foreach($old_row as $tr_field =>$tr_value){
+                    if($tr_field == $where_value)
+                        $sub_default[$where_field] = $tr_value;
+                }
+            }
+            array_walk_recursive($pdoConfig,array(&$this, 'walkFunc'),$sub_default);
+            $where = array_merge($where,$sub_default);
+        }
+        $pdoConfig['limit'] = 0;
+
+        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
+        $rows = $this->pdoTools->run();
+        if(!is_array($rows) or count($rows) == 0){
+            return $this->success('Строка таблицы не найдена!');
+        }
+        
+        $edit_tables = [];
+        ////$this->getTables->addDebug($table['edits'],'run $table[edits] ');
+        foreach($subtable['edits'] as $edit){
+            if($edit['type'] == 'view') continue;
+            $edit_tables[$edit['class']][] = $edit;
+        }
+
+        foreach($rows as $row){
+            unset($row['id']);
+            foreach($subtable['sub_where'] as $where_field=>$where_value){
+                foreach($new_row as $tr_field =>$tr_value){
+                    if($tr_field == $where_value)
+                        $row[$where_field] = $tr_value;
+                }
+            }
+            $resp = $this->update($subtable, $edit_tables, $row, true);
+            $saved[] = $resp;
+        }
+        
+        $error = '';
+        foreach($saved as $s){
+            if(!$s['success']) $error = "Object {$s['class']} {$s['field']} не сохранен copy_subtables \r\n";
+        }
+        if(!$error){
+            return $this->success('Сохранено успешно',$saved);
+        }else{
+            return $this->error($error,$saved);
+        }
+    }
+
     public function gen_pdoConfig($pdoConfig, $tsub_default = [], $tsub_where =[], $data = array(), $add_gen = [])
     {
         //$pdoConfig = $table['pdoTools'];
@@ -544,7 +686,7 @@ class getTableProcessor
             $pdoConfig['limit'] = 1;
             $pdoConfig['sortby'] = [$table['class'].'.id'=>'ASC'];
             $this->old_row_ids = $ids;
-            $this->getTables->addDebug($pdoConfig,'run $pdoConfig ');
+            //$this->getTables->addDebug($pdoConfig,'run $pdoConfig ');
             $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
             $rows = $this->pdoTools->run();
             if(!is_array($rows) or count($rows) == 0){
@@ -553,25 +695,7 @@ class getTableProcessor
                 $this->old_rows = $rows;
             }
         }
-        /*if($data['parent_current']){
-            
-            //$this->getTables->addDebug($data['parent_current'],'run $data  parent_current');
-            if($old_table_parent = $this->getTables->getClassCache('getTable',$data['parent_current']['name'])){
-                ////$this->getTables->addDebug($old_table_parent,'run $old_table_parent ');
-                $pdoConfig = $old_table_parent['pdoTools'];
-                
-                $pdoConfig['where'] = [
-                    $old_table_parent['class'].".id" => $data['parent_current']['tr_data']['id'],
-                ];
-                $pdoConfig['limit'] = 1;
-                $this->parent_old_row_id = $data['parent_current']['tr_data']['id'];
-                $this->pdoTools->config=array_merge($this->config['pdoClear'],$pdoConfig);
-                $rows = $this->pdoTools->run();
-                if(count($rows) == 1){
-                    $this->parent_old_row = $rows[0];
-                }
-            }
-        }*/
+        
         return $this->success('');
     }
     public function autosave($table, $edit_tables, $data = array())
@@ -878,7 +1002,7 @@ class getTableProcessor
             if(!$s['success']) $error = "Object {$s['class']} {$s['field']} не сохранен update \r\n";
         }
         if(!$error){
-            return $this->success('Сохранено успешно',$saved);
+            return $this->success('Сохранено успешно',['id'=>$data['id'],'saved'=>$saved]);
         }else{
             return $this->error($error,$saved);
         }
