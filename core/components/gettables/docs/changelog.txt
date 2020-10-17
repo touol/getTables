@@ -1,5 +1,9 @@
 Changelog for getTables.
 
+1.5.9-alpha
+==============
+- Исправлено page limit. 
+
 1.5.8-alpha
 ==============
 - Добавлен action copy. 

@@ -22,7 +22,7 @@
         <option value="10" {if $page.limit == 10}selected{/if}>10</option>
         <option value="20" {if $page.limit == 20}selected{/if}>20</option>
         <option value="40" {if $page.limit == 40}selected{/if}>40</option>
-        <option value="60" {if $page.limit == 60}selected{/if}>60</option>
+        <option value="60" {if $page.limit == 60 or !$page.limit}selected{/if}>60</option>
     </select>
     
     <button class="btn btn-sm get-nav-refresh" type="button" >
