@@ -149,7 +149,7 @@ class getTable
         $subtable['pdoTools'] = $pdoConfig;
         $subtable['sub_where_current'] = json_encode($where);
         $subtable['parent_current'] = json_encode(['name'=>$data['table_name'],'tr_data'=>$data['tr_data']]);
-        //$this->getTables->setClassConfig('getTable',$subtable['name'], $subtable);
+        $this->getTables->setClassConfig('getTable',$subtable['name'], $subtable);
         //получаем таблицу дочернию
         $subtable = $this->generateData($subtable);
         $sub_content = $this->pdoTools->getChunk($this->config['getTableOuterTpl'], $subtable);
@@ -1204,11 +1204,11 @@ class getTable
             //'commands'=>$table['commands'],
             'loadModels'=>$this->config['loadModels']
         ];
-        if(!empty($table['export'])) $table_compile['export'] = $table['export'];
-        if(!empty($table['autosave'])) $table_compile['autosave'] = $table['autosave'];
+        if(isset($table['export'])) $table_compile['export'] = $table['export'];
+        if(isset($table['autosave'])) $table_compile['autosave'] = $table['autosave'];
         if(!empty($table['sub_where'])) $table_compile['sub_where'] = $table['sub_where'];
         if(!empty($table['sub_default'])) $table_compile['sub_default'] = $table['sub_default'];
-        if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
+        //if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
         return $table_compile;
     }
     

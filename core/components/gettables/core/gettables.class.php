@@ -1,20 +1,8 @@
 <?php
-//продумать для удаления пустых записей в БВ. Наверно тригером.
-//в pdoTools fenom добавлен модификатор abs
-//в pdoTools fenom добавлен alias для таблицы
-//в pdoTools fenom добавлен subpdo 
-//https://prisma-cms.com/topics/dzhoinyi-podzaprosov-sredstvami-xpdo-2159.html
-//https://www.sql.ru/forum/687908/faq-vyborka-pervoy-posledney-zapisi-v-gruppah
 
-/*
-1) Удалять пустые записи в БВ. Триггер
-2) Копи строк
-3) Загрузка js css и чанков
-4) 
-*/
 class getTables
 {
-    public $version = '1.5.6';
+    public $version = '1.5.10';
     /** @var modX $modx */
     public $modx;
     /** @var pdoFetch $pdoTools */
@@ -358,7 +346,7 @@ class getTables
                 ],
                 'css'=>[
                     'frontend_framework_style_css' => $this->modx->getOption('gettables_mgr_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
-                    'frontend_excel_style' => $this->modx->getOption('gettables_mgr_excel_style',null,'[[+cssUrl]]gettables.excel-style.css'),
+                    'frontend_excel_style' => $this->modx->getOption('gettables_mgr_excel_style',null,'[[+cssUrl]]gettables.excel-style-admin.css'),
                     'frontend_message_css' => $this->modx->getOption('gettables_mgr_message_css',null,'[[+cssUrl]]gettables.message.css'),
                     'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.css',
                     'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',

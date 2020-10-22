@@ -2,7 +2,10 @@
 .ace_editor {
     font: 12px/normal 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
 }
-
+.get-tables-tabs .tab-content{
+    background: #fff;
+    padding: 17px;
+}
 /*get-table subtable во всю страницу*/
 .in_all_page{
     position: fixed;

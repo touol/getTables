@@ -106,7 +106,7 @@ return [
     ],
     'mgr_excel_style' => [
         'xtype' => 'textfield',
-        'value' => '[[+cssUrl]]gettables.excel-style.css',
+        'value' => '[[+cssUrl]]gettables.excel-style-admin.css',
         'area' => 'gettables_main',
     ],
 
