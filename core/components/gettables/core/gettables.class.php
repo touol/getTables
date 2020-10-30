@@ -87,7 +87,7 @@ class getTables
             }
         }
 
-        $this->getModels();
+        
         
         if ($this->pdoTools = $this->modx->getService('pdoFetch')) {
             if(isset($this->config['pdoTools'])){
@@ -103,7 +103,8 @@ class getTables
             }
             $this->config['pdoClear'] = $this->pdoTools->config;
         }
-        
+        $this->getModels();
+
         $this->config['hash'] = sha1(json_encode($this->config));
 		if(!empty($config['toJSON'])){
 			unset($config['toJSON']);
@@ -155,10 +156,31 @@ class getTables
                 );
             }
         }
-        
         $this->models = array_merge($this->models,$models);
+
+        //Загрузка тригеров
+		if(!$this->config['isAjax']){
+			$this->config['triggers'] = [];
+			foreach($models as $name =>$v){
+				$response = $this->loadService($name);
+				
+				if(is_array($response) and $response['success']){
+					$service = $this->models[$name]['service'];
+					$this->pdoTools->addTime("getModels triggers $name");
+					if(method_exists($service,'regTriggers')){ 
+						$triggers =  $service->regTriggers();
+						foreach($triggers as &$trigger){
+							$trigger['model'] = $name;
+						}
+						$this->config['triggers'] = array_merge($this->config['triggers'],$triggers);
+					}
+				}else{
+					$this->pdoTools->addTime("getModels triggers. Not load $name.");
+				}
+			}
+		}
+        
     }
-    
     
     public function cacheConfig()
     {
