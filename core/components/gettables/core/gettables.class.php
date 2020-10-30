@@ -617,8 +617,8 @@ class getTables
                 require_once($this->models[$class]['class']);
                 $this->models[$class]['service'] = new $class($this, $this->config);
             }else{
-                if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path'],$this->config)) {
-                    if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path']."$class/",$this->config)) {
+                if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path'],[])) {
+                    if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path']."$class/",[])) {
                         return $this->error("Компонент $class не найден!");
                     }
                 }
