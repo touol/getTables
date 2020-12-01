@@ -518,7 +518,7 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = $form.find('.get-nav-page').val();
+                    page = parseInt($form.find('.get-nav-page').val());
                     if(page > 1){
                         $form.find('.get-nav-page').val(1);
                         $form.trigger('submit');
@@ -530,7 +530,7 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = $form.find('.get-nav-page').val();
+                    page = parseInt($form.find('.get-nav-page').val());
                     if(page > 1){
                         $form.find('.get-nav-page').val(page - 1);
                         $form.trigger('submit');
@@ -542,8 +542,8 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = $form.find('.get-nav-page').val();
-                    page_max = $form.find('.get-nav-page').prop('max');
+                    page = parseInt($form.find('.get-nav-page').val());
+                    page_max = parseInt($form.find('.get-nav-page').prop('max'));
                     if(page < page_max){
                         $form.find('.get-nav-page').val(+page + 1);
                         $form.trigger('submit');
@@ -555,8 +555,8 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = $form.find('.get-nav-page').val();
-                    page_max = $form.find('.get-nav-page').prop('max');
+                    page = parseInt($form.find('.get-nav-page').val());
+                    page_max = parseInt($form.find('.get-nav-page').prop('max'));
                     if(page < page_max){
                         $form.find('.get-nav-page').val(page_max);
                         $form.trigger('submit');

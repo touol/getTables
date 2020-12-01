@@ -2,7 +2,7 @@
 
 class getTables
 {
-    public $version = '1.5.10';
+    public $version = '1.5.13';
     /** @var modX $modx */
     public $modx;
     /** @var pdoFetch $pdoTools */
