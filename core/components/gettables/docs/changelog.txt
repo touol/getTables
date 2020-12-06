@@ -2,7 +2,7 @@ Changelog for getTables.
 
 1.5.14-alpha
 ==============
-- Дефолтовые значения при autosave.
+- force значения при autosave.
 
 1.5.13-alpha
 ==============

@@ -426,12 +426,9 @@ class getTableProcessor
         }
         $set_data['id'] = (int)$data['tr_data']['id'];
         $set_data[$data['td']['field']] = $data['td']['value'];
-        
+
         foreach($edit_tables as $class_edits){
 			foreach($class_edits as $edit){
-				if($edit['default'] and empty($set_data[$edit['field']])){
-					$edit['force'] = $edit['default'];
-				}
 				if($edit['force']){
 					switch($edit['type']){
 						case 'date':
