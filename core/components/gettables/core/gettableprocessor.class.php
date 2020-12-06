@@ -426,6 +426,27 @@ class getTableProcessor
         }
         $set_data['id'] = (int)$data['tr_data']['id'];
         $set_data[$data['td']['field']] = $data['td']['value'];
+        
+        foreach($edit_tables as $class_edits){
+			foreach($class_edits as $edit){
+				if($edit['default'] and empty($set_data[$edit['field']])){
+					$edit['force'] = $edit['default'];
+				}
+				if($edit['force']){
+					switch($edit['type']){
+						case 'date':
+							$edit['force'] = date('Y-m-d',strtotime($edit['force']));
+							break;
+					}
+					switch($edit['force']){
+						case 'user_id':
+							$edit['force'] = $this->modx->user->id;
+							break;
+					}
+					$set_data[$edit['field']] = $edit['force'];
+				}
+			}
+		}
         return $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
     }
     public function sets($table, $edit_tables, $data = array())
