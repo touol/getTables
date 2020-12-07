@@ -134,7 +134,7 @@ class getTable
         //$this->getTables->addDebug($subtable['sub_where'],'subtable sub_where');
         //$this->getTables->addDebug($where,'subtable where');
         $pdoConfig['where'] = $where;
-        
+        //$this->getTables->addDebug($subtable['sub_default'],'subtable sub_default');
         if(isset($subtable['sub_default'])){
             $sub_default = [];
             foreach($subtable['sub_default'] as $where_field=>$where_value){
@@ -143,21 +143,31 @@ class getTable
                         $sub_default[$where_field] = $tr_value;
                 }
             }
+			//$this->getTables->addDebug($sub_default,'subtable sub_default2');
+			//$this->getTables->addDebug($pdoConfig,'subtable pdoConfig1');
             array_walk_recursive($pdoConfig,array(&$this, 'walkFunc'),$sub_default);
             $where = array_merge($where,$sub_default);
+			//$this->getTables->addDebug($pdoConfig,'subtable pdoConfig');
         }
-        $subtable['pdoTools'] = $pdoConfig;
+        //$subtable['pdoTools'] = $pdoConfig;
         $subtable['sub_where_current'] = json_encode($where);
         $subtable['parent_current'] = json_encode(['name'=>$data['table_name'],'tr_data'=>$data['tr_data']]);
         $this->getTables->setClassConfig('getTable',$subtable['name'], $subtable);
         //получаем таблицу дочернию
-        $subtable = $this->generateData($subtable);
+        $subtable = $this->generateData($subtable,$pdoConfig);
         $sub_content = $this->pdoTools->getChunk($this->config['getTableOuterTpl'], $subtable);
         
         return $this->success('',array('sub_content'=>$sub_content));
     }
     public function walkFunc(&$item, $key, $sub_default){
-        $item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
+        //$item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
+		//$this->getTables->addDebug($sub_default,'subtable sub_default2');
+		if(strpos($item, '{$sub_default') !== false){
+			
+			foreach($sub_default as $k=>$v){
+				$item = str_replace('{$sub_default.'.$k.'}',$v,$item);
+			}
+		}
     }
     public function varexport($expression, $return=FALSE) {
         $export = var_export($expression, TRUE);
