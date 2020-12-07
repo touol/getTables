@@ -179,21 +179,22 @@ class getTable
     }
     public function generateData($table,$pdoConfig =[])
     {
-        $table = $this->addFilterTable($table);
+        $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
+		$table = $this->addFilterTable($table);
         if(empty($table['paginator']) or ($table['paginator'] !== false and $pdoConfig['limit'] != 1)){
             $paginator = true;
-            $table['pdoTools']['setTotal'] = true;//offset
-            if(!empty($this->getTables->REQUEST['limit'])) $table['pdoTools']['limit'] = (int)$this->getTables->REQUEST['limit'];
-            if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools']['limit'];
+            $table['pdoTools2']['setTotal'] = true;//offset
+            if(!empty($this->getTables->REQUEST['limit'])) $table['pdoTools2']['limit'] = (int)$this->getTables->REQUEST['limit'];
+            if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools2']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools']['limit'];
         }
         //echo "getTable generateData table ".print_r($table,1);
         //$this->pdoTools->addTime("getTable generateData table ".print_r($table,1));
-        //$this->getTables->addDebug($table['pdoTools'],'generateData $table[pdoTools]');
-        //$this->getTables->addDebug($table['query'],'generateData $table[query]');
-        $table['pdoTools']['return'] = 'data';
+        $this->getTables->addDebug($table['pdoTools2'],'generateData $table[pdoTools]');
+        $this->getTables->addDebug($table['query'],'generateData $table[query]');
+        $table['pdoTools2']['return'] = 'data';
         
-        
-        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools'],$pdoConfig,$table['query']);
+        $table['pdoTools2']['where'] = array_merge($table['pdoTools2']['where'],$table['query']['where']);
+        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
         //file_put_contents(__DIR__ ."/". "222_initialize.txt",json_encode($this->pdoTools->config,JSON_PRETTY_PRINT));
         //$this->pdoTools->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));
         //$this->getTables->addDebug($this->pdoTools->config,'generateData this->pdoTools->config');
@@ -463,14 +464,14 @@ class getTable
             }
             if(isset($table['sub_default'])){
                 $sub_default = [];
-                $pdoConfig = $table['pdoTools'];
+                $pdoConfig = $table['pdoTools2'];
                 foreach($sub_where_current as $where_field=>$where_value){
                     if($table['sub_default'][$where_field]){
                         $sub_default[$where_field] = $where_value;
                     }    
                 }
                 array_walk_recursive($pdoConfig,array(&$this, 'walkFunc'),$sub_default);
-                $table['pdoTools'] = $pdoConfig;
+                $table['pdoTools2'] = $pdoConfig;
             }
         }
         
