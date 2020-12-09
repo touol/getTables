@@ -185,12 +185,12 @@ class getTable
             $paginator = true;
             $table['pdoTools2']['setTotal'] = true;//offset
             if(!empty($this->getTables->REQUEST['limit'])) $table['pdoTools2']['limit'] = (int)$this->getTables->REQUEST['limit'];
-            if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools2']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools']['limit'];
+            if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools2']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools2']['limit'];
         }
         //echo "getTable generateData table ".print_r($table,1);
         //$this->pdoTools->addTime("getTable generateData table ".print_r($table,1));
-        $this->getTables->addDebug($table['pdoTools2'],'generateData $table[pdoTools]');
-        $this->getTables->addDebug($table['query'],'generateData $table[query]');
+        //$this->getTables->addDebug($table['pdoTools2'],'generateData $table[pdoTools]');
+        //$this->getTables->addDebug($table['query'],'generateData $table[query]');
         $table['pdoTools2']['return'] = 'data';
         
         $table['pdoTools2']['where'] = array_merge($table['pdoTools2']['where'],$table['query']['where']);
@@ -606,8 +606,8 @@ class getTable
             $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
         }
         
-        if(!isset($table['pdoTools']['where'])) $table['pdoTools']['where'] = [];
-        $query = array_merge($table['pdoTools']['where'],$query);
+        if(!isset($table['pdoTools']['where'])) $table['pdoTools2']['where'] = [];
+        $query = array_merge($table['pdoTools2']['where'],$query);
         //$this->getTables->addDebug($query,'addFilterTable  $query');
         $table['query'] = ['where'=>$query];
         //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 1');
