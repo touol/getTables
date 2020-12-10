@@ -606,7 +606,7 @@ class getTable
             $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
         }
         
-        if(!isset($table['pdoTools']['where'])) $table['pdoTools2']['where'] = [];
+        if(!isset($table['pdoTools2']['where'])) $table['pdoTools2']['where'] = [];
         $query = array_merge($table['pdoTools2']['where'],$query);
         //$this->getTables->addDebug($query,'addFilterTable  $query');
         $table['query'] = ['where'=>$query];

@@ -1,5 +1,9 @@
 Changelog for getTables.
 
+1.5.17-alpha
+==============
+- Исправлена ошибка subtable.
+
 1.5.16-alpha
 ==============
 - добавлено custom modal.
