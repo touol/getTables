@@ -28,6 +28,7 @@
             sub_hide: getTablesConfig.callbacksObjectTemplate(),
             remove: getTablesConfig.callbacksObjectTemplate(),
             autosave: getTablesConfig.callbacksObjectTemplate(),
+			custom: getTablesConfig.callbacksObjectTemplate(),
         },
         Autocomplect: {
             load: getTablesConfig.callbacksObjectTemplate(),
@@ -152,7 +153,7 @@
                 break;
             default:
                 //console.log('self',self);
-                //getTables.send(getTables.sendData.data, getTables.Modal.callbacks.load, getTables.Callbacks.Modal.load);
+                getTables.Table.custom();
         }
     };
     getTables.send = function (data, callbacks, userCallbacks) {
@@ -297,42 +298,6 @@
                 $('.get-select-multiple').each(function(){
                     $(this).multiselect();
                 });
-                if(getTablesConfig.load_ckeditor == 1){
-                    $('textarea[data-editor=ckeditor]').each(function() {
-                        //$(this).ckeditor();
-                        CKEDITOR.replace(this);
-                    });
-                }
-                if(getTablesConfig.load_ace == 1){
-                    $('textarea[data-editor=ace]').each(function() {
-                        var textarea = $(this);
-                        var mode = textarea.data('editor-mode');
-                        var theme = textarea.data('editor-theme');
-                        var height = textarea.data('editor-height');
-                        
-                        var editDiv = $('<div>', {
-                          position: 'absolute',
-                          width: textarea.width(),
-                          height: height,
-                          'class': textarea.attr('class'),
-                          'readonly': textarea.attr('readonly')
-                        }).insertBefore(textarea);
-                        
-                        
-                        textarea.css('display', 'none');
-                        var editor = ace.edit(editDiv[0]);
-                        editor.renderer.setShowGutter(textarea.data('gutter'));
-                        editor.getSession().setValue(textarea.val());
-                        editor.getSession().setMode("ace/mode/" + mode);
-                        editor.setTheme("ace/theme/"+theme);
-                        //editor.setTheme("ace/theme/chrome");
-                    
-                        // copy back to textarea on form submit...
-                        textarea.closest('form').submit(function() {
-                          textarea.val(editor.getSession().getValue());
-                        })
-                      });
-                }
             });
             
         },
@@ -388,6 +353,7 @@
             update: getTablesConfig.callbacksObjectTemplate(),
             refresh: getTablesConfig.callbacksObjectTemplate(),
             filter: getTablesConfig.callbacksObjectTemplate(),
+			custom: getTablesConfig.callbacksObjectTemplate(),
             sets: getTablesConfig.callbacksObjectTemplate(),
             sub_show: getTablesConfig.callbacksObjectTemplate(),
             sub_hide: getTablesConfig.callbacksObjectTemplate(),
@@ -518,7 +484,7 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = parseInt($form.find('.get-nav-page').val());
+                    page = $form.find('.get-nav-page').val();
                     if(page > 1){
                         $form.find('.get-nav-page').val(1);
                         $form.trigger('submit');
@@ -530,7 +496,7 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = parseInt($form.find('.get-nav-page').val());
+                    page = $form.find('.get-nav-page').val();
                     if(page > 1){
                         $form.find('.get-nav-page').val(page - 1);
                         $form.trigger('submit');
@@ -542,8 +508,8 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = parseInt($form.find('.get-nav-page').val());
-                    page_max = parseInt($form.find('.get-nav-page').prop('max'));
+                    page = $form.find('.get-nav-page').val();
+                    page_max = $form.find('.get-nav-page').prop('max');
                     if(page < page_max){
                         $form.find('.get-nav-page').val(+page + 1);
                         $form.trigger('submit');
@@ -555,8 +521,8 @@
                     getTables.sendData.$GtsApp = $(this).closest('.get-table');
                     $form = $(this).closest(getTables.form);
                     getTables.sendData.$form = $form;
-                    page = parseInt($form.find('.get-nav-page').val());
-                    page_max = parseInt($form.find('.get-nav-page').prop('max'));
+                    page = $form.find('.get-nav-page').val();
+                    page_max = $form.find('.get-nav-page').prop('max');
                     if(page < page_max){
                         $form.find('.get-nav-page').val(page_max);
                         $form.trigger('submit');
@@ -873,7 +839,17 @@
             
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.filter, getTables.Callbacks.Table.filter);
         },
-        
+        custom: function () {
+            getTables.Message.close();
+            var callbacks = getTables.Table.callbacks;
+            
+            callbacks.custom.response.success = function (response) {
+                getTables.Table.refresh();
+                $('.gts_modal').modal('hide');
+            };
+            
+            return getTables.send(getTables.sendData.data, getTables.Table.callbacks.custom, getTables.Callbacks.Table.custom);
+        },
     };
     
     $(document).ready(function ($) {

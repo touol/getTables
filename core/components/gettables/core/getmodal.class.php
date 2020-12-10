@@ -121,7 +121,12 @@ class getModal
         //return $this->error("getModal fetchTableModal modal! ",$tr_data);
         $modal['edits'] = $edits;
         $this->getTables->addDebug($modal,'fetchTableModal $modal ');
-        $html = $this->pdoTools->getChunk($this->config[$modal['tpl']], ['modal'=>$modal]);
+		if(isset($this->config[$modal['tpl']])){
+			$tpl = $this->config[$modal['tpl']];
+		}else{
+			$tpl = $modal['tpl'];
+		}
+        $html = $this->pdoTools->getChunk($tpl, ['modal'=>$modal]);
         
         return $this->success('',array('html'=>$html));
     }
