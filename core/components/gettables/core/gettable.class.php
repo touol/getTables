@@ -277,8 +277,10 @@ class getTable
                 
                 if(isset($td['content'])){
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);
+					$autosave = false;
                 }else{
                     $td['content'] = $td['value'];
+					$autosave = true;
                 }
                 
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
@@ -301,7 +303,7 @@ class getTable
                         $td['value'] = $td['edit']['force'];
                     }
                 }*/
-                if(!empty($table['autosave']) and !empty($td['edit'])){
+                if(!empty($table['autosave']) and !empty($td['edit']) and $autosave){
                     
                     //autocomplect
                     if(isset($td['edit']['field_content'])){
