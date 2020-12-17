@@ -143,11 +143,11 @@ class getTable
                         $sub_default[$where_field] = $tr_value;
                 }
             }
-			//$this->getTables->addDebug($sub_default,'subtable sub_default2');
-			//$this->getTables->addDebug($pdoConfig,'subtable pdoConfig1');
+            //$this->getTables->addDebug($sub_default,'subtable sub_default2');
+            //$this->getTables->addDebug($pdoConfig,'subtable pdoConfig1');
             array_walk_recursive($pdoConfig,array(&$this, 'walkFunc'),$sub_default);
             $where = array_merge($where,$sub_default);
-			//$this->getTables->addDebug($pdoConfig,'subtable pdoConfig');
+            //$this->getTables->addDebug($pdoConfig,'subtable pdoConfig');
         }
         //$subtable['pdoTools'] = $pdoConfig;
         $subtable['sub_where_current'] = json_encode($where);
@@ -161,13 +161,13 @@ class getTable
     }
     public function walkFunc(&$item, $key, $sub_default){
         //$item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
-		//$this->getTables->addDebug($sub_default,'subtable sub_default2');
-		if(strpos($item, '{$sub_default') !== false){
-			
-			foreach($sub_default as $k=>$v){
-				$item = str_replace('{$sub_default.'.$k.'}',$v,$item);
-			}
-		}
+        //$this->getTables->addDebug($sub_default,'subtable sub_default2');
+        if(strpos($item, '{$sub_default') !== false){
+            
+            foreach($sub_default as $k=>$v){
+                $item = str_replace('{$sub_default.'.$k.'}',$v,$item);
+            }
+        }
     }
     public function varexport($expression, $return=FALSE) {
         $export = var_export($expression, TRUE);
@@ -180,7 +180,7 @@ class getTable
     public function generateData($table,$pdoConfig =[])
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
-		$table = $this->addFilterTable($table);
+        $table = $this->addFilterTable($table);
         if(empty($table['paginator']) or ($table['paginator'] !== false and $pdoConfig['limit'] != 1)){
             $paginator = true;
             $table['pdoTools2']['setTotal'] = true;//offset
@@ -277,10 +277,10 @@ class getTable
                 
                 if(isset($td['content'])){
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);
-					$autosave = false;
+                    $autosave = false;
                 }else{
                     $td['content'] = $td['value'];
-					$autosave = true;
+                    $autosave = true;
                 }
                 
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
@@ -756,7 +756,7 @@ class getTable
                         if($ta[0] == "getTable"){
                             if(isset($default_actions[$ta[1]])){
                                 $compile_actions[$k] = array_merge($default_actions[$ta[1]],$actions[$k]);
-								//$this->pdoTools->addTime(" действия {$ta[1]}. Действие  $k ".print_r($compile_actions[$k],1));
+                                //$this->pdoTools->addTime(" действия {$ta[1]}. Действие  $k ".print_r($compile_actions[$k],1));
                             }else{
                                 $this->pdoTools->addTime("В getTable нет действия {$ta[1]}. Действие  $k ".print_r($actions[$k],1));
                             }
