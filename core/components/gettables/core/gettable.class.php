@@ -756,8 +756,9 @@ class getTable
                         if($ta[0] == "getTable"){
                             if(isset($default_actions[$ta[1]])){
                                 $compile_actions[$k] = array_merge($default_actions[$ta[1]],$actions[$k]);
+								//$this->pdoTools->addTime(" действия {$ta[1]}. Действие  $k ".print_r($compile_actions[$k],1));
                             }else{
-                                $this->pdoTools->addTime("В getTable нет действия {$ta[1]}. Действие  $k =>".print_r($actions[$k]));
+                                $this->pdoTools->addTime("В getTable нет действия {$ta[1]}. Действие  $k ".print_r($actions[$k],1));
                             }
                         }else{
                             $compile_actions[$k] = $actions[$k];

@@ -81,6 +81,9 @@ class getModal
         $table_name = !empty($data['table_data']['name'])
             ? (string)$data['table_data']['name']
             : false;
+		$action_name = !empty($data['button_data']['name'])
+            ? (string)$data['button_data']['name']
+            : false;
         $tr_data = !empty($data['tr_data']) ? $data['tr_data'] : [];
            
         if(!$table_action) return $this->error("Нет table_action!");
@@ -94,7 +97,8 @@ class getModal
         }
         //$table = $this->config['getTable'][$table_name];
         //echo json_encode($table);
-        $modal = $table['modal'][$table_action];
+		//$this->getTables->addDebug($table,'fetchTableModal $table ');
+        $modal = $table['actions'][$action_name]['modal'];
         $edits = $table['edits'];
         $modal['hash'] = $this->config['hash'];
         $modal['table_name'] = $table_name;
@@ -106,7 +110,7 @@ class getModal
         if($tr_data){
             $edits = $this->generateEditsData($edits,$tr_data,$table);
         }
-        $this->getTables->addDebug($data['sub_where_current'],'fetchTableModal $data[sub_where_current] ');
+        //$this->getTables->addDebug($data['sub_where_current'],'fetchTableModal $data[sub_where_current] ');
         if($data['sub_where_current']){
             //$table['default'] = array_merge($table['default'],$data['table_data']['sub_where_current']);
             foreach($edits as &$edit){
@@ -120,7 +124,7 @@ class getModal
         //if(!empty($table['force'])) $edits = $this->defaultFieldSet($edits,$table['force']);
         //return $this->error("getModal fetchTableModal modal! ",$tr_data);
         $modal['edits'] = $edits;
-        $this->getTables->addDebug($modal,'fetchTableModal $modal ');
+        //$this->getTables->addDebug($modal,'fetchTableModal $modal ');
 		if(isset($this->config[$modal['tpl']])){
 			$tpl = $this->config[$modal['tpl']];
 		}else{
