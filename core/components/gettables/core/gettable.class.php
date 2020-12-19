@@ -104,8 +104,94 @@ class getTable
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->subtable($action, $table, $data);
                 break;
+            case 'export_excel':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->export_excel($action, $table, $data);
+                break;
         }
         return $this->error("Метод $action в классе $class не найден!");
+    }
+    public function export_excel($action, $table, $data)
+    {
+        
+        //$table['pdoTools']['limit'] = 0;
+        $table2 = $this->generateData($table);
+        
+        $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
+		require_once $PHPExcelPath . 'PHPExcel.php';
+		require_once $PHPExcelPath . 'PHPExcel/Writer/Excel2007.php';
+		
+		$xls = new PHPExcel();
+		$xls->setActiveSheetIndex(0);
+		$sheet = $xls->getActiveSheet();
+		$sheet->setTitle('Лист1');
+
+        $i = 1;$k = 0;
+		foreach($table2['edits'] as $edit){
+            if(!$edit['modal_only']){
+                $sheet->setCellValueByColumnAndRow($k, $i, $edit['label']);
+                $k++;
+            }
+		}
+		$i++;
+		foreach($table2['tbody']['trs'] as $row){
+            $k = 0;
+            foreach($row['tr']['tds'] as $v){
+                if($v['field']){
+                    switch($v['edit']['type']){
+                        case 'select':
+                            switch($v['edit']['select']['type']){
+                                case 'select':
+                                    $content = [];
+                                    if($v['edit']['multiple']){
+                                        foreach($v['edit']['select']['data'] as $d){
+                                            if($v['value'][$d['id']]){
+                                                $content[] = $d['content'];
+                                            }
+                                        }
+                                    }else{
+                                        foreach($v['edit']['select']['data'] as $d){
+                                            if($v['value'] == $d['id']){
+                                                $content[] = $d['content'];
+                                            }
+                                        }
+                                    }
+                                    $sheet->setCellValueByColumnAndRow($k, $i, implode(" ",$content));
+                                break;
+                                case 'autocomplect':
+                                    $sheet->setCellValueByColumnAndRow($k, $i, $v['edit']['content']);
+                                break;
+                                default:
+                                    $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
+                            }
+                        break;
+                        case 'checkbox':
+                            if($v['value']){
+                                $sheet->setCellValueByColumnAndRow($k, $i, "Да");
+                            }else{
+                                $sheet->setCellValueByColumnAndRow($k, $i, "Нет");
+                            }
+                        default:
+                            $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
+                    }
+                    
+                    $k++;
+                }
+                
+			}
+			$i++;
+		}
+
+		header("Expires: Mon, 1 Apr 1974 05:00:00 GMT");
+		header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+		header("Cache-Control: no-cache, must-revalidate");
+		header("Pragma: no-cache");
+		header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		header("Content-Disposition: attachment; filename={$table2['name']}.xlsx");
+		
+		$objWriter = new PHPExcel_Writer_Excel2007($xls);
+		$objWriter->save('php://output'); 
+		exit();
     }
     public function subtable($action, $table, $data)
     {
@@ -186,6 +272,11 @@ class getTable
             $table['pdoTools2']['setTotal'] = true;//offset
             if(!empty($this->getTables->REQUEST['limit'])) $table['pdoTools2']['limit'] = (int)$this->getTables->REQUEST['limit'];
             if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools2']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools2']['limit'];
+            
+        }
+        if($this->getTables->REQUEST['gts_action'] == 'getTable/export_excel'){
+            $table['pdoTools2']['limit'] = 0;
+            unset($table['pdoTools2']['offset']);
         }
         //echo "getTable generateData table ".print_r($table,1);
         //$this->pdoTools->addTime("getTable generateData table ".print_r($table,1));
@@ -735,6 +826,16 @@ class getTable
                 'attr' => '',
                 'style' => '',
             ],
+            'export_excel' =>[
+                'action'=>"getTable/export_excel",
+                'title'=>'Экспорт в excel',
+                'cls'=>'btn',
+                'multiple' => ['title'=>'Экспорт в excel'],
+                'icon' => $icon_prefix == 'fa fa' ? "fas fa-file-excel" : 'glyphicon glyphicon-export', //'glyphicon-glyphicon-duplicate',
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
+            ],
             
         ];
         $compile_actions = [];
@@ -1110,6 +1211,7 @@ class getTable
                 
             }else{
                 if(isset($value['modal_only'])){
+                    $edit['modal_only'] = 1;
                     $edits[] = $edit;
                     continue;
                 }
