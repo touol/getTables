@@ -171,6 +171,7 @@ class getTable
                             }else{
                                 $sheet->setCellValueByColumnAndRow($k, $i, "Нет");
                             }
+                        break;    
                         default:
                             $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
                     }
