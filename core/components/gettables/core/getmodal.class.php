@@ -164,7 +164,7 @@ class getModal
         $pdoConfig['return'] = 'data';
         foreach($tr_data as $k=>$v){
             foreach($edits as $edit){
-                if($edit['field'] == $k)
+                if($edit['field'] == $k and $k == 'id')
                     $pdoConfig['where'][$edit['where_field']] = $v;
             }
         }

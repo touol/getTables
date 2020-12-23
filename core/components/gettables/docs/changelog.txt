@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.5.21-alpha
+==============
+- Исправленно data у generateEditsData.
+
 1.5.20-alpha
 ==============
 - экспорт в excel исправлен чекбокс.
