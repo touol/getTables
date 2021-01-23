@@ -39,7 +39,6 @@ class getTables
             'cssUrl' => $assetsUrl . 'css/',
             'jsUrl' => $assetsUrl . 'js/',
             'ctx' => 'web',
-            
             'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
             
            /* 'getTableOuterTpl' => 'getTable.outer.tpl',
@@ -53,7 +52,7 @@ class getTables
             */
             
         ], $config);
-        
+        if($this->config['ctx'] == 'mgr') $this->config['frontend_framework_style'] = $this->modx->getOption('gettables_mgr_framework_style',null,'bootstrap_v3');
         $this->models['getTabs']['class'] = 'gettabs.class.php';
         $this->models['getTable']['class'] = 'gettable.class.php';
         $this->models['getModal']['class'] = 'getmodal.class.php';

@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.5.22-alpha
+==============
+- Исправленно bootsrap_style.
+
 1.5.21-alpha
 ==============
 - Исправленно data у generateEditsData.
