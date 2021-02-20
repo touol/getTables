@@ -140,4 +140,14 @@ return [
         'value' => true,
         'area' => 'gettables_editor',
     ],
+    'load_frontend_cellsselection' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_main',
+    ],
+    'load_mgr_cellsselection' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_main',
+    ],
 ];

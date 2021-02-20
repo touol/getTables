@@ -338,6 +338,7 @@ class getTables
                 'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
                 'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
                 'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
+                'cellsselection' => '[[+jsUrl]]gettables.cellsselection.js',
             ],
             'css'=>[
                 'frontend_framework_style_css' => $this->modx->getOption('gettables_frontend_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
@@ -345,6 +346,7 @@ class getTables
                 'frontend_message_css' => $this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.message.css'),
                 'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.css',
                 'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
+                'cellsselection' => '[[+cssUrl]]gettables.cellsselection.css',
             ],
             'load'=>[
                 'load_frontend_jquery' => $this->modx->getOption('gettables_load_frontend_jquery','',0),
@@ -352,6 +354,7 @@ class getTables
                 'load_add_lib' => $this->modx->getOption('gettables_load_frontend_add_lib','',0),
                 'load_ace' => $this->modx->getOption('gettables_load_frontend_ace','',0),
                 'load_ckeditor' => $this->modx->getOption('gettables_load_frontend_ckeditor','',0),
+                'load_cellsselection' => $this->modx->getOption('gettables_load_frontend_cellsselection','',0),
             ],
             'mgr'=>[
                 'js'=>[
@@ -364,6 +367,7 @@ class getTables
                     'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
                     'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
                     'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
+                    'cellsselection' => '[[+jsUrl]]gettables.cellsselection.js',
                 ],
                 'css'=>[
                     'frontend_framework_style_css' => $this->modx->getOption('gettables_mgr_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
@@ -371,6 +375,7 @@ class getTables
                     'frontend_message_css' => $this->modx->getOption('gettables_mgr_message_css',null,'[[+cssUrl]]gettables.message.css'),
                     'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.css',
                     'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
+                    'cellsselection' => '[[+cssUrl]]gettables.cellsselection.css',
                 ],
                 'load'=>[
                     'load_frontend_jquery' => $this->modx->getOption('gettables_load_mgr_jquery','',0),
@@ -378,6 +383,7 @@ class getTables
                     'load_add_lib' => $this->modx->getOption('gettables_load_mgr_add_lib','',0),
                     'load_ace' => $this->modx->getOption('gettables_load_mgr_ace','',0),
                     'load_ckeditor' => $this->modx->getOption('gettables_load_mgr_ckeditor','',0),
+                    'load_cellsselection' => $this->modx->getOption('gettables_load_mgr_cellsselection','',0),
                 ],
             ],
         ];
@@ -461,7 +467,9 @@ class getTables
             $csss[] = $CSS_JS['css']['add_lib_datepicker'];
             $csss[] = $CSS_JS['css']['add_lib_multiselect'];
         } 
-
+        if($CSS_JS['load']['load_cellsselection']){
+            $csss[] = $CSS_JS['css']['cellsselection'];
+        } 
         if($config['add_css']){
             foreach(explode(",",$config['add_css']) as $acss){
                 $csss[] = $acss;
@@ -481,7 +489,9 @@ class getTables
             $jss[] = $CSS_JS['js']['add_lib_datepicker_ru'];
             $jss[] = $CSS_JS['js']['add_lib_multiselect'];
         }
-         
+        if($CSS_JS['load']['load_cellsselection']){
+            $jss[] = $CSS_JS['js']['cellsselection'];
+        } 
 
         if($config['add_js']){
             foreach(explode(",",$config['add_js']) as $ajs){
