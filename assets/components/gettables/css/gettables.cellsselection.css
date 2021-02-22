@@ -26,3 +26,8 @@
 	border: 1px double #4887C7;
 	background-color: rgba(51, 122, 183, 0.2) !important;
 }
+.gtsCellsSelectionSum{
+	z-index: 5;
+	background-color: rgba(51, 122, 183, 0.2);
+	/* opacity:0.1; */
+}

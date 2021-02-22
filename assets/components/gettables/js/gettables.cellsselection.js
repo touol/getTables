@@ -26,10 +26,10 @@
         $(".gtsCellsSelectionSum").remove();
         getTableCells($table).each(function (key, cell) {
             var data1 = {};
-            data1.$elemX = $(cell).offset().left;
-            data1.$elemXwidth = $(cell).offset().left + $(cell).width();
-            data1.$elemY = $(cell).offset().top;
-            data1.$elemYheight = $(cell).offset().top + $(cell).height();
+            data1.$elemX = cell.offsetLeft;
+            data1.$elemXwidth = cell.offsetLeft + cell.offsetWidth;
+            data1.$elemY = cell.offsetTop;
+            data1.$elemYheight = cell.offsetTop + cell.offsetHeight;
             
             if ((data1.$elemX >= data.$pointXmin) && (data1.$elemXwidth <= data.$pointXwidth)
                 && (data1.$elemY >= data.$pointYmin)
@@ -45,8 +45,12 @@
                 average = sum/count;
             }
         });
+        $last = $table.find('.'+settings.selectedCellClass).last();
+        $pointXmin = $last.offset().left;
+        $pointYheight = $last.offset().top + $last.height();
         if(count > 1){
-            $table.after('<div class="gtsCellsSelectionSum" style="position:absolute;top:'+data.$pointYheight+'px;left:'+data.$pointXmin+'px;">'+
+            $table.after('<div class="gtsCellsSelectionSum" style="position:absolute;top:'
+            +$pointYheight+'px;left:'+$pointXmin+'px;">'+
             '<span>Среднее:<span></span>'+average+'</span>'+
             ' <span>Кол-во:<span></span>'+count+'</span>'+
             ' <span>Сумма:<span></span>'+sum+'</span></div>');
@@ -63,7 +67,7 @@
             .on(getEventNameWithPluginNamespace('mouseover'),'.get-table td', onMouseOver)//.mouseover(onMouseOver)
             .on(getEventNameWithPluginNamespace('mousedown'),'.get-table td',onMouseDown)//.mousedown(onMouseDown)
             //.on(getEventNameWithPluginNamespace('dragstart'),onDragStart)
-            .on(getEventNameWithPluginNamespace('mouseup'),'.get-table td',onMouseUp) //.mouseup(onMouseUp);
+            .on(getEventNameWithPluginNamespace('mouseup'),'.get-table table',onMouseUp) //.mouseup(onMouseUp);
             //клик на документе вне таблицы
             //.on(getEventNameWithPluginNamespace('click'),onOutTableClick);
                 //or $table.closest(":root"); - html
@@ -79,7 +83,7 @@
                 var $table = pluginData.$table;
                 //если клик правой кнопкой мыши - ничего не делаем
                 if (isRightMouseButton(event)){
-                    deselectAll($table);
+                    //deselectAll($table);
                     return true;
                 }
                 //получаем ячейку
@@ -115,10 +119,11 @@
                     }
                 }
 
-                data.$pointX1 = $cell.offset().left;
-                data.$pointX1width = $cell.offset().left+$cell.width();
-                data.$pointY1 = $cell.offset().top;
-                data.$pointY1height = $cell.offset().top+$cell.height();
+                cell = $cell[0];
+                data.$pointX1 = cell.offsetLeft;
+                data.$pointX1width = cell.offsetLeft+cell.offsetWidth;
+                data.$pointY1 = cell.offsetTop;
+                data.$pointY1height = cell.offsetTop+cell.offsetHeight;
                 //data.$pointYheight+'px;left:'+data.$pointXmin
                 data.$pointYheight = data.$pointY1height;
                 data.$pointXmin = data.$pointX1;
@@ -136,7 +141,7 @@
                 var pluginData = getPluginDataByEvent(event);
 
                 var $target = pluginData.$target;
-                console.log(event);
+                
                 //таблица
                 var $table = pluginData.$table;
 
@@ -159,84 +164,7 @@
                 data.selTo = getCoordinates($cell);
 
                 setPointCoordinates(data,$cell);
-                //todo: move to bottom
-                function coordinateManipulateMagic() {
-                    var i = 1;
-                    while (i > 0) {
-                        i = 0;//wtf???
-                        getTableCells($table).each(function (key, cell) {
-                            data.$elemX = $(cell).offset().left;
-                            data.$elemXwidth = $(cell).offset().left + $(cell).width();
-
-                            data.$elemY = $(cell).offset().top;
-                            data.$elemYheight = $(cell).offset().top + $(cell).height();
-
-                            if ((data.$elemX < data.$pointXmin) && (data.$elemXwidth >= data.$pointXmin) && (data.$elemXwidth <= data.$pointXwidth) && (data.$elemYheight <= data.$pointYheight) && (data.$elemYheight > data.$pointYmin)) {
-                                data.$temp = data.$elemX;
-                                if (data.$temp != data.$pointXmin) {
-                                    data.$pointXmin = data.$temp;
-                                    i = 1;
-                                }
-                            }
-
-                            if ((data.$elemX >= data.$pointXmin) && (data.$elemX < data.$pointXwidth) && (data.$elemXwidth >= data.$pointXwidth) && (data.$elemYheight <= data.$pointYheight) && (data.$elemYheight > data.$pointYmin)) {
-                                data.$temp = data.$elemXwidth;
-                                if (data.$temp != data.$pointXwidth) {
-                                    data.$pointXwidth = data.$temp;
-                                    i = 1;
-                                }
-                            }
-
-                            if ((data.$elemY < data.$pointYmin) && (data.$elemYheight >= data.$pointYmin) && (data.$elemYheight <= data.$pointYheight) && (data.$elemXwidth <= data.$pointXwidth) && (data.$elemXwidth > data.$pointXmin)) {
-                                data.$temp = data.$elemY;
-                                if (data.$temp != data.$pointYmin) {
-                                    data.$pointYmin = data.$temp;
-                                    i = 1;
-                                }
-                            }
-
-                            if ((data.$elemY >= data.$pointYmin) && (data.$elemY < data.$pointYheight) && (data.$elemYheight >= data.$pointYheight) && (data.$elemXwidth <= data.$pointXwidth) && (data.$elemXwidth > data.$pointXmin)) {
-                                data.$temp = data.$elemYheight;
-                                if (data.$temp != data.$pointYheight) {
-                                    data.$pointYheight = data.$temp;
-                                    i = 1;
-                                }
-                            }
-
-                            if ((data.$elemX < data.$pointXmin) && (data.$elemXwidth >= data.$pointXwidth) && (data.$elemYheight <= data.$pointYheight) && (data.$elemYheight > data.$pointYmin)) {
-                                data.$temp = data.$elemX;
-                                if (data.$temp < data.$pointXmin) {
-                                    data.$pointXmin = data.$temp;
-                                    i = 1;
-                                }
-                            }
-                            if ((data.$elemX > data.$pointXmin) && (data.$elemX < data.$pointXwidth) && (data.$elemY < data.$pointYheight) && (data.$elemY > data.$pointYmin)) {
-                                data.$temp = data.$elemXwidth;
-                                if (data.$temp > data.$pointXwidth) {
-                                    data.$pointXwidth = data.$temp;
-                                    i = 1;
-                                }
-                            }
-
-                            if ((data.$elemY < data.$pointYmin) && (data.$elemYheight >= data.$pointYmin) && (data.$elemYheight <= data.$pointYheight) && (data.$elemXwidth <= data.$pointXwidth) && (data.$elemXwidth > data.$pointXmin)) {
-                                data.$temp = data.$elemY;
-                                if (data.$temp < data.$pointYmin) {
-                                    data.$pointYmin = data.$temp;
-                                    i = 1;
-                                }
-                            }
-                            if ((data.$elemY > data.$pointYmin) && (data.$elemYheight <= data.$pointYheight) && (data.$elemX <= data.$pointXwidth)) {
-                                data.$temp = data.$elemYheight;
-                                if (data.$temp > data.$pointYheight) {
-                                    data.$pointYheight = data.$temp;
-                                    i = 1;
-                                }
-                            }
-                        });
-                    }
-                }
-
-                //coordinateManipulateMagic();
+                
                 if (!event.ctrlKey) {
                     deselectAll($table);
                 }
@@ -245,11 +173,12 @@
                 return true;
 
                 function setPointCoordinates(data, $cell) {
-                    data.$pointX2 = $cell.offset().left;
-                    data.$pointX2width = $cell.offset().left + $cell.width();
+                    cell = $cell[0];
+                    data.$pointX2 = cell.offsetLeft;
+                    data.$pointX2width = cell.offsetLeft + cell.offsetWidth;
 
-                    data.$pointY2 = $cell.offset().top;
-                    data.$pointY2height = $cell.offset().top + $cell.height();
+                    data.$pointY2 = cell.offsetTop;
+                    data.$pointY2height = cell.offsetTop + cell.offsetHeight;
 
                     if (data.$pointX1 < data.$pointX2) {
                         data.$pointXmin = data.$pointX1;
