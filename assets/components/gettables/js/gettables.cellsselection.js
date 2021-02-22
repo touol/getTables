@@ -127,6 +127,8 @@
                 //data.$pointYheight+'px;left:'+data.$pointXmin
                 data.$pointYheight = data.$pointY1height;
                 data.$pointXmin = data.$pointX1;
+                data.$pointXwidth = data.$pointX1width;
+                data.$pointYmin = data.$pointY1;
 
                 data.isHighlighted = $cell.hasClass(selectedCellClass);
                 $table.data(data);
@@ -209,7 +211,7 @@
             function onMouseUp(event){
                 //console.log('mouseup table');
                 var pluginData = getPluginDataByEvent(event);
-                var data = pluginData.data;
+                var data = {};
                 isMouseDown = false;
                 data.selFrom = false;
                 data.selTo = false;
