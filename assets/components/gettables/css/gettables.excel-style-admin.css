@@ -6,6 +6,7 @@
     background: #fff;
     padding: 17px;
 }
+ 
 /*get-table subtable во всю страницу*/
 .in_all_page{
     position: fixed;
@@ -29,7 +30,8 @@
     left: unset;
     max-height:400px;
     min-height:50px;
-    overflow-y: scroll;
+    overflow-y: scroll; 
+    width: 100%
 }
 /*get-table id у select autocomplect*/
 /* .get-autocomplect .input-group-addon{
@@ -124,7 +126,8 @@
     text-align: center;
 }
 .get-table .table>tbody>.get-table-tr>td, .get-table .table>tbody>.get-table-tr>th, .get-table .table>tfoot>.get-table-tr>td, .get-table .table>tfoot>.get-table-tr>th, .get-table .table>thead>.get-table-tr>td, .get-table .table>thead>.get-table-tr>th {
-    padding: 0px 5px;
+/*    padding: 0px 5px;*/
+    padding: 0;
     line-height: 1.42857143; 
     border-top: 1px solid #ddd;
     border-left: 1px solid #ddd;
@@ -136,8 +139,10 @@
     background-color: transparent;
 }
 .get-table .table .form-group {
+    position: relative;
     margin-bottom: 0; 
-    display: inline-block;
+/*    display: inline-block;*/
+    display: block;
 }
 .get-table .table .form-group .input-group .input-group-addon{
     background: transparent;
