@@ -21,7 +21,7 @@ return [
         'menus' => true,
         'plugins' => true,
         'resources' => false,
-        'settings' => true, //не забыть вернуть через неделю
+        'settings' => false, //не забыть вернуть через неделю
         'snippets' => true,
         'templates' => false,
         'widgets' => false,
