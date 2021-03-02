@@ -2,6 +2,7 @@
 .ace_editor {
     font: 12px/normal 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
 } 
+
 .db{
     display: block;
 }
@@ -17,6 +18,7 @@
 .hid{
     overflow: hidden;
 }
+
 /*get-table subtable во всю страницу*/
 .in_all_page{
     position: fixed;

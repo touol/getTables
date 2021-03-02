@@ -711,8 +711,8 @@
 
                 $sub_row = $row.next('.get-sub-row').first();
                 $sub_row.find('.get-sub-content').html(response.data.sub_content);
-                $sub_row.removeClass('hidden');
-
+                $sub_row.show();
+              
                 $row.find('.get-sub-show').hide();
                 $row.find('.get-sub-hide').show();
 
@@ -743,7 +743,7 @@
 
             $sub_row = $row.next('.get-sub-row').first();
             $sub_row.find('.get-sub-content').html('');
-            $sub_row.addClass('hidden');
+            $sub_row.hide();
 
             $row.find('.get-sub-show').show();
             $row.find('.get-sub-hide').hide();
