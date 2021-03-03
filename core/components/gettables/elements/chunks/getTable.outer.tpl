@@ -86,9 +86,15 @@
     </form>
     <table class="table">
       <thead>
-        <tr>
-            {foreach $thead.tr.ths as $th}
-                <th class="{$th.cls}" style="{$th.style}">{$th.content}</th>
+        <tr> 
+			{foreach $thead.tr.ths as $th}
+                <th class="{$th.cls}" style="{$th.style}">
+                    {$th.content} 
+                    <button class="filtr-btn filter"></button>
+                    <div class="filrt-window">
+                        текст
+                    </div>
+                </th>
             {/foreach}
         </tr>
       </thead>

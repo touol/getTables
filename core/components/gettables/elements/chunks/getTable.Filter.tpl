@@ -21,15 +21,19 @@
             </div>
         </div>
     {case 'checkbox'}
-        <div class="form-group">
-            
+        <div class="form-group"> 
             <div class="controls">
-        <select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
-            class="form-control {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
-            <option value="">Выберете {$filter.edit.placeholder}</option>
-            <option value="1" {if $filter.value === 1}selected{/if} >Да</option>
-            <option value="0" {if $filter.value === 0}selected{/if} >Нет</option>
-        </select>
+			<div class="select-box rL hid">
+				<select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
+					class="form-control {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
+					<option value="">Выберете {$filter.edit.placeholder}</option>
+					<option value="1" {if $filter.value === 1}selected{/if} >Да</option>
+					<option value="0" {if $filter.value === 0}selected{/if} >Нет</option>
+				</select>
+				<span class="select-btn"></span>
+			</div>
+				
+		
         </div>
         </div>
     {case 'select'}
@@ -63,10 +67,14 @@
                             value="{$filter.edit.value}" data-field="{$filter.edit.field}" name="{$filter.edit.field}" 
                             />
                     <span class="input-group-addon {if $filter.edit.hide_id}hidden{/if}" style="width:20%;padding: 0;">
-                        <input type="number" class="get-autocomplect-id" 
+						<span class="input-number__box ">
+                            <input type="number" class="get-autocomplect-id" 
                             value="{$edit.value}"  
                             placeholder="id" min="0"
                             style="width:100%;height: 30px;padding: 0;"/>
+                            <button class="arr-btn arr-btn__top"></button>
+                            <button class="arr-btn arr-btn__bottom"></button>
+                        </span>							
                     </span>
                     <input type="search" class="form-control get-autocomplect-content" value="{$filter.edit.content}" placeholder="{$filter.edit.placeholder}"/>
                     <div class="input-group-btn">

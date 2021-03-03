@@ -109,10 +109,22 @@ class getTables
 			unset($config['toJSON']);
 			$this->pdoTools->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
 		}
-
+        if(!empty($config['toFenom'])){
+			unset($config['toFenom']);
+			$this->pdoTools->addTime('toFenom '.$this->varexport($config,1));
+		}
         $this->pdoTools->addTime('__construct');
     }
-    
+
+    public function varexport($expression, $return=FALSE) {
+        $export = var_export($expression, TRUE);
+        $export = preg_replace("/^([ ]*)(.*)/m", '$1$1$2', $export);
+        $array = preg_split("/\r\n|\n|\r/", $export);
+        $array = preg_replace(["/\s*array\s\($/", "/\)(,)?$/", "/\s=>\s$/"], [NULL, ']$1', ' => ['], $array);
+        $export = join(PHP_EOL, array_filter(["["] + $array));
+        if ((bool)$return) return $export; else echo $export;
+    }
+
     public function addDebug($debug = [],$mes = '')
     {
         if($this->config['debug']) $this->debugs[] = ['mes'=>$mes,'debug'=>$debug];

@@ -2,6 +2,23 @@
 .ace_editor {
     font: 12px/normal 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
 } 
+
+.db{
+    display: block;
+}
+.inb{
+    display: inline-block;
+}
+.rL{
+    position: relative;
+}
+.abs{
+    position: absolute;
+}
+.hid{
+    overflow: hidden;
+}
+
 /*get-table subtable во всю страницу*/
 .in_all_page{
     position: fixed;
@@ -111,7 +128,7 @@
 /*    padding: 0;*/
 }
 .input-group .form-control, .input-group-addon, .input-group-btn {
- 
+    vertical-align: top;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
@@ -144,6 +161,7 @@
 }
 .get-table .table thead tr th{
     text-align: center;
+    position: relative;
 }
 
 .get-table .table>tbody>.get-table-tr>td, .get-table .table>tbody>.get-table-tr>th, .get-table .table>tfoot>.get-table-tr>td, .get-table .table>tfoot>.get-table-tr>th, .get-table .table>thead>.get-table-tr>td, .get-table .table>thead>.get-table-tr>th {
@@ -244,3 +262,190 @@
     box-shadow: none;
 }
 /*end get-table v-style от Валентина*/
+
+.ui-datepicker{
+    z-index: 100 !important;
+}
+
+/*стилизация элементов формы*/
+
+/* НАЧАЛО стилизация input type="number"*/
+/* Для Chrome убираю стрелочки  */
+.input-number__box input[type=number]::-webkit-inner-spin-button,
+.input-number__box input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+    text-align: center;
+    border: 0;
+    outline: 0}
+/* Для Firefox убираю стрелочки */
+.input-number__box input[type=number]{
+  -moz-appearance: textfield;
+    text-align: center;
+    border: 0;
+    outline: 0
+}
+.input-group-addon {
+    background-color: transparent;
+}
+.input-number__box{
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    padding-right: 15px;
+    min-width: 45px;
+}
+.input-number__box .arr-btn{
+    position: absolute;
+    height: 50%;
+    width: 10px;
+    right: 0;
+    background: none;
+    border: 0;
+    outline: 0;
+}
+.input-number__box .arr-btn::before{
+    content: '';
+    position: absolute; 
+    width: 7px;
+    height: 7px;
+    box-sizing: border-box;
+    border-top: 2px solid #555555;
+    border-left: 2px solid #555555;
+    top: 50%;
+    transform-origin: 50% 50%;
+    opacity: 0.5;
+    transition: all 200ms ease;
+}
+.input-number__box .arr-btn__top{
+    top: 0;
+}
+.input-number__box .arr-btn__top::before{ 
+    transform: rotate(45deg) translateX(-50%); 
+    left: 5px;
+    top: 10px;
+}
+.input-number__box .arr-btn:hover::before{
+    opacity: 1;
+}
+
+.input-number__box .arr-btn__bottom{
+    bottom: 0;
+}
+.input-number__box .arr-btn__bottom::before{
+    transform: rotate(45deg) translateX(-50%) scale(-1);
+    top: 2px;
+    left: 5px;
+}
+
+}
+/* КОНЕЦ стилизация input type="number"*/
+
+/*НАЧАЛО стилизация кнопку у select*/
+div.select-box{
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+}
+.select-box select{
+    box-sizing: border-box;
+    padding-right: 25px;
+    float: none !important;
+}
+.select-box select option{
+    cursor: pointer;
+}
+.select-box .select-btn{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 25px;
+    height: 893%;
+    background-color: #cccccc;
+    z-index: 10;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+.select-box .select-btn::after{
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    transform: rotate(-45deg) translateX(-50%) translateY(-50%);
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    top: 50%;
+    left: 50%;
+    transform-origin: top left;
+    pointer-events: none;
+    margin-top: -1px;
+}
+
+/*КОНЕЦ стилизация кнопку у select*/
+/*НАЧАЛО фильтр в заголовках таблицы*/
+.table th{
+    position: relative;
+    box-sizing: border-box;
+    padding-right: 20px !important;
+    vertical-align: middle !important;
+}
+.table th:first-child .filtr-btn,
+.table th:last-child .filtr-btn,
+.table th:first-child .filrt-window,
+.table th:last-child .filrt-window,
+.table th.no-filter{
+    display: none;
+}
+
+.table th:first-child, .table th:last-child{
+    padding-right: 8px !important;
+}
+.table th .filtr-btn{
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    bottom: 0;
+    right: 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    border: 1px solid #000; 
+}
+.table th .filtr-btn.filter{
+    background-image: url(../img/filter.svg)
+}
+.table th .filtr-btn.filter-sort-up{
+    background-image: url(../img/filter-sort-up.svg)
+}
+.table th .filtr-btn.filter-active{
+    background-image: url(../img/filter-active.svg)
+}
+.table th .filtr-btn.filter-sort-down{
+    background-image: url(../img/filter-sort-down.svg)
+}
+.table th .filrt-window{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 500px;
+    overflow: auto;
+    padding: 1rem;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.15); 
+    -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+    box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+    transform-origin: center top;
+    transform: scaleY(0);
+    transition: all 200ms ease;
+    z-index: 100;
+}
+.table th .filrt-window.filrt-window__open{
+    transform: scaleY(1);
+}
+/*НАЧАЛО фильтр в заголовках таблицы*/
