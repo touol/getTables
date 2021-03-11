@@ -90,10 +90,10 @@
 			{foreach $thead.tr.ths as $th}
                 <th class="{$th.cls}" style="{$th.style}">
                     {$th.content} 
-                    <button class="filtr-btn filter"></button>
+                    {*<button class="filtr-btn filter"></button>
                     <div class="filrt-window">
                         текст
-                    </div>
+                    </div>*}
                 </th>
             {/foreach}
         </tr>

@@ -11,7 +11,44 @@ if (empty($_REQUEST['action']) and empty($_REQUEST['gts_action'])) {
 
 //решение проблеммы с modx->cacheManager на beget.com. Но как оказалось запрещает доступ не админам.
 define('MODX_API_MODE', true);
-require dirname(dirname(dirname(dirname(__FILE__)))) . '/index.php';
+//require dirname(dirname(dirname(dirname(__FILE__)))) . '/index.php';
+if (file_exists(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.core.php')) {
+    /** @noinspection PhpIncludeInspection */
+    require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/config.core.php';
+} else {
+    require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/config.core.php';
+}
+$tstart= microtime(true);
+
+/* include the modX class */
+if (!@include_once (MODX_CORE_PATH . "model/modx/modx.class.php")) {
+    $errorMessage = 'Site temporarily unavailable';
+    @include(MODX_CORE_PATH . 'error/unavailable.include.php');
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    echo "<html><title>Error 503: Site temporarily unavailable</title><body><h1>Error 503</h1><p>{$errorMessage}</p></body></html>";
+    exit();
+}
+
+/* start output buffering */
+ob_start();
+
+/* Create an instance of the modX class */
+$modx= new modX();
+if (!is_object($modx) || !($modx instanceof modX)) {
+    ob_get_level() && @ob_end_flush();
+    $errorMessage = '<a href="setup/">MODX not installed. Install now?</a>';
+    @include(MODX_CORE_PATH . 'error/unavailable.include.php');
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    echo "<html><title>Error 503: Site temporarily unavailable</title><body><h1>Error 503</h1><p>{$errorMessage}</p></body></html>";
+    exit();
+}
+
+/* Set the actual start time */
+$modx->startTime= $tstart;
+
+$ctx = isset($_REQUEST['ctx']) && !empty($_REQUEST['ctx']) && is_string($_REQUEST['ctx']) ? $_REQUEST['ctx'] : 'mgr';
+$modx->initialize($ctx);
+
 /*require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
 require_once MODX_CORE_PATH.'config/'.MODX_CONFIG_KEY.'.inc.php';
 require_once MODX_CONNECTORS_PATH.'index.php';*/

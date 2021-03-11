@@ -577,7 +577,7 @@ class getTable
             
             //$this->pdoTools->addTime("getTable addFilterTable filter ".print_r($filter,1));
             
-            if(($filter['default']) and empty($this->getTables->REQUEST[$filter['edit']['field']])){
+            if($filter['default'] and empty($this->getTables->REQUEST[$filter['edit']['field']]) and $this->getTables->REQUEST[$filter['edit']['field']] !== "0"){
                 if($filter['default']){
                     if(!is_array($filter['default'])){
                         switch($filter['edit']['type']){

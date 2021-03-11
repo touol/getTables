@@ -513,6 +513,7 @@ class getTables
         
         
         $data = array(
+            'ctx' => $this->config['ctx'],
             'cssUrl' => $this->config['cssUrl'],
             'jsUrl' => $this->config['jsUrl'],
             'actionUrl' => $this->config['actionUrl'],
@@ -553,12 +554,6 @@ class getTables
         //$this->pdoTools->addTime("getTables handleRequest $action");
         $this->pdoTools->addTime("handleRequest $action");
         
-        $ctx = !empty($data['ctx'])
-            ? (string)$data['ctx']
-            : 'web';
-        if ($ctx != 'web') {
-            $this->modx->switchContext($ctx);
-        }
         if(isset($this->config['permission'][$action]))
             if(!$this->modx->hasPermission($this->config['permission'][$action])) return $this->error(['lexicon'=>'access_denied']);
         
