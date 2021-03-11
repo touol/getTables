@@ -150,4 +150,14 @@ return [
         'value' => false,
         'area' => 'gettables_main',
     ],
+    'load_frontend_sortable' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_main',
+    ],
+    'load_mgr_sortable' => [
+        'xtype' => 'combo-boolean',
+        'value' => true,
+        'area' => 'gettables_main',
+    ],
 ];

@@ -86,7 +86,7 @@ class getTable
         }  
 
         switch($action){
-            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy':
+            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy': case 'sort':
                 require_once('gettableprocessor.class.php');
                 $getTableProcessor = new getTableProcessor($this, $this->config);
                 return $getTableProcessor->run($action, $table, $data);
@@ -1274,8 +1274,14 @@ class getTable
         
         if(is_string($table['data']))
             $table['data'] = explode(",",$table['data']);
+        
         //$this->pdoTools->addTime("getTable compile table data".print_r($table['data'],1));
         if(empty($table['data'])) $table['data'] = [];
+        if(isset($table['sortable']) and is_array($table['sortable'])){
+            if($table['sortable']['field']){
+                $body_tr['sortable'] = true;
+            }
+        }
         $body_tr['data'] = array_merge($table['data'],$data);
         if(empty($body_tr['data'])) $body_tr['data'] = ['id'];
         //$this->pdoTools->addTime("getTable compile table body_tr".print_r($body_tr['data'],1));
@@ -1325,6 +1331,9 @@ class getTable
         if(isset($table['autosave'])) $table_compile['autosave'] = $table['autosave'];
         if(!empty($table['sub_where'])) $table_compile['sub_where'] = $table['sub_where'];
         if(!empty($table['sub_default'])) $table_compile['sub_default'] = $table['sub_default'];
+        if(isset($table['sortable']) and is_array($table['sortable'])){
+            $table_compile['sortable'] = $table['sortable'];
+        }
         //if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
         return $table_compile;
     }

@@ -2,7 +2,7 @@
 
 class getTables
 {
-    public $version = '1.5.26';
+    public $version = '1.5.28';
     /** @var modX $modx */
     public $modx;
     /** @var pdoFetch $pdoTools */
@@ -351,6 +351,7 @@ class getTables
                 'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
                 'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
                 'cellsselection' => '[[+jsUrl]]gettables.cellsselection.js',
+                'sortable' => '[[+jsUrl]]gettables.sortable.js',
             ],
             'css'=>[
                 'frontend_framework_style_css' => $this->modx->getOption('gettables_frontend_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
@@ -359,6 +360,7 @@ class getTables
                 'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.css',
                 'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
                 'cellsselection' => '[[+cssUrl]]gettables.cellsselection.css',
+                'sortable' => '[[+cssUrl]]gettables.sortable.css',
             ],
             'load'=>[
                 'load_frontend_jquery' => $this->modx->getOption('gettables_load_frontend_jquery','',0),
@@ -367,6 +369,7 @@ class getTables
                 'load_ace' => $this->modx->getOption('gettables_load_frontend_ace','',0),
                 'load_ckeditor' => $this->modx->getOption('gettables_load_frontend_ckeditor','',0),
                 'load_cellsselection' => $this->modx->getOption('gettables_load_frontend_cellsselection','',0),
+                'load_sortable' => $this->modx->getOption('gettables_load_frontend_sortable','',0),
             ],
             'mgr'=>[
                 'js'=>[
@@ -380,6 +383,7 @@ class getTables
                     'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
                     'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
                     'cellsselection' => '[[+jsUrl]]gettables.cellsselection.js',
+                    'sortable' => '[[+jsUrl]]gettables.sortable.js',
                 ],
                 'css'=>[
                     'frontend_framework_style_css' => $this->modx->getOption('gettables_mgr_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
@@ -388,6 +392,7 @@ class getTables
                     'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.css',
                     'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
                     'cellsselection' => '[[+cssUrl]]gettables.cellsselection.css',
+                    'sortable' => '[[+cssUrl]]gettables.sortable.css',
                 ],
                 'load'=>[
                     'load_frontend_jquery' => $this->modx->getOption('gettables_load_mgr_jquery','',0),
@@ -396,6 +401,7 @@ class getTables
                     'load_ace' => $this->modx->getOption('gettables_load_mgr_ace','',0),
                     'load_ckeditor' => $this->modx->getOption('gettables_load_mgr_ckeditor','',0),
                     'load_cellsselection' => $this->modx->getOption('gettables_load_mgr_cellsselection','',0),
+                    'load_sortable' => $this->modx->getOption('gettables_load_mgr_sortable','',0),
                 ],
             ],
         ];
@@ -482,6 +488,9 @@ class getTables
         if($CSS_JS['load']['load_cellsselection']){
             $csss[] = $CSS_JS['css']['cellsselection'];
         } 
+        if($CSS_JS['load']['load_sortable']){
+            $csss[] = $CSS_JS['css']['sortable'];
+        }
         if($config['add_css']){
             foreach(explode(",",$config['add_css']) as $acss){
                 $csss[] = $acss;
@@ -503,6 +512,10 @@ class getTables
         }
         if($CSS_JS['load']['load_cellsselection']){
             $jss[] = $CSS_JS['js']['cellsselection'];
+        } 
+
+        if($CSS_JS['load']['load_sortable']){
+            $jss[] = $CSS_JS['js']['sortable'];
         } 
 
         if($config['add_js']){

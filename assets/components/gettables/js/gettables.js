@@ -33,6 +33,9 @@
         Autocomplect: {
             load: getTablesConfig.callbacksObjectTemplate(),
         },
+        Sortable: {
+            sort: getTablesConfig.callbacksObjectTemplate(),
+        },
     };
 
     getTables.Callbacks.add = function (path, name, func) {
@@ -608,17 +611,6 @@
         remove: function (button_data, table_data, tr_data) {
             getTables.Message.close();
 
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
-
             var callbacks = getTables.Table.callbacks;
 
             callbacks.remove.response.success = function (response) {
@@ -630,17 +622,6 @@
         },
         update: function (button_data, table_data, tr_data) {
             getTables.Message.close();
-
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
 
             var callbacks = getTables.Table.callbacks;
 
@@ -656,16 +637,6 @@
         sets: function (button_data, table_data, trs_data) {
             getTables.Message.close();
 
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
             getTables.sendData.data = {
                 gts_action: button_data.action,
                 hash: table_data.hash,
@@ -686,16 +657,6 @@
         sub_show: function (button_data, table_data, tr_data) {
             getTables.Message.close();
 
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
             getTables.sendData.data = {
                 gts_action: button_data.action,
                 hash: table_data.hash,
@@ -709,7 +670,12 @@
             callbacks.sub_show.response.success = function (response) {
                 $row = getTables.sendData.$row;
 
-                $sub_row = $row.next('.get-sub-row').first();
+                colspan = $row.find('td').length - 1;
+                $sub_row = $('<tr class="get-sub-row" style="display:none;">' +
+                '<td class=""></td>' +
+                '<td class="get-sub-content" colspan="'+colspan+'"></td>' +
+                '</tr>');
+                $row.after($sub_row);
                 $sub_row.find('.get-sub-content').html(response.data.sub_content);
                 $sub_row.show();
               
@@ -729,98 +695,30 @@
         sub_hide: function (button_data, table_data, tr_data) {
             getTables.Message.close();
 
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
             $row = getTables.sendData.$row;
 
             $sub_row = $row.next('.get-sub-row').first();
-            $sub_row.find('.get-sub-content').html('');
-            $sub_row.hide();
+            //$sub_row.find('.get-sub-content').html('');
+            $sub_row.remove();
 
             $row.find('.get-sub-show').show();
             $row.find('.get-sub-hide').hide();
 
             return;
-            /*var callbacks = getTables.Table.callbacks;
             
-            callbacks.sub_hide.response.success = function (response) {
-                $row = getTables.sendData.$row;
-
-                $sub_row = $row.next('.get-sub-row').first();
-                $sub_row.find('.get-sub-content').html('');
-                $sub_row.addClass('hidden');
-                
-                $row.find('.get-sub-show').removeClass('hidden');
-                $row.find('.get-sub-hide').addClass('hidden');
-            };
-            
-            return getTables.send(getTables.sendData.data, getTables.Table.callbacks.sub_hide, getTables.Callbacks.Table.sub_hide);
-            */
         },
         refresh: function () {
             getTables.Message.close();
-
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
-            //console.log('refresh getTables.sendData',getTables.sendData);
-            //getTables.sendData.action = 'getTable/refresh';
             $table = getTables.sendData.$GtsApp;
             $form = $table.children(getTables.form);
 
-            //$form[0].reset();
             $form.find('.get-nav-page').val(1);
-            //getTables.Table.refresh();
-            //console.log('refresh $form',$form);
             $form.trigger('submit');
 
-            /*getTables.sendData.$form = null;
-            getTables.sendData.data = {
-                    hash: table_data.hash,
-                    table_name: table_data.name,
-                    gts_action: getTables.sendData.action
-                };
-            //console.log('refresh',getTables.sendData);
-            var callbacks = getTables.Table.callbacks;
-            
-            callbacks.refresh.response.success = function (response) {
-                $table = getTables.sendData.$GtsApp;
-                //console.log('response',response);
-                $table.find('tbody').html(response.data.html);
-                
-            };
-            
-            return getTables.send(getTables.sendData.data, getTables.Table.callbacks.refresh, getTables.Callbacks.Table.refresh);*/
         },
 
         filter: function () {
             getTables.Message.close();
-
-            // Checking for active ajax request
-            /*if (getTables.ajaxProgress) {
-                //noinspection JSUnresolvedFunction
-                getTables.$doc.ajaxComplete(function () {
-                    getTables.ajaxProgress = false;
-                    getTables.$doc.unbind('ajaxComplete');
-                    getTables.Modal.load();
-                });
-                return false;
-            }*/
 
             var callbacks = getTables.Table.callbacks;
 

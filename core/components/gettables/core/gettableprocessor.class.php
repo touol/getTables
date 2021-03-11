@@ -173,8 +173,10 @@ class getTableProcessor
     public function run($action, $table, $data = array())
     {
         
-        if(!(isset($table['actions'][$action]) or ($action == "autosave" and !empty($table['autosave'])))) 
+        if(!(isset($table['actions'][$action]) or ($action == "autosave" and !empty($table['autosave'])
+        or ($action == "sort" and !empty($table['sortable']))))){ 
             return $this->error("Action $action не найдено! ",$table);
+        }
 
         $this->current_action = $table['actions'][$action];
         $this->action = $action;
@@ -185,12 +187,10 @@ class getTableProcessor
             $edit_tables[$edit['class']][] = $edit;
         }
         
-        //проверка что данные можно редактировать. Хз знает зачем. И собираем данные для лога и комманд. 
-        //Обновление. Сейчас придумал тригеры и они будут собирать и проверять все. 
-        //if($table['commands']){
+        if($action != "sort"){
             $resp = $this->check_rows($table, $data);
             if(!$resp['success']) return $resp;
-        //}
+        }
         
         switch($action){
             case 'update':
@@ -214,12 +214,62 @@ class getTableProcessor
             case 'copy':
                 $response = $this->copy($table, $edit_tables, $data);
                 break;
+            case 'sort':
+                $response = $this->sort($table, $edit_tables, $data);
+                break;
             default:
                 $response = $this->error("Action $action не найдено! ",$table);
                 break;
         }
         
         return $response;
+    }
+    public function sort($table, $edit_tables, $data = array())
+    {
+		$class = $table["class"];
+        $source = $this->modx->getObject($class, $data['source_id']);
+		$target = $this->modx->getObject($class, $data['target_id']);
+        
+        if (empty($source) || empty($target)) {
+			return $this->error("Пустые индексы");
+		}
+        if(isset($table['sortable']) and is_array($table['sortable'])){
+            if($table['sortable']['field']){
+                $field = $table['sortable']['field'];
+                if(is_array($table['sortable']['where'])){
+                    $where = $table['sortable']['where'];
+                }else{
+                    $where = [];
+                }
+                $where_str = "";
+                if(!empty($where)){
+                    foreach($where as $k=>$v)
+                    $where_str .= " AND $k = $v";
+                }
+
+                if ($source->get($field) < $target->get($field)) {
+                    $this->modx->exec("UPDATE {$this->modx->getTableName($class)}
+                        SET $field = $field - 1 WHERE
+                            $field <= {$target->get($field)}
+                            AND $field > {$source->get($field)}
+                            AND $field > 0
+                    ".$where_str);
+        
+                } else {
+                    $this->modx->exec("UPDATE {$this->modx->getTableName($class)}
+                        SET $field = $field + 1 WHERE
+                        $field >= {$target->get($field)}
+                            AND $field < {$source->get($field)}
+                    ".$where_str);
+                }
+                $newRank = $target->get($field);
+                $source->set($field,$newRank);
+                $source->save();
+                return $this->success('Сохранено успешно',$saved);
+            }
+        }
+
+        return $this->error("Ошибка");
     }
     public function copy($table, $edit_tables, $data = array())
     {
@@ -581,6 +631,27 @@ class getTableProcessor
                     $obj = $this->modx->newObject($class);
                     $data['id'] = false;
                     $type = 'create';
+                    //sortable
+                    if(isset($table['sortable']) and is_array($table['sortable'])){
+                        if($table['sortable']['field']){
+                            $field = $table['sortable']['field'];
+                            if(is_array($table['sortable']['where'])){
+                                $where = $table['sortable']['where'];
+                            }else{
+                                $where = [];
+                            }
+                            $c = $this->modx->newQuery($class);
+                            $c->select("MAX($field) as max");
+                            $c->where($where);
+                            $max = 0;
+                            if ($c->prepare() && $c->stmt->execute()) {
+                                $max = $c->stmt->fetchColumn();
+                            }
+			                $set_data[$table['sortable']['field']] = $max + 1;
+                        }
+                    }
+                    // $this->getTables->addDebug($table['sortable'],'sortable update');
+                    // $this->getTables->addDebug($set_data,'$set_data update');
                 }else{
                     $obj = $this->modx->getObject($class,(int)$data['id']);
                     $type = 'update';
