@@ -1283,7 +1283,7 @@ class getTable
             }
         }
         $body_tr['data'] = array_merge($table['data'],$data);
-        if(empty($body_tr['data'])) $body_tr['data'] = ['id'];
+        //if(empty($body_tr['data'])) $body_tr['data'] = ['id'];
         //$this->pdoTools->addTime("getTable compile table body_tr".print_r($body_tr['data'],1));
         if(!empty($actions_row)){
             //собираем кнопки
