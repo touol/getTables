@@ -62,7 +62,9 @@
                  {/if}
             {case 'autocomplect'}
                 
-                <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$edit.select.name}" {if $edit.style} style="{$edit.style}"{/if}>
+                <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$edit.select.name}" 
+                {if $edit.search}data-search="{$edit.search}"{/if}
+                {if $edit.style} style="{$edit.style}"{/if}>
                   <div class="input-group">
                     <input type="hidden" class="get-autocomplect-hidden-id get-table-autosave" 
                             value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" 

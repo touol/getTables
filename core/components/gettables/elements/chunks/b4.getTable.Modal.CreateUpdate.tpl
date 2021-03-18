@@ -112,7 +112,9 @@
                                     </div>
                                 </div>
                              {case 'autocomplect'}
-                                <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$edit.select.name}" data-modal="1">
+                                <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$edit.select.name}" 
+                                {if $edit.search}data-search="{$edit.search}"{/if}
+                                data-modal="1">
                                   <label class="control-label" for="{$edit.field}">{$edit.label}</label>
                                   <div class="input-group">
                                     <input type="hidden" class="get-autocomplect-hidden-id" 
