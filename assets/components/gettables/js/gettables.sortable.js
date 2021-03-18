@@ -17,7 +17,7 @@
                 $source = $table.find('tr[data-id="'+rdata+'"]');
                 $target = $(e.target).closest('.get-table-tr');
 
-                getTables.sendData.$table = $table;
+                getTables.sendData.$GtsApp = $table;
                 getTables.sendData.$source = $source;
                 getTables.sendData.$target = $target;
                 getTables.sendData.data = {
@@ -30,9 +30,10 @@
                 var callbacks = getTables.Sortable.callbacks;
 
                 callbacks.sort.response.success = function (response) {
-                    $target = getTables.sendData.$target;
-                    $source = getTables.sendData.$source;
-                    $target.after($source);
+                    // $target = getTables.sendData.$target;
+                    // $source = getTables.sendData.$source;
+                    // $target.after($source);
+                    getTables.Table.refresh();
                 };
                 getTables.send(getTables.sendData.data, getTables.Sortable.callbacks.sort, getTables.Callbacks.Sortable.sort);
                 

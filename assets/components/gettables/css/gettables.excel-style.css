@@ -264,7 +264,7 @@
 /*end get-table v-style от Валентина*/
 
 .ui-datepicker{
-    z-index: 100 !important;
+    /* z-index: 100 !important; */
 }
 
 /*стилизация элементов формы*/

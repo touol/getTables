@@ -84,6 +84,17 @@ class getSelect
                     $where[$field] = $value;
                 }
             }
+			$search = $data['search'];
+			if(!empty($search)){
+                foreach($select['where'] as $field=>$value){
+                    foreach($search as $s){
+						if($s['field'] == $value){
+							$where[$field] = $s['value'];
+						}
+					}
+                }
+            }
+			//$this->getTables->addDebug($where,'autocomplect  $where');
             if(!empty($where)){
                 if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
                 $select['pdoTools']['where'] = array_merge($select['pdoTools']['where'],$where);

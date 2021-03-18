@@ -300,12 +300,12 @@ class getTables
     {
         if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_'.$this->config['frontend_framework_style']))){
             foreach($propSet->getProperties() as $name=>$prop){
-                $this->config[$name] = $prop;
+                if(!isset($this->config[$name])) $this->config[$name] = $prop;
             }
             $this->pdoTools->addTime("load propertySet ".'getTables_'.$this->config['frontend_framework_style']);    
         }else if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_bootstrap_v3'))){
             foreach($propSet->getProperties() as $name=>$prop){
-                $this->config[$name] = $prop;
+                if(!isset($this->config[$name])) $this->config[$name] = $prop;
             }
             $this->pdoTools->addTime("load propertySet ".'getTables_getTables_bootstrap_v3');
         }

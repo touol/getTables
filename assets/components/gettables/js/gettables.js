@@ -785,14 +785,13 @@
     window.getTables = getTables;
 })(window, document, jQuery, getTablesConfig);
 
-
 //autocomplect
 (function (window, document, $, getTables, getTablesConfig) {
     getTables.Autocomplect = {
         callbacks: {
             load: getTablesConfig.callbacksObjectTemplate(),
         },
-
+        
         initialize: function () {
             getTables.$doc
                 .on('click', 'body', function (e) {
@@ -804,14 +803,45 @@
                     e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $table = $(this).closest('.get-table');
-
+                    var search_on = false;
+					var search = [];
+					var search1;
+					if($autocomplect.data('search') != undefined){
+						search_on = true;
+						search_str = $autocomplect.data('search');
+						search1 = search_str.split(",");
+						
+					}
+					
                     hash = $table.data('hash');
-                    if ($autocomplect.data('modal') == 1) {
+                    if($autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
                         //console.info("hash",hash);
-                    }
+						var parent_current0 = $(this).closest('.gts-form').find('input[name="parent_current"]').val();
+						if(parent_current0 != undefined){
+							var parent_current = JSON.parse(parent_current0);
+						}
+                    }else{
+						var parent_current =  $table.data('parent_current');
+						//console.info("parent_current0",parent_current0);
+					}
+					
+					if(search_on){
+						search1.forEach((element) => {
+							var search2;
+							search2 = element.split(":");
+							if(search2[0] == "parent"){
+								if(parent_current.tr_data[search2[1]] != undefined){
+									search.push({
+										field:search2[1],
+										value:parent_current.tr_data[search2[1]]
+									});
+								}
+							}
+						});
+					}
                     $menu = $autocomplect.find('.get-autocomplect-menu');
-                    if ($menu.is(':visible')) {
+                    if($menu.is(':visible')){
                         $menu.hide();
                         return;
                     }
@@ -822,9 +852,10 @@
                         hash: hash,
                         select_name: $autocomplect.data('name'),
                         query: '',
+						search: search,
                     };
                     var callbacks = getTables.Autocomplect.callbacks;
-
+            
                     callbacks.load.response.success = function (response) {
                         $menu = getTables.sendData.$autocomplect.find('.get-autocomplect-menu');
                         $menu.html(response.data.html).show();
@@ -842,9 +873,9 @@
                 });
             getTables.$doc
                 .on('change keypress', '.get-autocomplect-id', function (e) {
-
-                    if (e.type == "keypress") {
-                        if (e.which != 13) {
+                    
+                    if(e.type == "keypress"){
+                        if(e.which != 13){
                             return;
                         }
                     }
@@ -854,10 +885,10 @@
                     //table_data = $table.data();
                     //getTables.sendData.$GtsApp = $table;
                     hash = $table.data('hash');
-                    if ($autocomplect.data('modal') == 1) {
+                    if($autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
-
-                    }
+                        
+                    } 
                     getTables.sendData.$autocomplect = $autocomplect;
                     getTables.sendData.data = {
                         gts_action: $autocomplect.data('action'),
@@ -867,7 +898,7 @@
                         id: $(this).val(),
                     };
                     var callbacks = getTables.Autocomplect.callbacks;
-
+            
                     callbacks.load.response.success = function (response) {
                         $autocomplect = getTables.sendData.$autocomplect;
                         $autocomplect.find('.get-autocomplect-hidden-id').val($autocomplect.find('.get-autocomplect-id').val()).trigger('change');
@@ -882,18 +913,53 @@
                     $table = $(this).closest('.get-table');
                     //table_data = $table.data();
                     hash = $table.data('hash');
-                    if ($autocomplect.data('modal') == 1) {
+                    var search_on = false;
+					var search = [];
+					var search1;
+					if($autocomplect.data('search') != undefined){
+						search_on = true;
+						search_str = $autocomplect.data('search');
+						search1 = search_str.split(",");
+						
+					}
+					
+                    hash = $table.data('hash');
+                    if($autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
-                    }
+                        //console.info("hash",hash);
+						var parent_current0 = $(this).closest('.gts-form').find('input[name="parent_current"]').val();
+						if(parent_current0 != undefined){
+							var parent_current = JSON.parse(parent_current0);
+						}
+                    }else{
+						var parent_current =  $table.data('parent_current');
+						//console.info("parent_current0",parent_current0);
+					}
+					
+					if(search_on){
+						search1.forEach((element) => {
+							var search2;
+							search2 = element.split(":");
+							if(search2[0] == "parent"){
+								if(parent_current.tr_data[search2[1]] != undefined){
+									search.push({
+										field:search2[1],
+										value:parent_current.tr_data[search2[1]]
+									});
+								}
+							}
+						});
+					} 
                     getTables.sendData.$autocomplect = $autocomplect;
                     getTables.sendData.data = {
                         gts_action: $autocomplect.data('action'),
                         hash: hash,
                         select_name: $autocomplect.data('name'),
                         query: $(this).val(),
+						search: search,
                     };
                     var callbacks = getTables.Autocomplect.callbacks;
-
+            
                     callbacks.load.response.success = function (response) {
                         $menu = getTables.sendData.$autocomplect.find('.get-autocomplect-menu');
                         $menu.html(response.data.html).show();
@@ -904,7 +970,7 @@
                 .on('change', '.get-autocomplect-content', function (e) {
                     e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
-                    if ($(this).val() == "") {
+                    if($(this).val() == ""){
                         $autocomplect.find('.get-autocomplect-id').val(0);
                         $autocomplect.find('.get-autocomplect-hidden-id').val(0).trigger('change');
                     }
