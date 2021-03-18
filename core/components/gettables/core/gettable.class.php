@@ -1134,7 +1134,7 @@ class getTable
                 $temp_tds2[$field] = $value;
             }
         }
-        $data = [];
+        $data = ['id'];
         $edits = [];
         $filter_position = 0;
         //$this->pdoTools->addTime("getTable compile temp_tds2 $name ".print_r($temp_tds2,1));
