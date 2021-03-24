@@ -399,10 +399,13 @@
                     //console.info('button.get-table-row');
                     if (typeof (button_data.modal) != "undefined") {
                         getTables.Modal.load(button_data, table_data, tr_data);
-                    } else if (button_data.name == 'subtable') {
+                    }else if (button_data.name == 'subtable') {
                         if (button_data.js_action != "undefined")
                             getTables.Table[button_data.js_action](button_data, table_data, tr_data);
-                    } else {
+                    }else if (button_data.name == 'remove') {
+                        trs_data = [tr_data];
+                        getTables.Table.remove(button_data, table_data, trs_data);
+                    }else {
                         trs_data = [tr_data];
                         getTables.Table.sets(button_data, table_data, trs_data);
                     }
@@ -476,7 +479,9 @@
                     //console.info('trs_data',trs_data);
                     if (typeof (button_data.modal) != "undefined") {
                         getTables.Modal.load(button_data, table_data, trs_data);
-                    } else {
+                    }else if (button_data.name == 'remove') {
+                        getTables.Table.remove(button_data, table_data, trs_data);
+                    }else{
                         getTables.Table.sets(button_data, table_data, trs_data);
                     }
                 });
@@ -608,8 +613,17 @@
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.autosave, getTables.Callbacks.Table.autosave);
         },
-        remove: function (button_data, table_data, tr_data) {
+        remove: function (button_data, table_data, trs_data) {
             getTables.Message.close();
+            
+            getTables.sendData.data = {
+                gts_action: button_data.action,
+                hash: table_data.hash,
+                table_name: table_data.name,
+                table_data: table_data,
+                button_data: button_data,
+                trs_data: trs_data
+            };
 
             var callbacks = getTables.Table.callbacks;
 

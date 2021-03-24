@@ -1,7 +1,16 @@
 Changelog for getTables.
+1.5.34-alpha
+- исправлено добавление table_name для autosave.
+- исправлен search_field в нижнем регистре.
+
+1.5.33-alpha
+- добавлено события getTablesBeforeUpdateCreate,getTablesBeforeRemove,getTablesAfterRemove.
+- исправлен js callbacks remove.
+
 1.5.32-alpha
 ==============
 - В autoselect подстановка в поиск данных из родительской таблицы.
+- добавлено событие getTablesAfterUpdateCreate.
 
 1.5.31-alpha
 ==============

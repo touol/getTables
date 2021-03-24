@@ -1331,6 +1331,7 @@ class getTable
         if(isset($table['autosave'])) $table_compile['autosave'] = $table['autosave'];
         if(!empty($table['sub_where'])) $table_compile['sub_where'] = $table['sub_where'];
         if(!empty($table['sub_default'])) $table_compile['sub_default'] = $table['sub_default'];
+        if(!empty($table['event'])) $table_compile['event'] = $table['event'];
         if(isset($table['sortable']) and is_array($table['sortable'])){
             $table_compile['sortable'] = $table['sortable'];
         }

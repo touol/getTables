@@ -494,8 +494,10 @@ class getTableProcessor
 				}
 			}
 		}
+        $set_data['table_name'] = $data['table_name'];
         return $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
     }
+
     public function sets($table, $edit_tables, $data = array())
     {
         
@@ -511,6 +513,7 @@ class getTableProcessor
                 if($data['button_data']['toggle'] == 'enable') $value = 1;
             }
             $set_data[$this->current_action['field']] = $value;
+            $set_data['table_name'] = $data['table_name'];
             $saved[] = $this->update($table, $edit_tables, $set_data);
         }
         
@@ -529,6 +532,22 @@ class getTableProcessor
     {
         $saved = [];
         if(empty($data['trs_data'])) return $this->error('trs_data пусто');
+        if($table['event']){
+            $getTablesBeforeRemove = $this->modx->invokeEvent('getTablesBeforeRemove', array(
+                'data'=>$data,
+            ));
+            if (is_array($getTablesBeforeRemove)) {
+                $canSave = false;
+                foreach ($getTablesBeforeRemove as $msg) {
+                    if (!empty($msg)) {
+                        $canSave .= $msg."\n";
+                    }
+                }
+            } else {
+                $canSave = $getTablesBeforeRemove;
+            }
+            if(!empty($canSave)) return $this->error($canSave);
+        }
         foreach($data['trs_data'] as $tr_data){
             if(!(int)$tr_data['id']){
                 $saved[] = $this->error('$tr_data[id] пусто'); continue;
@@ -563,6 +582,11 @@ class getTableProcessor
             if(!$s['success']) $error = "Удаление запрещено или возникла ошибка \r\n";
         }
         if(!$error){
+            if($table['event']){
+                $response = $this->modx->invokeEvent('getTablesAfterRemove', array(
+                    'data'=>$data,
+                ));
+            }
             return $this->success('Удалено успешно',$saved);
         }else{
             return $this->error($error,$saved);
@@ -573,7 +597,23 @@ class getTableProcessor
     public function update($table, $edit_tables, $data = array(), $create = false, $tr_data = [])
     {
         $saved = [];
-        
+        if($table['event']){
+            $getTablesBeforeUpdateCreate = $this->modx->invokeEvent('getTablesBeforeUpdateCreate', array(
+                'data'=>$data,
+                'create'=>$create,
+            ));
+            if (is_array($getTablesBeforeUpdateCreate)) {
+                $canSave = false;
+                foreach ($getTablesBeforeUpdateCreate as $msg) {
+                    if (!empty($msg)) {
+                        $canSave .= $msg."\n";
+                    }
+                }
+            } else {
+                $canSave = $getTablesBeforeUpdateCreate;
+            }
+            if(!empty($canSave)) return $this->error($canSave);
+        }
         ////$this->getTables->addDebug($edit_tables,'update $edit_tables ');
         foreach($table['edits'] as $edit){
             if(isset($data[$edit['field']])){
@@ -606,7 +646,7 @@ class getTableProcessor
             }
             
             
-            
+            $set_data_event = $set_data;
             if(isset($this->current_action['processors'][$class])){
                 if(empty($set_data['context_key'])) $set_data['context_key'] = 'web';
                 //добавить триггер before
@@ -692,15 +732,18 @@ class getTableProcessor
                 if(!empty($edit['search_fields'])){
                     $saveobj = ['success'=>false,'class'=>$class,'field'=>$edit['field']];
                     //$this->getTables->addDebug($edit,'$edit update search_fields '.$edit['field']);
-                    ////$this->getTables->addDebug($data,'$data');
+                    //$this->getTables->addDebug($tr_data,'$tr_data');
                     //$this->getTables->addDebug($edit['search_fields'],'111 update $edit[search_fields]');
                     $search_fields = [];
                     foreach($edit['search_fields'] as $k=>$v){
                         $search_fields[$k] = $v;
                         //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
                         foreach($tr_data as $tr_field=>$tr_value){
-                            if($tr_field == $k){
+                            //$this->getTables->addDebug($search_fields[$k],$v." $tr_field ".$k.' 1 k update $$search_fields');
+                            if($tr_field == mb_strtolower($v)){
+                                
                                 $search_fields[$k] = $tr_value;
+                                //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
                             }
                         }
                         ////$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 2 k update $$search_fields');
@@ -709,7 +752,7 @@ class getTableProcessor
                         }
                         ////$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 3 k update $$search_fields');
                     }
-                    ////$this->getTables->addDebug($search_fields,'222 update $$search_fields');
+                    //$this->getTables->addDebug($search_fields,'222 update $$search_fields');
                     ////$this->getTables->addDebug($search_fields,'$search_fields');
                     if($edit['multiple']){
                         $cols = $this->modx->getIterator($class,$search_fields);
@@ -810,6 +853,13 @@ class getTableProcessor
             if(!$s['success']) $error = "Object {$s['class']} {$s['field']} не сохранен update \r\n";
         }
         if(!$error){
+            if($table['event']){
+                $response = $this->modx->invokeEvent('getTablesAfterUpdateCreate', array(
+                    'data'=>$data,
+                    'set_data'=>$set_data_event,
+                    'create'=>$create,
+                ));
+            }
             return $this->success('Сохранено успешно',['id'=>$data['id'],'saved'=>$saved]);
         }else{
             return $this->error($error,$saved);
