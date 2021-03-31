@@ -36,6 +36,13 @@ if ($transport->xpdo) {
 				$Event->set('groupname', 'getTables');
 				$Event->save();
 			}
+			if(!$Event = $modx->getObject('modEvent',array('name'=>'getTablesRunTriggers'))){
+				$Event = $modx->newObject('modEvent');
+				$Event->set('name', 'getTablesRunTriggers');
+				$Event->set('service',1); 
+				$Event->set('groupname', 'getTables');
+				$Event->save();
+			}
 			break;
         case xPDOTransport::ACTION_UNINSTALL:
             $events = $modx->getIterator('modEvent', array('groupname'=>'getTables'));

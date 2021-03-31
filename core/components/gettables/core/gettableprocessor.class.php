@@ -33,6 +33,26 @@ class getTableProcessor
     }
     public function run_triggers($class, $type, $method, $fields, $object_old, $object_new =[])
     {
+        $getTablesRunTriggers = $this->modx->invokeEvent('getTablesRunTriggers', array(
+            'class'=>$class,
+            'type'=>$type,
+            'method'=>$method,
+            'fields'=>$fields,
+            'object_old'=>$object_old,
+            'object_new'=>$object_new,
+        ));
+        if (is_array($getTablesRunTriggers)) {
+            $canSave = false;
+            foreach ($getTablesRunTriggers as $msg) {
+                if (!empty($msg)) {
+                    $canSave .= $msg."\n";
+                }
+            }
+        } else {
+            $canSave = $getTablesRunTriggers;
+        }
+        if(!empty($canSave)) return $this->error($canSave);
+
         $triggers = $this->config['triggers'];
         if(isset($triggers[$class]['function']) and isset($triggers[$class]['model'])){
             $response = $this->getTables->loadService($triggers[$class]['model']);

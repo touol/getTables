@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.5.35-alpha
+- добавлено событие getTablesRunTriggers.
+
 1.5.34-alpha
 - исправлено добавление table_name для autosave.
 - исправлен search_field в нижнем регистре.
