@@ -361,11 +361,18 @@ class getTable
                     }
                 }
                 if(isset($table['sub_where_current'])){
-                    $sub_where_current = json_decode($table['sub_where_current'],1);
+                    if(isset($this->getTables->REQUEST['sub_where_current'])){
+                        $sub_where_current = $this->getTables->REQUEST['sub_where_current'];
+                    }else{
+                        $sub_where_current = json_decode($table['sub_where_current'],1);
+                    }    
+                    //$this->getTables->addDebug($sub_where_current,'sub_where_current  td');
                     if(isset($sub_where_current[$td['field']])){
                         $td['value'] = $sub_where_current[$td['field']];
                     }
                 }
+                //$this->getTables->addDebug($this->getTables->REQUEST['sub_where_current'],'$this->getTables->REQUEST[sub_where_current]');
+                
                 
                 if(isset($td['content'])){
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);

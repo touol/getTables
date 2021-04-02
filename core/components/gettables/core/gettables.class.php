@@ -83,6 +83,7 @@ class getTables
                 //$this->pdoTools->addTime("getTables {$this->config['config']} ".print_r($config_set,1));
                 unset($this->config['config']);
                 $this->config = array_merge($config_set, $this->config);
+                $config = array_merge($config_set, $config);
             }
         }
 

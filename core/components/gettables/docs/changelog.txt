@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.5.36-alpha
+- исправлено sub_where_current.
+
 1.5.35-alpha
 - добавлено событие getTablesRunTriggers.
 
