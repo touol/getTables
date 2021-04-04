@@ -73,8 +73,11 @@ class getTable
         $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
         //$this->pdoTools->addTime('REQUEST2'.print_r($this->getTables->REQUEST,1));
 
-        if($action == "fetch" and !$this->config['isAjax'])
+        if($action == "fetch"){
+            if($this->config['isAjax']) $data = [];
             return $this->fetch($data);
+        } // and !$this->config['isAjax'])
+            
 
         //$this->getTables->addDebug($data['table_name'],'handleRequest  $table_name');
         if(!$table = $this->getTables->getClassCache('getTable',$data['table_name'])){
