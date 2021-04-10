@@ -751,6 +751,7 @@ class getTable
                 'modal' => [
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
+                    'EditFormtpl'=>'getTableEditFormTpl',
                 ],
                 'tag' =>'button',
                 'attr' => '',
@@ -766,6 +767,7 @@ class getTable
                 'modal' => [
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
+                    'EditFormtpl'=>'getTableEditFormTpl',
                 ],
                 'tag' =>'button',
                 'attr' => '',

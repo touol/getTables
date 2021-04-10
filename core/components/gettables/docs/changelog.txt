@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.6.0-alpha
+- Контент полей модальных окон вынесен в отдельный чанк getTable.EditForm.tpl.
+
 1.5.37-alpha
 - Разрешен getTable/fetch по ajax.
 

@@ -88,7 +88,15 @@ if ($transport->xpdo) {
                         'area' => '',
                         'value' => 'getTable.action.tpl',
                     ),
-
+                    'getTableEditFormTpl' => array(
+                        'name' => 'getTableEditFormTpl',
+                        'desc' => 'getTableEditFormTpl',
+                        'type' => 'textfield',
+                        'options' => array(),
+                        'lexicon' => '',
+                        'area' => '',
+                        'value' => 'getTable.EditForm.tpl',
+                    ),
                 ),
             ));
             if ($prop_bootstrap_v3->save()) {
@@ -178,7 +186,15 @@ if ($transport->xpdo) {
                         'area' => '',
                         'value' => 'getTable.action.tpl',
                     ),
-
+                    'getTableEditFormTpl' => array(
+                        'name' => 'getTableEditFormTpl',
+                        'desc' => 'getTableEditFormTpl',
+                        'type' => 'textfield',
+                        'options' => array(),
+                        'lexicon' => '',
+                        'area' => '',
+                        'value' => 'b4.getTable.EditForm.tpl',
+                    ),
                 ),
             ));
             if ($prop_bootstrap_v4->save()) {

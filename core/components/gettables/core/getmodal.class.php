@@ -123,6 +123,14 @@ class getModal
         
         //if(!empty($table['force'])) $edits = $this->defaultFieldSet($edits,$table['force']);
         //return $this->error("getModal fetchTableModal modal! ",$tr_data);
+        if(isset($this->config[$modal['EditFormtpl']])){
+			$EditFormtpl = $this->config[$modal['EditFormtpl']];
+		}else{
+			$EditFormtpl = $modal['EditFormtpl'];
+		}
+        foreach($edits as &$edit){
+            $edit['modal_content'] = $this->pdoTools->getChunk($EditFormtpl, ['edit'=>$edit]);
+        }
         $modal['edits'] = $edits;
         //$this->getTables->addDebug($modal,'fetchTableModal $modal ');
 		if(isset($this->config[$modal['tpl']])){

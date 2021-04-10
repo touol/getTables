@@ -63,5 +63,12 @@ return [
         'file' => 'b4.getTabs',
         'description' => '',
     ],
-    
+    'b4.getTable.EditForm.tpl' => [
+        'file' => 'b4.getTable.EditForm',
+        'description' => '',
+    ],
+    'getTable.EditForm.tpl' => [
+        'file' => 'getTable.EditForm',
+        'description' => '',
+    ],
 ];
