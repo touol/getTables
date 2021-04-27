@@ -109,11 +109,13 @@
                     <input type="text" class="form-control get-autocomplect-content" value="{$edit.content}" 
                     placeholder="{$edit.placeholder}" 
                     {if $edit.readonly}readonly{/if}/>
-                    <div class="input-group-append">
+                    {if !$edit.readonly}
+                        <div class="input-group-append">
                         <button class="btn get-autocomplect-all">
                             <span class="fa fa-caret-down"></span>
                         </button>
-                    </div>
+                        </div>
+                    {/if}
                     </div>
                     <ul class="dropdown-menu get-autocomplect-menu" role="menu">
                         

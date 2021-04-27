@@ -11,10 +11,23 @@
     };
 
     var isMouseDown = false;//нажата ли левая клавиша мыши
+    
+    var isSelectEnable = false;
 
     getTables.CellsSelection = {
         initialize: function () {
-            addEventListeners();
+            //addEventListeners();
+            document.addEventListener('keydown', function(event){
+                if (event.repeat == false && event.shiftKey && event.ctrlKey && ['S','S'].includes(event.key) ) {
+                    if(isSelectEnable){
+                        removeEventListeners();
+                        isSelectEnable = false;
+                    }else{
+                        addEventListeners();
+                        isSelectEnable = true;
+                    }
+                }
+            })
         },
         
     };
@@ -61,7 +74,12 @@
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
     function getTableCells($table){ return $table.find('th, td'); }
-
+    
+    function removeEventListeners()
+    {
+        $(document).unbind('.'+systemSettings.eventNamespace);
+    }
+    
     function addEventListeners(){
         $(document)
             .on(getEventNameWithPluginNamespace('mouseover'),'.get-table td', onMouseOver)//.mouseover(onMouseOver)

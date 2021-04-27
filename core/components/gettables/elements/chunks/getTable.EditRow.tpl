@@ -84,11 +84,13 @@
                     <input type="search" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"
                     {if $edit.readonly}readonly{/if}
                     />
-                    <div class="input-group-btn">
-                      <button class="btn get-autocomplect-all">
-                          <span class="caret"></span>
-                      </button>
-                    </div>
+                    {if !$edit.readonly}
+                        <div class="input-group-btn">
+                            <button class="btn get-autocomplect-all">
+                                <span class="caret"></span>
+                            </button>
+                        </div>
+                    {/if}
                   </div>
                   <ul class="dropdown-menu get-autocomplect-menu" role="menu">
                       

@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.6.1-alpha
+- Включение и выключение выделение ячеек в таблице и подсчет суммы по Ctrl+Shift+s.
+- исправлено readonly на autocomplect.
+
 1.6.0-alpha
 - Контент полей модальных окон вынесен в отдельный чанк getTable.EditForm.tpl.
 
