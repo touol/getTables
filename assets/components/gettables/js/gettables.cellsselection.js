@@ -20,6 +20,7 @@
             document.addEventListener('keydown', function(event){
                 if (event.repeat == false && event.shiftKey && event.ctrlKey && ['S','S'].includes(event.key) ) {
                     if(isSelectEnable){
+                        deselectAll2();
                         removeEventListeners();
                         isSelectEnable = false;
                     }else{
@@ -243,10 +244,24 @@
                 if($(event.target).closest($table).length==0) deselectAll($table);
             }
     }
+    function deselectAll2() {
+        $(".gtsCellsSelectionSum").remove();
+        var selectedCells = $(document).find('.'+settings.selectedCellClass);;//TODO:исправить на локальные изменения только
+        var length = 0;
+
+        /*selectedCells.each(function(i, cell) {
+            length++;
+            $(cell).removeClass(settings.selectedCellClass);
+        });*/
+        //or
+        selectedCells.removeClass(settings.selectedCellClass);
+
+        return length;
+    }
 
     function deselectAll($table) {
         $(".gtsCellsSelectionSum").remove();
-        var selectedCells = getSelectedCells($table);//TODO:исправить на локальные изменения только
+        var selectedCells = $table.find('.'+settings.selectedCellClass);;//TODO:исправить на локальные изменения только
         var length = 0;
 
         /*selectedCells.each(function(i, cell) {

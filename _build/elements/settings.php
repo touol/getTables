@@ -142,7 +142,7 @@ return [
     ],
     'load_frontend_cellsselection' => [
         'xtype' => 'combo-boolean',
-        'value' => false,
+        'value' => true,
         'area' => 'gettables_main',
     ],
     'load_mgr_cellsselection' => [
