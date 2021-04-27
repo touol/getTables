@@ -460,7 +460,7 @@
                     if ($(this).data('action') == 'getTable/export_excel') {
                         $filter_form = $table.children('form');
                         query = $filter_form.serialize();
-                        window.open(getTablesConfig.actionUrl + '?' + query + '&gts_action=getTable/export_excel', '_blank');
+                        window.open(getTablesConfig.actionUrl + '?' + query + '&gts_action=getTable/export_excel&ctx=' + getTablesConfig.ctx, '_blank');
                         return;
                     }
                     $trs_check = $table.children('table').children('tbody').children('.get-table-tr').find('.get-table-check-row:checked');

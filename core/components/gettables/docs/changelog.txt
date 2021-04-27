@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.6.2-alpha
+- исправлено export_excel.
+
 1.6.1-alpha
 - Включение и выключение выделение ячеек в таблице и подсчет суммы по Ctrl+Shift+s.
 - исправлено readonly на autocomplect.
