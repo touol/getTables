@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.6.3-alpha
+- добавлено search_where по sub_where_current.
+
 1.6.2-alpha
 - исправлено export_excel.
 

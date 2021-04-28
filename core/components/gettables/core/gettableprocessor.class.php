@@ -758,6 +758,14 @@ class getTableProcessor
                     foreach($edit['search_fields'] as $k=>$v){
                         $search_fields[$k] = $v;
                         //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
+                        if(isset($this->getTables->REQUEST['sub_where_current'])){
+                            foreach($this->getTables->REQUEST['sub_where_current'] as $f=>$f_v){
+                                if($f == mb_strtolower($v)){
+                                    $search_fields[$k] = $f_v;
+                                    //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
+                                }
+                            }
+                        }
                         foreach($tr_data as $tr_field=>$tr_value){
                             //$this->getTables->addDebug($search_fields[$k],$v." $tr_field ".$k.' 1 k update $$search_fields');
                             if($tr_field == mb_strtolower($v)){
