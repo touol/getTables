@@ -38,7 +38,7 @@ class getTables
             'assetsUrl' => $assetsUrl,
             'cssUrl' => $assetsUrl . 'css/',
             'jsUrl' => $assetsUrl . 'js/',
-            'ctx' => 'web',
+            'ctx' => $this->modx->context->key,
             'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
             
            /* 'getTableOuterTpl' => 'getTable.outer.tpl',
