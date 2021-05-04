@@ -1,4 +1,8 @@
 Changelog for getTables.
+
+1.6.4-alpha
+- частично переведено на англиский.
+
 1.6.3-alpha
 - добавлено search_where по sub_where_current.
 

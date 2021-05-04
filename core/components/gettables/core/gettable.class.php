@@ -744,7 +744,7 @@ class getTable
         $default_actions = [
             'create' =>[
                 'action'=>'getTable/create',
-                'title'=>'Создать',
+                'title'=>$this->modx->lexicon('gettables_create'),
                 'cls' => 'btn',
                 'icon' => "$icon_prefix-plus",
                 'topBar' => [],
@@ -760,7 +760,7 @@ class getTable
             ],
             'update' =>[
                 'action'=>'getTable/update',
-                'title'=>'Изменить',
+                'title'=>$this->modx->lexicon('gettables_edit'),
                 'cls' => 'btn',
                 'icon' => "$icon_prefix-edit",//'glyphicon glyphicon-edit',
                 'row' => [],
@@ -776,7 +776,7 @@ class getTable
             ],
             'remove' =>[
                 'action'=>'getTable/remove',
-                'title'=>'Удалить',
+                'title'=>$this->modx->lexicon('gettables_delete'),
                 'cls' => 'btn btn-danger',
                 'icon' => "$icon_prefix-trash", //'glyphicon glyphicon-trash',
                 //'topBar' => [],
@@ -788,8 +788,8 @@ class getTable
             ],
             'toggle' =>[
                 'action'=>"getTable/toggle",
-                'title'=>['Включить','Выключить'],
-                'multiple'=>['Включить','Выключить'],
+                'title'=>[$this->modx->lexicon('gettables_enable'),$this->modx->lexicon('gettables_disable')],
+                'multiple'=>[$this->modx->lexicon('gettables_enable'),$this->modx->lexicon('gettables_disable')],
                 'cls' => ['btn btn-danger','btn btn-success'],
                 'icon' => $icon_prefix == 'fa fa' ? "$icon_prefix-power-off" : 'glyphicon glyphicon-off',
                 'field' => 'published',
@@ -800,7 +800,7 @@ class getTable
             ],
             'subtable' =>[
                 'action'=>"getTable/subtable",
-                'title'=>['Открыть','Закрыть'],
+                'title'=>[$this->modx->lexicon('gettables_open'),$this->modx->lexicon('gettables_close')],//['Открыть','Закрыть'],
                 'cls' => ['btn get-sub-show ','btn get-sub-hide'],
                 'icon' => [$icon_prefix == 'fa fa' ? "$icon_prefix-eye" : 'glyphicon glyphicon-eye-open'
                     ,$icon_prefix == 'fa fa' ? "$icon_prefix-eye-slash" : 'glyphicon glyphicon-eye-close'],
@@ -830,7 +830,7 @@ class getTable
             ],
             'copy' =>[
                 'action'=>"getTable/copy",
-                'title'=>'Копировать',
+                'title'=>$this->modx->lexicon('gettables_copy'), //'Копировать',
                 'cls'=>'btn',
                 'row' => [],
                 'multiple' => ['title'=>'Скопировать выбранное'],
@@ -841,9 +841,9 @@ class getTable
             ],
             'export_excel' =>[
                 'action'=>"getTable/export_excel",
-                'title'=>'Экспорт в excel',
+                'title'=>$this->modx->lexicon('gettables_export_to_excel'), //'Экспорт в excel',
                 'cls'=>'btn',
-                'multiple' => ['title'=>'Экспорт в excel'],
+                'multiple' => ['title'=>$this->modx->lexicon('gettables_export_to_excel')],
                 'icon' => $icon_prefix == 'fa fa' ? "fas fa-file-excel" : 'glyphicon glyphicon-export', //'glyphicon-glyphicon-duplicate',
                 'tag' =>'button',
                 'attr' => '',
@@ -1301,7 +1301,7 @@ class getTable
             //собираем кнопки
             //$buttons = $this->compileActionButtons($actions_row);
              //text-right
-            $ths[] = ['cls'=>'text-right','name'=>'actions','content'=> "Действия"];
+            $ths[] = ['cls'=>'text-right','name'=>'actions','content'=> $this->modx->lexicon('gettables_actions')];
             $tds[] = ['cls'=>'text-right','name'=>'actions','content'=> implode('&nbsp;',$actions_row),'style'=>'white-space: nowrap;'];
         }
         //$this->pdoTools->addTime("getTable compile buttons {ignore}".print_r($actions_row,1)."{/ignore}");

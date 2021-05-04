@@ -2,6 +2,23 @@
 include_once 'setting.inc.php';
 
 $_lang['gettables'] = 'getTables';
+
+$_lang['gettables_create'] = 'Создать';
+$_lang['gettables_edit'] = 'Изменить';
+$_lang['gettables_delete'] = 'Удалить';
+$_lang['gettables_enable'] = 'Включить';
+$_lang['gettables_disable'] = 'Выключить';
+$_lang['gettables_open'] = 'Открыть';
+$_lang['gettables_close'] = 'Закрыть';
+$_lang['gettables_copy'] = 'Копировать';
+$_lang['gettables_export_to_excel'] = 'Экспорт в excel';
+$_lang['gettables_saved_successfully'] = 'Сохранено успешно'; //Saved successfully
+$_lang['gettables_removed_successfully'] = 'Удалено успешно';
+$_lang['gettables_removed_error'] = "Удаление запрещено или возникла ошибка \r\n";//Deletion prohibited or an error occurred
+$_lang['gettables_row_not_found'] = 'Строка таблицы не найдена!'; //The table row was not found!
+$_lang['gettables_actions'] = 'Действия';
+$_lang['gettables_empty_indexes'] = "Пустые индексы";//Empty indexes
+
 $_lang['gettables_menu_desc'] = 'Пример расширения для разработки.';
 $_lang['gettables_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 

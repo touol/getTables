@@ -195,7 +195,7 @@ class getTableProcessor
         
         if(!(isset($table['actions'][$action]) or ($action == "autosave" and !empty($table['autosave'])
         or ($action == "sort" and !empty($table['sortable']))))){ 
-            return $this->error("Action $action не найдено! ",$table);
+            return $this->error("Action $action not found! ",$table);
         }
 
         $this->current_action = $table['actions'][$action];
@@ -238,7 +238,7 @@ class getTableProcessor
                 $response = $this->sort($table, $edit_tables, $data);
                 break;
             default:
-                $response = $this->error("Action $action не найдено! ",$table);
+                $response = $this->error("Action $action not found! ",$table);
                 break;
         }
         
@@ -251,7 +251,7 @@ class getTableProcessor
 		$target = $this->modx->getObject($class, $data['target_id']);
         
         if (empty($source) || empty($target)) {
-			return $this->error("Пустые индексы");
+			return $this->error('gettables_empty_indexes');
 		}
         if(isset($table['sortable']) and is_array($table['sortable'])){
             if($table['sortable']['field']){
@@ -285,17 +285,17 @@ class getTableProcessor
                 $newRank = $target->get($field);
                 $source->set($field,$newRank);
                 $source->save();
-                return $this->success('Сохранено успешно',$saved);
+                return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
             }
         }
 
-        return $this->error("Ошибка");
+        return $this->error("Error");
     }
     public function copy($table, $edit_tables, $data = array())
     {
         
         $saved = [];
-        if(empty($data['trs_data'])) return $this->error('trs_data пусто');
+        if(empty($data['trs_data'])) return $this->error('trs_data empty');
         
         foreach($this->old_rows as $row){
             $old_row = $row;
@@ -336,7 +336,7 @@ class getTableProcessor
             }
         }
         if(!$error){
-            return $this->success('Сохранено успешно',$saved);
+            return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
         }else{
             return $this->error($error,$saved);
         }
@@ -346,10 +346,10 @@ class getTableProcessor
     {
         $saved = [];
         if(!$source = $this->modx->getObject($class,(int)$old_row['id']) or !$dest = $this->modx->getObject($class,(int)$new_row['id'])){
-            return $this->error('class не найдено',array('class'=>$class));
+            return $this->error('class not found',array('class'=>$class));
         }
         if(!$childs = $source->getMany($child_alias)){
-            return $this->error('child_alias не найдено',array('child_alias'=>$child_alias));
+            return $this->error('child_alias not found',array('child_alias'=>$child_alias));
         }
         foreach($childs as $ch){
             if($newchild = $this->modx->newObject($child_class,$ch->toArray())){
@@ -357,7 +357,7 @@ class getTableProcessor
                 $newchild->save();
             }
         }
-        return $this->success('Сохранено успешно',$saved);
+        return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
     }
 
 
@@ -366,7 +366,7 @@ class getTableProcessor
         
         $saved = [];
         if(!$subtable = $this->getTables->getClassCache('getTable',$subtable_name)){
-            return $this->error('subtable не найдено',array('subtable_name'=>$subtable_name));
+            return $this->error('subtable not found',array('subtable_name'=>$subtable_name));
         }
         $pdoConfig = $subtable['pdoTools'];
         $pdoConfig['return'] = 'data';
@@ -397,7 +397,7 @@ class getTableProcessor
         $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
         $rows = $this->pdoTools->run();
         if(!is_array($rows) or count($rows) == 0){
-            return $this->success('Строка таблицы не найдена!');
+            return $this->success($this->modx->lexicon('gettables_row_not_found'));
         }
         
         $edit_tables = [];
@@ -424,7 +424,7 @@ class getTableProcessor
             if(!$s['success']) $error = "Object {$s['class']} {$s['field']} не сохранен copy_subtables \r\n";
         }
         if(!$error){
-            return $this->success('Сохранено успешно',$saved);
+            return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
         }else{
             return $this->error($error,$saved);
         }
@@ -479,7 +479,7 @@ class getTableProcessor
             $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
             $rows = $this->pdoTools->run();
             if(!is_array($rows) or count($rows) == 0){
-                return $this->error('Строка таблицы не найдена!');
+                return $this->error('gettables_row_not_found');
             }else{
                 $this->old_rows = $rows;
             }
@@ -489,10 +489,10 @@ class getTableProcessor
     }
     public function autosave($table, $edit_tables, $data = array())
     {
-        if(empty($data['tr_data'])) return $this->error('tr_data пусто');
+        if(empty($data['tr_data'])) return $this->error('tr_data empty');
 
         if(!(int)$data['tr_data']['id']){
-            return $this->error('$tr_data[id] пусто');
+            return $this->error('$tr_data[id] empty');
         }
         $set_data['id'] = (int)$data['tr_data']['id'];
         $set_data[$data['td']['field']] = $data['td']['value'];
@@ -522,10 +522,10 @@ class getTableProcessor
     {
         
         $saved = [];
-        if(empty($data['trs_data'])) return $this->error('trs_data пусто');
+        if(empty($data['trs_data'])) return $this->error('trs_data empty');
         foreach($data['trs_data'] as $tr_data){
             if(!(int)$tr_data['id']){
-                $saved[] = $this->error('$tr_data[id] пусто'); continue;
+                $saved[] = $this->error('$tr_data[id] empty'); continue;
             }
             $set_data['id'] = (int)$tr_data['id'];
             $value = 0;
@@ -542,7 +542,7 @@ class getTableProcessor
             if(!$s['success']) $error = "Object {$s['class']} {$s['field']} не сохранен sets \r\n";
         }
         if(!$error){
-            return $this->success('Сохранено успешно',$saved);
+            return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
         }else{
             return $this->error($error,$saved);
         }
@@ -551,7 +551,7 @@ class getTableProcessor
     public function remove($table, $edit_tables, $data = array())
     {
         $saved = [];
-        if(empty($data['trs_data'])) return $this->error('trs_data пусто');
+        if(empty($data['trs_data'])) return $this->error('trs_data empty');
         if($table['event']){
             $getTablesBeforeRemove = $this->modx->invokeEvent('getTablesBeforeRemove', array(
                 'data'=>$data,
@@ -570,7 +570,7 @@ class getTableProcessor
         }
         foreach($data['trs_data'] as $tr_data){
             if(!(int)$tr_data['id']){
-                $saved[] = $this->error('$tr_data[id] пусто'); continue;
+                $saved[] = $this->error('$tr_data[id] empty'); continue;
             }
             if(!$obj = $this->modx->getObject($table['class'],(int)$tr_data['id'])){
                 $saved[] = $this->error('Объект не найден');
@@ -593,13 +593,13 @@ class getTableProcessor
                     //'field'=>$ks,
                     //'value'=>$set_value,
                     ];
-                $saved[] = $this->success('Удалено успешно',$saved);
+                $saved[] = $this->success($this->modx->lexicon('gettables_removed_successfully'),$saved);
             } 
         }
         
         $error = '';
         foreach($saved as $s){
-            if(!$s['success']) $error = "Удаление запрещено или возникла ошибка \r\n";
+            if(!$s['success']) $error = $this->modx->lexicon('gettables_removed_error');
         }
         if(!$error){
             if($table['event']){
@@ -607,7 +607,7 @@ class getTableProcessor
                     'data'=>$data,
                 ));
             }
-            return $this->success('Удалено успешно',$saved);
+            return $this->success($this->modx->lexicon('gettables_removed_successfully'),$saved);
         }else{
             return $this->error($error,$saved);
         }
@@ -741,7 +741,7 @@ class getTableProcessor
             }
             unset($edit_tables[$class]);
         }
-        if($create and !$data['id']) return $this->error("Не удалось создать объект $class",$saved);
+        if($create and !$data['id']) return $this->error("Failed to create object $class",$saved);
         ////$this->getTables->addDebug($edit_tables,'update 2 $edit_tables ');
         
         foreach($edit_tables as $class=>$edits){
@@ -888,7 +888,7 @@ class getTableProcessor
                     'create'=>$create,
                 ));
             }
-            return $this->success('Сохранено успешно',['id'=>$data['id'],'saved'=>$saved]);
+            return $this->success($this->modx->lexicon('gettables_saved_successfully'),['id'=>$data['id'],'saved'=>$saved]);
         }else{
             return $this->error($error,$saved);
         }
