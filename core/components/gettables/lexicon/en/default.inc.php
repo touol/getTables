@@ -18,7 +18,7 @@ $_lang['gettables_removed_error'] = "Deletion prohibited or an error occurred \r
 $_lang['gettables_row_not_found'] = 'The table row was not found!'; //The table row was not found!
 $_lang['gettables_actions'] = 'Actions';
 $_lang['gettables_empty_indexes'] = "Empty indexes";//Empty indexes
-
+$_lang['gettables_save'] = 'Save';//Save
 
 
 $_lang['gettables_menu_desc'] = 'A sample Extra to develop from.';

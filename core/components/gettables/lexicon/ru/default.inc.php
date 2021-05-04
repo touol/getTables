@@ -18,6 +18,7 @@ $_lang['gettables_removed_error'] = "Удаление запрещено или 
 $_lang['gettables_row_not_found'] = 'Строка таблицы не найдена!'; //The table row was not found!
 $_lang['gettables_actions'] = 'Действия';
 $_lang['gettables_empty_indexes'] = "Пустые индексы";//Empty indexes
+$_lang['gettables_save'] = 'Сохранить';//Save
 
 $_lang['gettables_menu_desc'] = 'Пример расширения для разработки.';
 $_lang['gettables_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';

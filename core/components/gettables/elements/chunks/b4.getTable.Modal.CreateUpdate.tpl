@@ -11,7 +11,7 @@
                <input type="hidden" name="parent_current" value='{$modal.parent_current}'>
           {/if}
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+            <button type="button" class="close" data-dismiss="modal" aria-label="{'gettables_close' | lexicon}">
               <span aria-hidden="true">×</span>
             </button>
             <h4 class="modal-title" id="myModalLabel">{$modal.title}</h4>
@@ -22,8 +22,8 @@
             {/foreach}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-            <button type="submit" name="gts_action" value="{$modal.table_action}" class="btn btn-primary">Сохранить изменения</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{'gettables_close' | lexicon}</button>
+            <button type="submit" name="gts_action" value="{$modal.table_action}" class="btn btn-primary">{'gettables_save' | lexicon}</button>
           </div>
       </form>
     </div>
