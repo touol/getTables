@@ -57,17 +57,22 @@ class getTable
         
         
         $this->getTables->REQUEST = $_REQUEST;
-        if($data['sub_where_current']){
+        if($data['sub_where_current'] and is_string($data['sub_where_current'])){
             $table['sub_where_current'] = $data['sub_where_current'];
             $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = json_decode($data['sub_where_current'],1);
         }else if($data['table_data']['sub_where_current']){
             $table['sub_where_current'] = json_encode($data['table_data']['sub_where_current']);
             $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = $data['table_data']['sub_where_current'];
-        } 
-        if($data['parent_current']){
+        }else if(is_array($data['sub_where_current'])){
+            $table['sub_where_current'] = json_encode($data['sub_where_current']);
+            $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = $data['sub_where_current'];
+        }  
+        if($data['parent_current'] and is_string($data['parent_current'])){
             $data['parent_current'] = json_decode($data['parent_current'],1);
         }else if($data['table_data']['parent_current']){
             $data['parent_current'] = $data['table_data']['parent_current'];
+        }else if(is_array($data['parent_current'])){
+            $data['parent_current'] = $data['parent_current'];
         }
         //$this->pdoTools->addTime('REQUEST1'.print_r($this->getTables->REQUEST,1));
         $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
@@ -111,8 +116,97 @@ class getTable
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->export_excel($action, $table, $data);
                 break;
+            case 'filter_checkbox_load':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->filter_checkbox_load($action, $table, $data);
+                break;
         }
         return $this->error("Метод $action в классе $class не найден!");
+    }
+    public function filter_checkbox_load($action, $table, $data)
+    {
+        
+        //$table['pdoTools']['limit'] = 0;
+        //$table2 = $this->generateData($table);
+        $table['pdoTools2'] = $table['pdoTools'];
+        $table = $this->addFilterTable($table);
+        
+        $table['pdoTools2']['limit'] = 0;
+        unset($table['pdoTools2']['offset']);
+        $table['pdoTools2']['return'] = 'data';
+        
+        $table['pdoTools2']['where'] = array_merge($table['pdoTools2']['where'],$table['query']['where']);
+        $select = "DISTINCT ";
+        $checkbox_edit = [];
+        foreach($table['edits'] as $edit){
+            if($edit['field'] == $data['field']){
+                $select .= $edit['class'].".".$data['field'];
+                $checkbox_edit = $edit;
+            }
+        }
+        $table['pdoTools2']['select'] = $select;
+        $table['pdoTools2']['sortby'] = [
+            $data['field']=>'DESC',
+        ];
+        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
+        $rows = $this->pdoTools->run();
+        $checkboxs = [];
+        switch($checkbox_edit['type']){
+            case 'date': case 'text': case 'decimal': 
+                foreach($rows as $row){
+                    $checkboxs[] = [
+                        'value'=>$row[$data['field']],
+                        'content'=>$row[$data['field']],
+                    ];
+                }
+                break;
+            case 'textarea':
+                foreach($rows as $row){
+                    $checkboxs[] = [
+                        'value'=>$row[$data['field']],
+                        'content'=> substr(strip_tags($row[$data['field']]),0,40),
+                    ];
+                }
+                break;
+            case 'select':
+                switch($checkbox_edit['select']['type']){
+                    case 'select':
+                        foreach($rows as $row){
+                            foreach($checkbox_edit['select']['data'] as $d){
+                                if($d['id']==$row[$data['field']]) $content=$d['content'];
+                            }
+                            $checkboxs[] = [
+                                'value'=>$row[$data['field']],
+                                'content'=> $content,
+                            ];
+                        }
+                        break;
+                    case 'autocomplect':
+                        foreach($rows as $row){
+                            $content = "";
+                            if($row[$data['field']] != 0){
+                                $pdoTools = $checkbox_edit['select']['pdoTools'];
+                                $pdoTools['where'] = [
+                                    $pdoTools['class'].".id"=>$row[$data['field']],
+                                ];
+                                $pdoTools['limit'] = 1;
+                                $pdoTools['return'] = 'data';
+                                $this->pdoTools->setConfig($pdoTools);
+                                $select = $this->pdoTools->run();
+
+                                $content=$this->pdoTools->getChunk('@INLINE '.$checkbox_edit['select']['content'],$select[0]);
+                            }
+                            $checkboxs[] = [
+                                'value'=>$row[$data['field']],
+                                'content'=> $content,
+                            ];
+                        }
+                        break;
+                }
+                    
+        }
+        $html=$this->pdoTools->getChunk($this->config['getTableFilterCheckboxTpl'],['checkboxs' => $checkboxs]);
+        return $this->success('',['html'=>$html]);
     }
     public function export_excel($action, $table, $data)
     {
@@ -363,6 +457,9 @@ class getTable
                         $td['value'] = number_format($td['value'],$td['number'][0],$td['number'][1],$td['number'][2]);
                     }
                 }
+                // if($td['edit']['type'] == 'textarea' and $this->getTables->REQUEST['gts_action'] != 'getTable/export_excel'){
+                //     $td['value'] = '{ignore}'.$td['value'].'{/ignore}';
+                // }
                 if(isset($table['sub_where_current'])){
                     if(isset($this->getTables->REQUEST['sub_where_current'])){
                         $sub_where_current = $this->getTables->REQUEST['sub_where_current'];
@@ -370,9 +467,9 @@ class getTable
                         $sub_where_current = json_decode($table['sub_where_current'],1);
                     }    
                     //$this->getTables->addDebug($sub_where_current,'sub_where_current  td');
-                    if(isset($sub_where_current[$td['field']])){
-                        $td['value'] = $sub_where_current[$td['field']];
-                    }
+                    // if(isset($sub_where_current[$td['field']])){
+                    //     $td['value'] = $sub_where_current[$td['field']];
+                    // }
                 }
                 //$this->getTables->addDebug($this->getTables->REQUEST['sub_where_current'],'$this->getTables->REQUEST[sub_where_current]');
                 
@@ -674,7 +771,11 @@ class getTable
                                 $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
                             }
                             if(strpos($filter['edit']['where_field'], ':IN') !== false){
-                                if(!is_array($filter['value'])) $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                                if(!is_array($filter['value'])){
+                                    $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                                }else{
+                                    $query[$filter['edit']['where_field']] = $filter['value'];
+                                }
                             }else{
                                 $query[$filter['edit']['where_field']] = $filter['value'];
                             }
@@ -706,7 +807,11 @@ class getTable
                 }
                 $filter['value'] = $value;
             }    
-                
+            //checkbox filter
+            if(isset($this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']])){
+                $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 
+                    $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
+            }
             $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
         }
         
@@ -716,7 +821,20 @@ class getTable
         $table['query'] = ['where'=>$query];
         //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 1');
         foreach($table['filters'] as $f){
-            if($f['section']) $table['topBar'][$f['section']]['filters'][] = $f;
+            if($f['section'] == 'topBar/topline/filters') $table['topBar'][$f['section']]['filters'][] = $f;
+            if($f['section'] == 'th'){
+                foreach($table['thead']['tr']['ths'] as &$th){
+                    if($th['field']==$f['edit']['field']){
+                        $th['filter'] = 1;
+                        $th['filters'][] = $f;
+                        if(!empty($f['value']) or $f['value'] === '0' or $f['value'] === 0){
+                            $th['filter_class'] = 'filter-active';
+                        }else{
+                            $th['filter_class'] = 'filter';
+                        }
+                    }
+                }
+            }
         }
         
         
@@ -729,7 +847,8 @@ class getTable
             }
             $table['topBar']['topBar/topline/filters']['offset'] = 10-$offset;
             $table['topBar']['topBar/topline/filters/search'] = array_pop($table['topBar']['topBar/topline/filters']['filters']);
-        } 
+        }
+        
         //$this->getTables->addDebug($table,'addFilterTable  $table');
         return $table;
     }
@@ -1220,22 +1339,12 @@ class getTable
                 $edit['select'] = $this->config['selects'][$edit['select']];
             }
             if(isset($value['pdoTools'])) $edit['pdoTools'] = $value['pdoTools'];
-            if(isset($value['edit']) and $value['edit'] == false ){
-                
-            }else{
-                if(isset($value['modal_only'])){
-                    $edit['modal_only'] = 1;
-                    $edits[] = $edit;
-                    continue;
-                }
-                $td['edit'] = $edit;
-                $edits[] = $edit;
-            }
-            
+
+            //фильтры
             if(isset($value['filter'])){
                 
                 $tf = [
-                    'section' => 'topBar/topline/filters',
+                    'section' => 'th',
                     'position' => $filter_position,
                     'cls' => '',
                     'cols'=>2,
@@ -1259,6 +1368,19 @@ class getTable
                 }
                 $filters[] = $tf;
             }
+            //end фильтры
+            if(isset($value['edit']) and $value['edit'] == false ){
+                
+            }else{
+                if(isset($value['modal_only'])){
+                    $edit['modal_only'] = 1;
+                    $edits[] = $edit;
+                    continue;
+                }
+                $td['edit'] = $edit;
+                $edits[] = $edit;
+            }
+            
             if(isset($value['data'])) $data[] = $value['field'];
             if(isset($value['actions'])){
                 $td['actions'] = $this->compileActions($value['actions']);
@@ -1308,7 +1430,8 @@ class getTable
         
         $topBar = $this->compileTopBar($actions);
         //$this->pdoTools->addTime("getTable compileTopBar topBar {ignore}".print_r($topBar,1)."{/ignore}");
-        if(!isset($table['checkbox'])) unset($topBar['topBar/topline/multiple']);
+        //пока убрал
+        //if(!isset($table['checkbox'])) unset($topBar['topBar/topline/multiple']);
         $topBar['hash'] = $this->config['hash'];
         $topBar['table_name'] = $name;
         

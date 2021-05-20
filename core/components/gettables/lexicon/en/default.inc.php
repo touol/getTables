@@ -19,8 +19,14 @@ $_lang['gettables_row_not_found'] = 'The table row was not found!'; //The table 
 $_lang['gettables_actions'] = 'Actions';
 $_lang['gettables_empty_indexes'] = "Empty indexes";//Empty indexes
 $_lang['gettables_save'] = 'Save';//Save
+$_lang['gettables_delete_confirm'] = 'Are you sure you want to delete this data?';//Are you sure you want to delete this data?
 
+//фильтры
+$_lang['filtr_btn_checkbox_load'] = 'load';
+$_lang['filtr_btn_checkbox_apply'] = 'Apply';
+$_lang['filtr_checkbox_select_all'] = 'Select all';
 
+//не используется
 $_lang['gettables_menu_desc'] = 'A sample Extra to develop from.';
 $_lang['gettables_intro_msg'] = 'You can select multiple items by holding Shift or Ctrl button.';
 

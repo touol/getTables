@@ -19,7 +19,14 @@ $_lang['gettables_row_not_found'] = 'Строка таблицы не найде
 $_lang['gettables_actions'] = 'Действия';
 $_lang['gettables_empty_indexes'] = "Пустые индексы";//Empty indexes
 $_lang['gettables_save'] = 'Сохранить';//Save
+$_lang['gettables_delete_confirm'] = 'Вы уверены, что хотите удалить эти данные?';//Are you sure you want to delete this data?
 
+//фильтры
+$_lang['filtr_btn_checkbox_load'] = 'Загрузить';
+$_lang['filtr_btn_checkbox_apply'] = 'Применить';
+$_lang['filtr_checkbox_select_all'] = 'Выбрать всё';
+
+//не используется
 $_lang['gettables_menu_desc'] = 'Пример расширения для разработки.';
 $_lang['gettables_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 

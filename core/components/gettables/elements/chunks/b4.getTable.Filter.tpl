@@ -60,11 +60,11 @@
                 <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$filter.edit.select.name}" {if $edit.style} style="{$edit.style}"{/if}>
                   <div class="input-group">
                     <input type="hidden" class="get-autocomplect-hidden-id" 
-                            value="{$filter.edit.value}" data-field="{$filter.edit.field}" name="{$filter.edit.field}" 
+                            value="{$filter.value}" data-field="{$filter.edit.field}" name="{$filter.edit.field}" 
                             />
                     <span class="input-group-prepend" style="width: 20%;{if $filter.edit.hide_id}display:none;{/if}">
                         <input type="number" class="get-autocomplect-id" 
-                            value="{$edit.value}"  
+                            value="{$filter.value}"  
                             placeholder="id" min="0"
                             style="width:100%;"/>
                     </span>

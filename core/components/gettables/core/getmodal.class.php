@@ -59,6 +59,10 @@ class getModal
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->fetchTableModal($data);
                 break;
+            case 'fetchModalRemove':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->fetchModalRemove($data);
+                break;
             default:
                 return $this->error("Метод $action в классе $class не найден!");
         }
@@ -69,7 +73,13 @@ class getModal
             return $this->error("Метод $action в классе $class не найден!");
         }*/
     }
-
+    public function fetchModalRemove($data)
+    {
+        
+        $html = $this->pdoTools->getChunk($this->config['getTableModalRemoveTpl']);
+        
+        return $this->success('',array('html'=>$html));
+    }
     public function fetchTableModal($data)
     {
         //echo json_encode($data).'! '.$data['data']['button_data']['action'].'!';
@@ -170,6 +180,7 @@ class getModal
         //$this->getTables->addDebug($table['pdoTools'],'$table[pdoTools] ');
         $pdoConfig['limit'] = 1;
         $pdoConfig['return'] = 'data';
+        //$pdoConfig['where'] = [];
         foreach($tr_data as $k=>$v){
             foreach($edits as $edit){
                 if($edit['field'] == $k and $k == 'id')

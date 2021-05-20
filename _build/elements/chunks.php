@@ -71,4 +71,12 @@ return [
         'file' => 'getTable.EditForm',
         'description' => '',
     ],
+    'getTable.FilterCheckbox.tpl' => [
+        'file' => 'getTable.FilterCheckbox',
+        'description' => '',
+    ],
+    'getTable.Modal.Remove.tpl' => [
+        'file' => 'getTable.Modal.Remove',
+        'description' => '',
+    ],
 ];
