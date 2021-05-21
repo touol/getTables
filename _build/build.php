@@ -1,5 +1,5 @@
 <?php
-
+set_time_limit(300);
 class getTablesPackage
 {
     /** @var modX $modx */
