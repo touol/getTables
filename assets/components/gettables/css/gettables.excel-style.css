@@ -447,4 +447,8 @@ div.select-box{
 .table th .filrt-window.filrt-window__open{
     transform: scaleY(1);
 }
-/*НАЧАЛО фильтр в заголовках таблицы*/
+/*КОНЕЦ фильтр в заголовках таблицы*/
+
+.get-tables-tabs input[type="checkbox"]{
+    transform: scale(1.3);
+}
