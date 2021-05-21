@@ -20,6 +20,10 @@ $_lang['gettables_actions'] = 'Actions';
 $_lang['gettables_empty_indexes'] = "Empty indexes";//Empty indexes
 $_lang['gettables_save'] = 'Save';//Save
 $_lang['gettables_delete_confirm'] = 'Are you sure you want to delete this data?';//Are you sure you want to delete this data?
+$_lang['gettables_page'] = 'Page';//Page
+$_lang['gettables_page_from'] = 'From';//From
+$_lang['gettables_on_page'] = 'On page:';//On page
+$_lang['gettables_all'] = 'All';//All
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'load';

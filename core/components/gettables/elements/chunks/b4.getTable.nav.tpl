@@ -5,10 +5,10 @@
     <button class="btn btn-sm get-nav-prev" type="button" >
        <span class="fa fa-chevron-left"></span>
     </button>
-    <label class="control-label" for="getPage_{$name}">Страница</label>
+    <label class="control-label" for="getPage_{$name}">{'gettables_page' | lexicon}</label>
     <input type="number" id="getPage_{$name}" min="1" max="{$page.max}" name="page" value="{$page.current}" 
         style="width:60px;" class="form-control input-sm get-nav-page">
-    <label class="control-label" for="getPage_{$name}">Из {$page.max}</label>
+    <label class="control-label" for="getPage_{$name}">{'gettables_page_from' | lexicon} {$page.max}</label>
     
     <button class="btn btn-sm get-nav-next" type="button" >
        <span class="fa fa-chevron-right"></span>
@@ -17,7 +17,7 @@
        <span class="fa fa-forward"></span>
     </button>
     
-    <label class="control-label" for="getLimit_{$name}">На странице:</label>
+    <label class="control-label" for="getLimit_{$name}">{'gettables_on_page' | lexicon}</label>
     <select name="limit" id="getLimit_{$name}" class="form-control input-sm">
         <option value="10" {if $page.limit == 10}selected{/if}>10</option>
         <option value="20" {if $page.limit == 20}selected{/if}>20</option>
@@ -28,4 +28,4 @@
     <button class="btn btn-sm get-nav-refresh" type="button" >
        <span class="fa fa-refresh"></span>
     </button>
-    <label class="float-right">Всего <span class="get-page-total">{$page.total}</span></label>
+    <label>{'gettables_all' | lexicon} <span class="get-page-total">{$page.total}</span></label>

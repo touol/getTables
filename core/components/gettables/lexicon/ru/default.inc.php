@@ -20,6 +20,11 @@ $_lang['gettables_actions'] = 'Действия';
 $_lang['gettables_empty_indexes'] = "Пустые индексы";//Empty indexes
 $_lang['gettables_save'] = 'Сохранить';//Save
 $_lang['gettables_delete_confirm'] = 'Вы уверены, что хотите удалить эти данные?';//Are you sure you want to delete this data?
+$_lang['gettables_page'] = 'Стр.';//Page
+$_lang['gettables_page_from'] = 'Из';//From
+$_lang['gettables_on_page'] = 'На стр.:';//On page
+$_lang['gettables_all'] = 'Всего';//All
+
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'Загрузить';
