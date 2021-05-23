@@ -1217,14 +1217,27 @@
              $(this).parent().children('.filrt-window').addClass('filrt-window__open');
         }
         
-    })
+    });
 //    клик вне фильтра
     $(document).mouseup(function (e){ // событие клика по веб-документу
         var filter = $(".filrt-window"); // тут указываем ID элемента
+       
         if (!filter.is(e.target) // если клик был не по нашему блоку
-            && filter.has(e.target).length === 0) { // и не по его дочерним элементам
+            && filter.has(e.target).length === 0) { // и не по его дочерним элементам и не по календарю
             filter.removeClass('filrt-window__open'); // скрываем его
         }
     });
+    
+//    код - щуп. Удалить на боевой версии 
+     let calendar = $('.ui-state-default');
+    
+    $(document).on('click', function(e){
+        console.log(e.target);
+    });
+    calendar.on('click', function(e){
+        
+        alert("Aringilda boltushka");
+    });
+//    код щуп - конец
 })(); 
 
