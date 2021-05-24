@@ -522,7 +522,7 @@ div.select-box {
 /*КОНЕЦ фильтр в заголовках таблицы*/
 
 /*НАЧАЛО Увеличение checkbox */
-.get-tables-tabs input[type="checkbox"] {
+.get-table input[type="checkbox"] {
     transform: scale(1.4);
 }
 
