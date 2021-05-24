@@ -6,35 +6,13 @@
     {/if}
     data-hash="{$hash}" class="get-table {$cls} {if $in_all_page}in_all_page{/if}" style="{if $width}width:{$width}%;{/if}">
     <div class="form-inline float-sm-right">
-        
-    {*if $style}
-        <form class="gts-config">
-            
-                <label class="control-label">Конфигуратор:</label> 
-                <label class="control-label" for="getTable_width">Ширина таблицы</label>
-                <input type="number" id="getTable_width" min="10" max="500" step="10" name="width" value="{$width}" 
-                    style="width:100px;" class="form-control">
-                <input type="checkbox" id="getTable_subtable_in_all_page" name="subtable_in_all_page" value="1" 
-                    {if $subtable_in_all_page}checked{/if}>Открывать субтаблицы на всю страницу 
-                <button class="btn btn-primary" type="submit" name="gts_action">
-                    <span class="glyphicon glyphicon-wrench"></span>
-                </button>
-        </form>
-    {/if*}
-    {if $parent_current}
-        <button class="get-table-in_all_page"><span class="fa fa-expand"></span></button>
-        <button class="get-table-close-subtable">X</button>
-    {/if}
-    </div>
-    <form class="gts-form">
-        <input type="hidden" name="hash" value="{$topBar.hash}">
-        <input type="hidden" name="table_name" value="{$topBar.table_name}">
-        {if $sub_where_current}
-            <input type="hidden" name="sub_where_current" value='{$sub_where_current}'>
-        {/if}
+
         {if $parent_current}
-            <input type="hidden" name="parent_current" value='{$parent_current}'>
+            <button class="get-table-in_all_page"><span class="fa fa-expand"></span></button>
+            <button class="get-table-close-subtable">X</button>
         {/if}
+    </div>
+    <div class="gts-form get-table-filter-container get-table-paginator-container">
         <div class="row">
             <div class="col-md-2 get-table-topline-first">
                 {foreach $topBar['topBar/topline/first'] as $t}
@@ -47,16 +25,19 @@
                 {/foreach}
             </div>
         </div>
-        <div class="row">
-            {foreach $topBar['topBar/topline/filters']['filters'] as $f}
-                <div class="col-md-{$f.cols} ">    
-                    {$f.content}
-                </div>
-            {/foreach}
-        </div>
+
+        {if count($topBar['topBar/topline/filters']['filters']) > 0}
+            <div class="row">
+                {foreach $topBar['topBar/topline/filters']['filters'] as $f}
+                    <div class="col-md-{$f.cols} ">    
+                        {$f.content}
+                    </div>
+                {/foreach}
+            </div>
+        {/if}
         <div class="row">
             <div class="col-md-6">
-                <div class="form-inline get-table-nav" style="font-size:10px;">
+                <div class="form-inline get-table-nav">
                 {if $page.total}
                     {$page.content}
                 {/if}
@@ -83,12 +64,36 @@
                 {/if}
             </div>
         </div>
-    </form>
+    </div>
     <table class="table">
       <thead>
         <tr>
             {foreach $thead.tr.ths as $th}
-                <th class="{$th.cls}" style="{$th.style}">{$th.content}</th>
+                <th class="{$th.cls}" style="{$th.style}" data-field="{$th.field}">
+                    {$th.content}
+                    {if $th.filter}
+                        <button class="filtr-btn {$th.filter_class}"></button>
+                        <div class="filrt-window">
+                            <div class="filrt-standart">
+                                {foreach $th.filters as $f}
+                                    <div class="">    
+                                        {$f.content}
+                                    </div>
+                                {/foreach}
+                            </div>
+                            <div class="filrt-add">
+                                <div class="filtr-btn__box-top">
+                                    <button class="filtr-btn-clear">{'filtr_btn_checkbox_clear' | lexicon}</button>
+                                    <button class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
+                                </div>
+                                <div class="filrt-checkbox-container">
+                                
+                                </div>
+                                <button class="filtr-btn-checkbox-apply" style="display:none;">{'filtr_btn_checkbox_apply' | lexicon}</button>
+                            </div>
+                        </div>
+                    {/if}
+                </th>
             {/foreach}
         </tr>
       </thead>

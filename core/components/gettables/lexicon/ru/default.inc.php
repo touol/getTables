@@ -26,6 +26,8 @@ $_lang['gettables_on_page'] = 'На стр.:';//On page
 $_lang['gettables_all'] = 'Всего';//All
 $_lang['gettables_yes'] = 'Да';//Yes
 $_lang['gettables_no'] = 'Нет';//No
+$_lang['gettables_from'] = 'От';//From
+$_lang['gettables_to'] = 'До';//To
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'Загрузить';

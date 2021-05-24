@@ -6,7 +6,6 @@
     {/if}
     data-hash="{$hash}" class="get-table {$cls} {if $in_all_page}in_all_page{/if}" style="{if $width}width:{$width}%;{/if}">
     <div class="form-inline">
-        
         {if $parent_current}
             <button class="pull-right get-table-in_all_page"><span class="glyphicon glyphicon-resize-full"></span></button>
             <button class="pull-right get-table-close-subtable">X</button>
@@ -64,8 +63,8 @@
     </div>
     <table class="table">
       <thead>
-        <tr> 
-			{foreach $thead.tr.ths as $th}
+        <tr>
+            {foreach $thead.tr.ths as $th}
                 <th class="{$th.cls}" style="{$th.style}" data-field="{$th.field}">
                     {$th.content}
                     {if $th.filter}
@@ -79,10 +78,10 @@
                                 {/foreach}
                             </div>
                             <div class="filrt-add">
-								<div class="filtr-btn__box-top">
-									<button class="filtr-btn-clear">{'filtr_btn_checkbox_clear' | lexicon}</button>
-									<button class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
-								</div>
+                                <div class="filtr-btn__box-top">
+                                    <button class="filtr-btn-clear">{'filtr_btn_checkbox_clear' | lexicon}</button>
+                                    <button class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
+                                </div>
                                 <div class="filrt-checkbox-container">
                                 
                                 </div>

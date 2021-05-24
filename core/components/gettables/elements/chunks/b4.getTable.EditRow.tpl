@@ -71,10 +71,15 @@
                             {if $edit.readonly}readonly{/if}
                             />
                     <span class="input-group-prepend" style="width: 20%;{if $edit.hide_id}display:none;{/if}">
-                        <input type="number" class="get-autocomplect-id" 
+                        <span class="input-number__box ">
+                            <input type="number" class="get-autocomplect-id" 
                             value="{$edit.value}"  
                             placeholder="id" min="0"
+                            {if $edit.readonly}readonly{/if}
                             style="width:100%;"/>
+                            <button class="arr-btn arr-btn__top"></button>
+                            <button class="arr-btn arr-btn__bottom"></button>
+                        </span>
                     </span>
                     <input type="text" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"
                     {if $edit.readonly}readonly{/if}

@@ -2,35 +2,37 @@
     {case 'text'}
         <div class="form-group">
             <div class="controls">
-                <input type="text" id="{$filter.edit.field}" name="{$filter.edit.field}" value="{$filter.value}" 
-                placeholder="{$filter.edit.placeholder}" class="form-control"/>
+                <input type="text" name="{$filter.edit.field}" value="{$filter.value}" 
+                placeholder="{$filter.edit.placeholder}" class="form-control get-table-filter"/>
             </div>
         </div>
     {case 'decimal'}
         <div class="form-group">
             <div class="controls">
-                <input type="text" step="0.01" id="{$filter.edit.field}" name="{$filter.edit.field}" value="{$filter.value}" 
-                placeholder="{$filter.edit.placeholder}" class="form-control"/>
+                <input type="text" step="0.01" name="{$filter.edit.field}" value="{$filter.value}" 
+                placeholder="{$filter.edit.placeholder}" class="form-control get-table-filter"/>
             </div>
         </div>
     {case 'textarea'}
         <div class="form-group">
             <div class="controls">
-                <input type="text" id="{$filter.edit.field}" name="{$filter.edit.field}" value="{$filter.value}" 
-                placeholder="{$filter.edit.placeholder}" class="form-control"/>
+                <input type="text" name="{$filter.edit.field}" value="{$filter.value}" 
+                placeholder="{$filter.edit.placeholder}" class="form-control get-table-filter"/>
             </div>
         </div>
     {case 'checkbox'}
         <div class="form-group">
-            
             <div class="controls">
-        <select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
-            class="form-control {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
-            <option value="">Выберете {$filter.edit.placeholder}</option>
-            <option value="1" {if $filter.value === 1}selected{/if} >{'gettables_yes' | lexicon}</option>
-            <option value="0" {if $filter.value === 0}selected{/if} >{'gettables_no' | lexicon}</option>
-        </select>
-        </div>
+                <div class="select-box rL hid">
+                    <select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
+                        class="form-control get-table-filter {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
+                        <option value="">Выберете {$filter.edit.placeholder}</option>
+                        <option value="1" {if $filter.value === 1}selected{/if} >{'gettables_yes' | lexicon}</option>
+                        <option value="0" {if $filter.value === 0}selected{/if} >{'gettables_no' | lexicon}</option>
+                    </select>
+                    <span class="select-btn"></span>
+                </div>
+            </div>
         </div>
     {case 'select'}
         {switch $filter.edit.select.type}
@@ -39,7 +41,7 @@
                     <div class="controls">
                         {if !$filter.edit.multiple}
                             <select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
-                                class="form-control {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
+                                class="form-control get-table-filter {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
                     
                                 <option value="">{$filter.edit.placeholder}</option>
                                 {foreach $filter.edit.select.data as $d}
@@ -48,7 +50,7 @@
                             </select>
                         {else}
                             <select data-field="{$filter.edit.field}" name="{$filter.edit.field}[]" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
-                                class="form-control get-select-multiple" multiple="multiple">
+                                class="form-control get-select-multiple get-table-filter" multiple="multiple">
                                 {foreach $filter.edit.select.data as $d}
                                     <option value="{$d.id}" {if $filter.value[$d.id]}selected{/if} >{$d.content}</option>
                                 {/foreach}
@@ -59,14 +61,18 @@
              {case 'autocomplect'}
                 <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$filter.edit.select.name}" {if $edit.style} style="{$edit.style}"{/if}>
                   <div class="input-group">
-                    <input type="hidden" class="get-autocomplect-hidden-id" 
+                    <input type="hidden" class="get-autocomplect-hidden-id get-table-filter" 
                             value="{$filter.value}" data-field="{$filter.edit.field}" name="{$filter.edit.field}" 
                             />
                     <span class="input-group-prepend" style="width: 20%;{if $filter.edit.hide_id}display:none;{/if}">
-                        <input type="number" class="get-autocomplect-id" 
-                            value="{$filter.value}"  
-                            placeholder="id" min="0"
-                            style="width:100%;"/>
+                        <span class="input-number__box ">
+                            <input type="number" class="get-autocomplect-id" 
+                                value="{$filter.value}"  
+                                placeholder="id" min="0"
+                                style="width:100%;"/>
+                            <button class="arr-btn arr-btn__top"></button>
+                            <button class="arr-btn arr-btn__bottom"></button>
+                        </span>
                     </span>
                     <input type="text" class="form-control get-autocomplect-content" value="{$filter.edit.content}" placeholder="{$filter.edit.placeholder}"/>
                     <div class="input-group-append">
@@ -84,14 +90,14 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <input type="text" id="{$filter.edit.field}_from" name="{$filter.edit.field}[from]" value="{$filter.value.from}" 
-                    placeholder="От {$filter.edit.placeholder}" class="form-control get-date" autocomplect="off"/>
+                    <input type="text" name="{$filter.edit.field}[from]" value="{$filter.value.from}" 
+                    placeholder="{'gettables_from' | lexicon} {$filter.edit.placeholder}" class="form-control get-date get-table-filter" autocomplect="off"/>
                 </div>
             </div>
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <input type="text" id="{$filter.edit.field}_to" name="{$filter.edit.field}[to]" value="{$filter.value.to}" 
-                    placeholder="До {$filter.edit.placeholder}" class="form-control get-date" autocomplect="off"/>
+                    <input type="text" name="{$filter.edit.field}[to]" value="{$filter.value.to}" 
+                    placeholder="{'gettables_to' | lexicon} {$filter.edit.placeholder}" class="form-control get-date get-table-filter" autocomplect="off"/>
                 </div>
             </div>
         </div>

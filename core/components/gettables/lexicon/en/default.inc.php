@@ -26,6 +26,8 @@ $_lang['gettables_on_page'] = 'On page:';//On page
 $_lang['gettables_all'] = 'All';//All
 $_lang['gettables_yes'] = 'Yes';//
 $_lang['gettables_no'] = 'No';//
+$_lang['gettables_from'] = 'From';//From
+$_lang['gettables_to'] = 'To';//
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'Load';
