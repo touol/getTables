@@ -24,7 +24,8 @@ $_lang['gettables_page'] = 'Стр.';//Page
 $_lang['gettables_page_from'] = 'Из';//From
 $_lang['gettables_on_page'] = 'На стр.:';//On page
 $_lang['gettables_all'] = 'Всего';//All
-
+$_lang['gettables_yes'] = 'Да';//Yes
+$_lang['gettables_no'] = 'Нет';//No
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'Загрузить';

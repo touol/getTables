@@ -905,21 +905,21 @@
             $table.children(".get-table-filter-container").find('.get-table-filter').each(function(){
                 filters[this.name] = $(this).val();
             });
-            $select_all = $ths.find('.filrt-checkbox-select-all');
-            if(typeof($select_all) != "undefined" && $select_all.prop('checked') == false){
-                console.log(1);
-                $ths.each(function(){
-                    $th = $(this);
+            
+            //console.log(1);
+            $ths.each(function(){
+                $th = $(this);
+                $select_all = $th.find('.filrt-checkbox-select-all');
+                if(typeof($select_all) != "undefined" && $select_all.prop('checked') == false){
                     $th.find('.filrt-checkbox-input:checked').each(function(){
                         if(typeof(filters['filter_checkboxs']) == "undefined")
-                           filters['filter_checkboxs'] = {}; 
+                        filters['filter_checkboxs'] = {}; 
                         if(typeof(filters['filter_checkboxs'][$th.data('field')]) == "undefined")
                             filters['filter_checkboxs'][$th.data('field')] = [];
                         filters['filter_checkboxs'][$th.data('field')].push($(this).val());
                     });
-                });
-
-            }
+                }
+            });
             return filters;
         },
 
@@ -1229,15 +1229,15 @@
     });
     
 //    код - щуп. Удалить на боевой версии 
-     let calendar = $('.ui-state-default');
+    //  let calendar = $('.ui-state-default');
     
-    $(document).on('click', function(e){
-        console.log(e.target);
-    });
-    calendar.on('click', function(e){
+    // $(document).on('click', function(e){
+    //     console.log(e.target);
+    // });
+    // calendar.on('click', function(e){
         
-        alert("Aringilda boltushka");
-    });
+    //     alert("Aringilda boltushka");
+    // });
 //    код щуп - конец
 })(); 
 

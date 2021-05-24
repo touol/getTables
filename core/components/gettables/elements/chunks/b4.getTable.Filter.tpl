@@ -27,8 +27,8 @@
         <select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
             class="form-control {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
             <option value="">Выберете {$filter.edit.placeholder}</option>
-            <option value="1" {if $filter.value === 1}selected{/if} >Да</option>
-            <option value="0" {if $filter.value === 0}selected{/if} >Нет</option>
+            <option value="1" {if $filter.value === 1}selected{/if} >{'gettables_yes' | lexicon}</option>
+            <option value="0" {if $filter.value === 0}selected{/if} >{'gettables_no' | lexicon}</option>
         </select>
         </div>
         </div>

@@ -160,6 +160,14 @@ class getTable
                     ];
                 }
                 break;
+            case 'checkbox':
+                foreach($rows as $row){
+                    $checkboxs[] = [
+                        'value'=>$row[$data['field']],
+                        'content'=>$row[$data['field']] ? $this->modx->lexicon('gettables_yes') : $this->modx->lexicon('gettables_no'),
+                    ];
+                }
+                break;
             case 'textarea':
                 foreach($rows as $row){
                     $checkboxs[] = [
@@ -810,7 +818,7 @@ class getTable
             //checkbox filter
             if(isset($this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']])){
                 $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 
-                    $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
+                $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
             }
             $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
         }

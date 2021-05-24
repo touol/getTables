@@ -23,17 +23,17 @@
     {case 'checkbox'}
         <div class="form-group"> 
             <div class="controls">
-			<div class="select-box rL hid">
-				<select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
-					class="form-control get-table-filter {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
-					<option value="">Выберете {$filter.edit.placeholder}</option>
-					<option value="1" {if $filter.value === 1}selected{/if} >Да</option>
-					<option value="0" {if $filter.value === 0}selected{/if} >Нет</option>
-				</select>
-				<span class="select-btn"></span>
-			</div>
-				
-		
+            <div class="select-box rL hid">
+                <select data-field="{$filter.edit.field}" name="{$filter.edit.field}" data-value="{$filter.value}" placeholder="{$filter.edit.placeholder}" 
+                    class="form-control get-table-filter {if $filter.edit.multiple}get-select-multiple{/if}" {if $filter.edit.multiple}multiple="multiple"{/if}>
+                    <option value="">Выберете {$filter.edit.placeholder}</option>
+                    <option value="1" {if $filter.value === 1}selected{/if} >{'gettables_yes' | lexicon}</option>
+                    <option value="0" {if $filter.value === 0}selected{/if} >{'gettables_no' | lexicon}</option>
+                </select>
+                <span class="select-btn"></span>
+            </div>
+                
+        
         </div>
         </div>
     {case 'select'}
@@ -67,7 +67,7 @@
                             value="{$filter.value}" data-field="{$filter.edit.field}" name="{$filter.edit.field}" 
                             />
                     <span class="input-group-addon {if $filter.edit.hide_id}hidden{/if}" style="width:20%;padding: 0;">
-						<span class="input-number__box ">
+                        <span class="input-number__box ">
                             <input type="number" class="get-autocomplect-id" 
                             value="{$filter.value}"  
                             placeholder="id" min="0"
