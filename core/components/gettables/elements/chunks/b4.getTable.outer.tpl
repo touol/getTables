@@ -57,10 +57,6 @@
                            </button>
                         </span>
                       </div>
-                {else}
-                    <button class="btn btn-primary get-table-search hidden" type="submit" name="gts_action" value="getTable/filter">
-                        <span class="fa fa-search"></span>
-                    </button>
                 {/if}
             </div>
         </div>
