@@ -71,7 +71,6 @@
                     {if $th.filter}
                         <button class="filtr-btn {$th.filter_class}"></button>
                         <div class="filrt-window">
-                            <button class="filtr-btn-clear">X</button>
                             <div class="filrt-standart">
                                 {foreach $th.filters as $f}
                                     <div class="">    
@@ -80,7 +79,10 @@
                                 {/foreach}
                             </div>
                             <div class="filrt-add">
-                                <button class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
+								<div class="filtr-btn__box-top">
+									<button class="filtr-btn-clear">{'filtr_btn_checkbox_clear' | lexicon}</button>
+									<button class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
+								</div>
                                 <div class="filrt-checkbox-container">
                                 
                                 </div>

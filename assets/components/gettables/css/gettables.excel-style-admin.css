@@ -211,4 +211,11 @@
     outline: none;
     box-shadow: none;
 }
+
+/*устанавливаю цвет фона gettable в админке*/
+#gettables-panel-home-div{
+    background-color: #fff;
+    padding: 1rem;
+}
+
 /*end get-table v-style от Валентина*/

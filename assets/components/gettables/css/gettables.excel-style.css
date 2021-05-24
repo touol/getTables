@@ -1,26 +1,30 @@
 /*get-table технические стили*/
 .ace_editor {
     font: 12px/normal 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
-} 
+}
 
-.db{
+.db {
     display: block;
 }
-.inb{
+
+.inb {
     display: inline-block;
 }
-.rL{
+
+.rL {
     position: relative;
 }
-.abs{
+
+.abs {
     position: absolute;
 }
-.hid{
+
+.hid {
     overflow: hidden;
 }
 
 /*get-table subtable во всю страницу*/
-.in_all_page{
+.in_all_page {
     position: fixed;
     top: 0px;
     left: 0;
@@ -31,45 +35,56 @@
     background: white;
     overflow-y: auto;
 }
+
 /*get-table тень вокруг subtable*/
-.get-sub-content .table{
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+.get-sub-content .table {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     margin-bottom: 40px;
 }
-.table td:focus, .table td:active{
+
+.table td:focus,
+.table td:active {
     outline: 0;
 }
+
 /*отмена выделения кнопки при активности или при фокусе*/
-.gts-selection-enabled .btn:focus, .gts-selection-enabled .btn:active{
+.gts-selection-enabled .btn:focus,
+.gts-selection-enabled .btn:active {
     outline: 0;
     border: 0;
 }
-.table .th{
-    border: 1px solid 
+
+.table .th {
+    border: 1px solid
 }
-.table>thead>tr>th{
+
+.table > thead > tr > th {
     border: 1px solid transparent;
 }
+
 /*выравниваю кнопку крестик шапке модалки*/
-.modal-header{
+.modal-header {
     position: relative;
 }
-.modal-header .close{
+
+.modal-header .close {
     right: 15px;
     transform: translateY(-7px);
 }
+
 /*get-table выпадающее меню у select autocomplect*/
-.get-autocomplect .get-autocomplect-menu{
+.get-autocomplect .get-autocomplect-menu {
     top: unset;
     left: unset;
-    max-height:400px;
-    min-height:50px;
+    max-height: 400px;
+    min-height: 50px;
     overflow-y: auto;
     width: 100%;
     border-radius: 0;
     margin-top: 0;
     max-height: 150px;
 }
+
 /*get-table id у select autocomplect*/
 /* .get-autocomplect .input-group-addon{
     width:20%;
@@ -84,65 +99,80 @@
 
 /*get-table v-style от Валентина*/
 
-.get-table .navbar-collapse .btn-primary { 
+.get-table .navbar-collapse .btn-primary {
     position: relative;
     top: 7px;
     right: 10px;
 }
-.get-table .navbar { 
-     margin-bottom: 0px;  
-}
-.get-table .breadcrumb{
+
+.get-table .navbar {
     margin-bottom: 0px;
 }
-.get-table .gts-config{
+
+.get-table .breadcrumb {
+    margin-bottom: 0px;
+}
+
+.get-table .gts-config {
     padding: 10px 10px;
     margin-bottom: 10px;
 }
 
-.get-table .row{
+.get-table .row {
     margin: 0;
     padding-right: 10px;
     padding-left: 10px;
 }
-.get-table .get-table-topline-first{
+
+.get-table .get-table-topline-first {
     margin: 0;
     padding: 0;
     width: auto;
 }
-.get-table .get-table-topline-multiple{
+
+.get-table .get-table-topline-multiple {
     margin: 0;
     padding: 0;
     margin-left: 15px;
 }
-.get-table .get-table-topline-filters{ 
-}
-.get-table .get-table-topline-filters .row{
+
+.get-table .get-table-topline-filters {}
+
+.get-table .get-table-topline-filters .row {
     padding-right: 0px;
     padding-left: 0px;
 }
+
 .get-table .get-table-topline-filters > .row > .col-md-3 {
     padding: 0;
 }
-.get-table .get-table-topline-filters  .form-group{
-/*    padding: 0;*/
+
+.get-table .get-table-topline-filters .form-group {
+    /*    padding: 0;*/
 }
-.input-group .form-control, .input-group-addon, .input-group-btn {
+
+.input-group .form-control,
+.input-group-addon,
+.input-group-btn {
     vertical-align: top;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
 }
-.get-table .gts-form > .row{
+
+.get-table .gts-form > .row {
     margin-bottom: 30px;
 }
-.get-table .pull-right{
+
+.get-table .pull-right {
     line-height: 30px;
 }
-.get-table .form-inline{
+
+.get-table .form-inline {
     padding: 3px 0px;
 }
+
 /*таблица*/
 /*.get-table .table {
     width: 100%;
@@ -150,120 +180,139 @@
      margin-bottom: 0px; 
 }*/
 .get-table .table tr td[data-name="checkbox"],
-.get-table .table tr td[data-name="id"]{
+.get-table .table tr td[data-name="id"] {
     padding: 0 5px;
 }
-.get-table .table tr td[data-name="sum_closed"]{
+
+.get-table .table tr td[data-name="sum_closed"] {
     text-align: center;
 }
-.get-table .table thead tr{
+
+.get-table .table thead tr {
     background-color: #e6e6e6;
 }
-.get-table .table thead tr th{
+
+.get-table .table thead tr th {
     text-align: center;
     position: relative;
 }
 
-.get-table .table>tbody>.get-table-tr>td, .get-table .table>tbody>.get-table-tr>th, .get-table .table>tfoot>.get-table-tr>td, .get-table .table>tfoot>.get-table-tr>th, .get-table .table>thead>.get-table-tr>td, .get-table .table>thead>.get-table-tr>th {
-/*    padding: 0px 5px;*/
-    padding: 4px; 
-    line-height: 1.42857143; 
-/*    border-top: 1px solid #ddd;*/
-/*    border-left: 1px solid #ddd;*/
+.get-table .table > tbody > .get-table-tr > td,
+.get-table .table > tbody > .get-table-tr > th,
+.get-table .table > tfoot > .get-table-tr > td,
+.get-table .table > tfoot > .get-table-tr > th,
+.get-table .table > thead > .get-table-tr > td,
+.get-table .table > thead > .get-table-tr > th {
+    /*    padding: 0px 5px;*/
+    padding: 4px;
+    line-height: 1.42857143;
+    /*    border-top: 1px solid #ddd;*/
+    /*    border-left: 1px solid #ddd;*/
     border: 1px solid #ddd;
     vertical-align: middle;
 }
-.get-autocomplect-id:focus, .get-autocomplect-id:active{
+
+.get-autocomplect-id:focus,
+.get-autocomplect-id:active {
     border: 0;
     outline: 0;
 }
-.get-table-tr { 
+
+.get-table-tr {
     text-align: center;
     vertical-align: center;
 }
-.get-table-tr .form-control{
+
+.get-table-tr .form-control {
     box-shadow: none;
     height: 30px;
     border: 0;
     background-color: transparent;
-    
+
 }
+
 .get-table .table .form-group {
-    margin-bottom: 0; 
-/*    display: inline-block;*/
+    margin-bottom: 0;
+    /*    display: inline-block;*/
     display: block;
     position: relative;
 }
-.get-table .table .form-group .input-group .input-group-addon{
+
+.get-table .table .form-group .input-group .input-group-addon {
     background: transparent;
     border: none;
 }
-.table>tbody>tr.hit>td,
-.table>tbody>tr.hit>th,
-.table>tbody>tr>td.hit, 
-.table>tbody>tr>th.hit,
-.table>tfoot>tr.hit>td,
-.table>tfoot>tr.hit>th, 
-.table>tfoot>tr>td.hit, 
-.table>tfoot>tr>th.hit, 
-.table>thead>tr.hit>td, 
-.table>thead>tr.hit>th, 
-.table>thead>tr>td.hit, 
-.table>thead>tr>th.hit { 
+
+.table > tbody > tr.hit > td,
+.table > tbody > tr.hit > th,
+.table > tbody > tr > td.hit,
+.table > tbody > tr > th.hit,
+.table > tfoot > tr.hit > td,
+.table > tfoot > tr.hit > th,
+.table > tfoot > tr > td.hit,
+.table > tfoot > tr > th.hit,
+.table > thead > tr.hit > td,
+.table > thead > tr.hit > th,
+.table > thead > tr > td.hit,
+.table > thead > tr > th.hit {
     background-color: #60cc2fe6;
 }
-.table>tbody>tr.attention>td, 
-.table>tbody>tr.attention>th, 
-.table>tbody>tr>td.attention, 
-.table>tbody>tr>th.attention,
-.table>tfoot>tr.attention>td, 
-.table>tfoot>tr.attention>th, 
-.table>tfoot>tr>td.attention,
-.table>tfoot>tr>th.attention,
-.table>thead>tr.attention>td,
-.table>thead>tr.attention>th,
-.table>thead>tr>td.attention,
-.table>thead>tr>th.attention {
+
+.table > tbody > tr.attention > td,
+.table > tbody > tr.attention > th,
+.table > tbody > tr > td.attention,
+.table > tbody > tr > th.attention,
+.table > tfoot > tr.attention > td,
+.table > tfoot > tr.attention > th,
+.table > tfoot > tr > td.attention,
+.table > tfoot > tr > th.attention,
+.table > thead > tr.attention > td,
+.table > thead > tr.attention > th,
+.table > thead > tr > td.attention,
+.table > thead > tr > th.attention {
     background-color: rgba(252, 3, 3, 0.8);
 }
 
-.get-table .table select.get-table-autosave{
+.get-table .table select.get-table-autosave {
     cursor: pointer;
 }
 
-.get-table .table .form-group .input-group .input-group-addon input[type="number"]{
+.get-table .table .form-group .input-group .input-group-addon input[type="number"] {
     background-color: transparent;
     border: none;
     text-align: center;
-} 
+}
 
-.get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all{
+.get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all {
     background-color: rgba(99, 229, 44, 0.0);
     transition: background-color 0.3s;
 }
-.get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:hover{
+
+.get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:hover {
     background-color: #cec9c9
 }
 
-.get-table .table .attention .form-group .input-group .input-group-btn .get-autocomplect-all:hover{
-     background-color: rgb(222, 50, 50); 
+.get-table .table .attention .form-group .input-group .input-group-btn .get-autocomplect-all:hover {
+    background-color: rgb(222, 50, 50);
 }
-.get-table .table .hit .form-group .input-group .input-group-btn .get-autocomplect-all:hover{
-     background-color: rgba(66, 190, 14, 0.9); 
+
+.get-table .table .hit .form-group .input-group .input-group-btn .get-autocomplect-all:hover {
+    background-color: rgba(66, 190, 14, 0.9);
 }
 
 
 
 
 .get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:active,
-.get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:focus{
+.get-table .table .form-group .input-group .input-group-btn .get-autocomplect-all:focus {
     border: 0;
     outline: none;
     box-shadow: none;
 }
+
 /*end get-table v-style от Валентина*/
 
-.ui-datepicker{
+.ui-datepicker {
     /* z-index: 100 !important; */
 }
 
@@ -279,25 +328,30 @@
     margin: 0;
     text-align: center;
     border: 0;
-    outline: 0}
+    outline: 0
+}
+
 /* Для Firefox убираю стрелочки */
-.input-number__box input[type=number]{
-  -moz-appearance: textfield;
+.input-number__box input[type=number] {
+    -moz-appearance: textfield;
     text-align: center;
     border: 0;
     outline: 0
 }
+
 .input-group-addon {
     background-color: transparent;
 }
-.input-number__box{
+
+.input-number__box {
     display: inline-block;
     position: relative;
     box-sizing: border-box;
     padding-right: 15px;
     min-width: 45px;
 }
-.input-number__box .arr-btn{
+
+.input-number__box .arr-btn {
     position: absolute;
     height: 50%;
     width: 10px;
@@ -306,9 +360,10 @@
     border: 0;
     outline: 0;
 }
-.input-number__box .arr-btn::before{
+
+.input-number__box .arr-btn::before {
     content: '';
-    position: absolute; 
+    position: absolute;
     width: 7px;
     height: 7px;
     box-sizing: border-box;
@@ -319,22 +374,26 @@
     opacity: 0.5;
     transition: all 200ms ease;
 }
-.input-number__box .arr-btn__top{
+
+.input-number__box .arr-btn__top {
     top: 0;
 }
-.input-number__box .arr-btn__top::before{ 
-    transform: rotate(45deg) translateX(-50%); 
+
+.input-number__box .arr-btn__top::before {
+    transform: rotate(45deg) translateX(-50%);
     left: 5px;
     top: 10px;
 }
-.input-number__box .arr-btn:hover::before{
+
+.input-number__box .arr-btn:hover::before {
     opacity: 1;
 }
 
-.input-number__box .arr-btn__bottom{
+.input-number__box .arr-btn__bottom {
     bottom: 0;
 }
-.input-number__box .arr-btn__bottom::before{
+
+.input-number__box .arr-btn__bottom::before {
     transform: rotate(45deg) translateX(-50%) scale(-1);
     top: 2px;
     left: 5px;
@@ -343,21 +402,24 @@
 /* КОНЕЦ стилизация input type="number"*/
 
 /*НАЧАЛО стилизация кнопку у select*/
-div.select-box{
+div.select-box {
     position: relative;
     display: inline-block;
     vertical-align: top;
     overflow: hidden;
 }
-.select-box select{
+
+.select-box select {
     box-sizing: border-box;
     padding-right: 25px;
     float: none !important;
 }
-.select-box select option{
+
+.select-box select option {
     cursor: pointer;
 }
-.select-box .select-btn{
+
+.select-box .select-btn {
     position: absolute;
     top: 50%;
     right: 0;
@@ -368,7 +430,8 @@ div.select-box{
     pointer-events: none;
     transform: translateY(-50%);
 }
-.select-box .select-btn::after{
+
+.select-box .select-btn::after {
     content: '';
     position: absolute;
     width: 7px;
@@ -384,25 +447,29 @@ div.select-box{
 }
 
 /*КОНЕЦ стилизация кнопку у select*/
+
 /*НАЧАЛО фильтр в заголовках таблицы*/
-.table th{
+.table th {
     position: relative;
     box-sizing: border-box;
     padding-right: 20px !important;
     vertical-align: middle !important;
 }
+
 .table th:first-child .filtr-btn,
 .table th:last-child .filtr-btn,
 .table th:first-child .filrt-window,
 .table th:last-child .filrt-window,
-.table th.no-filter{
+.table th.no-filter {
     display: none;
 }
 
-.table th:first-child, .table th:last-child{
+.table th:first-child,
+.table th:last-child {
     padding-right: 8px !important;
 }
-.table th .filtr-btn{
+
+.table th .filtr-btn {
     position: absolute;
     width: 15px;
     height: 15px;
@@ -412,31 +479,34 @@ div.select-box{
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center center;
-    border: 1px solid #000; 
+    border: 1px solid #000;
 }
-.table th .filtr-btn.filter{
+
+.table th .filtr-btn.filter {
     background-image: url(../img/filter.svg)
 }
-.table th .filtr-btn.filter-sort-up{
+
+.table th .filtr-btn.filter-sort-up {
     background-image: url(../img/filter-sort-up.svg)
 }
-.table th .filtr-btn.filter-active{
+
+.table th .filtr-btn.filter-active {
     background-image: url(../img/filter-active.svg)
 }
-.table th .filtr-btn.filter-sort-down{
+
+.table th .filtr-btn.filter-sort-down {
     background-image: url(../img/filter-sort-down.svg)
 }
-.table th .filrt-window{
+
+.table th .filrt-window {
     position: absolute;
     top: 100%;
     left: 0;
     width: 300px;
-    height: 500px;
-    overflow: auto;
     padding: 1rem;
     box-sizing: border-box;
     background-color: #fff;
-    border: 1px solid rgba(0,0,0,.15); 
+    border: 1px solid rgba(0, 0, 0, .15);
     -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
     box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
     transform-origin: center top;
@@ -444,7 +514,117 @@ div.select-box{
     transition: all 200ms ease;
     z-index: 100;
 }
-.table th .filrt-window.filrt-window__open{
+
+.table th .filrt-window.filrt-window__open {
     transform: scaleY(1);
 }
-/*НАЧАЛО фильтр в заголовках таблицы*/
+
+/*КОНЕЦ фильтр в заголовках таблицы*/
+
+/*НАЧАЛО Увеличение checkbox */
+.get-tables-tabs input[type="checkbox"] {
+    transform: scale(1.4);
+}
+
+/*КОНЕЦ Увеличение checkbox */
+
+/* НАЧАЛО Стилизация фильтов к заголовках таблцы*/
+.get-table .filrt-window .filrt-standart {
+    margin-bottom: 1rem;
+}
+
+.get-table .filrt-window .filrt-standart .row {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.get-table .filrt-window .filrt-standart .row .form-group {
+    padding: 0;
+    float: none;
+}
+
+.get-table .filrt-window .filrt-standart .row .form-group:first-child {
+    margin-right: 3px;
+}
+
+.get-table .filrt-window .filrt-standart .row .form-group:last-child {
+    margin-left: 3px;
+}
+
+.get-table .filrt-window .input-group {
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    border-radius: 4px;
+}
+
+.get-table .filrt-window .input-group:focus{
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%), 0 0 8px rgb(102 175 233 / 60%);
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%), 0 0 8px rgb(102 175 233 / 60%);
+}
+.get-table .filrt-window .input-group .btn{
+    padding: 7px 12px;
+}
+.get-table .filrt-window .input-group input {
+    border: none;
+    box-shadow: none;
+}
+
+/*-панель с кнопками Очистить и Загрузить-*/
+.get-table .filrt-window .filtr-btn__box-top {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.get-table .filrt-window .filtr-btn__box-top button {
+    min-width: 85px;
+    border-radius: 4px;
+    border-width: 1px;
+}
+
+.get-table .filrt-window .filtr-btn__box-top button:first-child {
+    margin-right: 3px;
+}
+
+.get-table .filrt-window .filtr-btn__box-top button:last-child {
+    margin-left: 3px;
+}
+
+/*Контейнер с результатами поиска (чекбоксы)*/
+.get-table .filrt-window .filrt-checkbox-container {
+    position: relative;
+    overflow: auto;
+    max-height: 300px;
+    padding: 0 5px;
+}
+
+.get-table .filrt-window .filrt-checkbox-container .filrt-checkbox-ul {
+    padding: 0;
+    text-align: left;
+
+}
+
+.get-table .filrt-window .filrt-checkbox-container .filrt-checkbox-ul .filrt-checkbox-item {
+    list-style-type: none;
+}
+
+.get-table .filrt-window .filrt-checkbox-container .filrt-checkbox-ul .filrt-checkbox-item:not(:last-child) {
+    margin-bottom: 5px;
+}
+
+.get-table .filrt-window .filrt-checkbox-container .filrt-checkbox-ul .filrt-checkbox-item input[type="checkbox"] {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* КОНЕЦ Стилизация фильтов к заголовках таблцы*/
+/*устанавливаю цвет фона gettable в админке*/
+#gettables-panel-home-div{
+    background-color: #fff;
+    padding: 1rem;
+}
+
