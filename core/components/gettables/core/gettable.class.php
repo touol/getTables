@@ -475,9 +475,9 @@ class getTable
                         $sub_where_current = json_decode($table['sub_where_current'],1);
                     }    
                     //$this->getTables->addDebug($sub_where_current,'sub_where_current  td');
-                    // if(isset($sub_where_current[$td['field']])){
-                    //     $td['value'] = $sub_where_current[$td['field']];
-                    // }
+                    if(isset($sub_where_current[$td['field']]) and empty($td['value'])){
+                        $td['value'] = $sub_where_current[$td['field']];
+                    }
                 }
                 //$this->getTables->addDebug($this->getTables->REQUEST['sub_where_current'],'$this->getTables->REQUEST[sub_where_current]');
                 

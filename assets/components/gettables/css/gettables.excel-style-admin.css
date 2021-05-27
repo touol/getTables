@@ -456,14 +456,6 @@ div.select-box {
     vertical-align: middle !important;
 }
 
-.table th:first-child .filtr-btn,
-.table th:last-child .filtr-btn,
-.table th:first-child .filrt-window,
-.table th:last-child .filrt-window,
-.table th.no-filter {
-    display: none;
-}
-
 .table th:first-child,
 .table th:last-child {
     padding-right: 8px !important;
