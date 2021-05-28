@@ -659,6 +659,10 @@ class getTableProcessor
             foreach($edit_tables[$class] as $edit){
                 if($data[$edit['field']] !== null)
                     $set_data[$edit['field']] = $data[$edit['field']];
+
+                if($edit['type'] == 'date' and $data[$edit['field']] == ''){
+                    $set_data[$edit['field']] = null;
+                }
             }
             foreach($table['defaultFieldSet'] as $df=>$dfv){
                 if($dfv['class'] == $class)
