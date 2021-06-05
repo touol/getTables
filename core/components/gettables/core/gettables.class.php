@@ -572,7 +572,7 @@ class getTables
             if(!$this->modx->hasPermission($this->config['permission'][$action])) return $this->error(['lexicon'=>'access_denied']);
         
         $this->config['isAjax'] = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-        if(($this->config['isAjax'] or $action == 'getTable/export_excel') and $this->config['loadModels']){
+        if(($this->config['isAjax'] or $action == 'getTable/export_excel' or $_GET["load_model"] == 1) and $this->config['loadModels']){
             $this->pdoTools->config['loadModels'] = $this->config['loadModels'];
             $this->pdoTools->loadModels();
             $this->getModels();
