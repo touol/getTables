@@ -152,7 +152,7 @@ class getTable
         $rows = $this->pdoTools->run();
         $checkboxs = [];
         switch($checkbox_edit['type']){
-            case 'date': case 'text': case 'decimal': 
+            case 'date': case 'text': case 'decimal': case 'row_view': 
                 foreach($rows as $row){
                     $checkboxs[] = [
                         'value'=>$row[$data['field']],

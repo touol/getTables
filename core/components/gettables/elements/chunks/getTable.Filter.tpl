@@ -1,5 +1,5 @@
 {switch $filter.edit.type}
-    {case 'text'}
+    {case 'text','row_view'}
         <div class="form-group">
             <div class="controls">
                 <input type="text" name="{$filter.edit.field}" value="{$filter.value}" 
