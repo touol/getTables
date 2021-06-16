@@ -660,7 +660,7 @@ class getTableProcessor
                 if($data[$edit['field']] !== null)
                     $set_data[$edit['field']] = $data[$edit['field']];
 
-                if($edit['type'] == 'date' and $data[$edit['field']] == ''){
+                if($edit['type'] == 'date' and isset($data[$edit['field']]) and $data[$edit['field']] === ''){
                     $set_data[$edit['field']] = null;
                 }
             }
