@@ -168,6 +168,20 @@ class getSelect
                     
                     //$this->pdoTools->addTime('select '.print_r($select,1));
                     break;
+                case 'data':
+                    $data = [];
+                    foreach($select['rows'] as $row){
+                        $d = [
+                            'id' =>$row[0],
+                            'content' =>$row[1],
+                        ];
+                        $data[] = $d;
+                    }
+                    $select['data'] = $data;
+                    $compile[$name] = $select;
+                    
+                    //$this->pdoTools->addTime('select '.print_r($select,1));
+                    break;
                 case 'autocomplect':
                     /*$select['pdoTools']['limit'] = 0;
                     

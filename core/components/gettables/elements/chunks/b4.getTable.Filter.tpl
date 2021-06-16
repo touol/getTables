@@ -36,7 +36,7 @@
         </div>
     {case 'select'}
         {switch $filter.edit.select.type}
-            {case 'select'}
+            {case 'select','data'}
                 <div class="form-group">
                     <div class="controls">
                         {if !$filter.edit.multiple}

@@ -39,7 +39,7 @@
         {/if}
     {case 'select'}
         {switch $edit.select.type}
-            {case 'select'}
+            {case 'select','data'}
                 {if $edit.multiple and !$edit.readonly}
                     <select data-field="{$edit.field}" name="{$edit.field}" data-value='{$edit.json}' placeholder="{$edit.placeholder}" 
                         class="form-control get-select-multiple get-table-autosave" multiple="multiple" {if $edit.style} style="{$edit.style}"{/if}

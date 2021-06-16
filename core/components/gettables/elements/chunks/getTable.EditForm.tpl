@@ -67,7 +67,7 @@
         </label>
     {case 'select'}
         {switch $edit.select.type}
-            {case 'select'}
+            {case 'select','data'}
                 <div class="form-group">
                     <label class="control-label" for="{$edit.field}">{$edit.label}</label>
                     <div class="controls">
