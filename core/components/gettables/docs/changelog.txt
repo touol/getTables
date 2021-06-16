@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.7.2-alpha
+- Добавлен select data.
+- Исправлено обнуление даты.
+
 1.7.1-alpha
 - Исправлены стили для админки.
 
