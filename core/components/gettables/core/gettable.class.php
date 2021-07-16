@@ -944,6 +944,7 @@ class getTable
                 'tag' =>'a',
                 'attr' => '',
                 'href' => '',
+                'res_id' => '',
                 'style' => '',
             ],
             'custom' =>[
@@ -1024,6 +1025,8 @@ class getTable
                     $html = [];
                     $html[0] = $a['icon'][0] ? '<i class="'.$a['icon'][0].'"></i>' : $a['title'][0];
                     $html[1] = $a['icon'][1] ? '<i class="'.$a['icon'][1].'"></i>' : $a['title'][1];
+                    $html[0] .= $a['text'] ? $a['text'] : '';
+                    $html[1] .= $a['text'] ? $a['text'] : '';
                     $a['buttons'] = [
                         'sub_show' =>[
                             'cls' => $a['cls'][0],
@@ -1073,6 +1076,8 @@ class getTable
                     $html = [];
                     $html[0] = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'][0];
                     $html[1] = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'][1];
+                    $html[0] .= $a['text'] ? $a['text'] : '';
+                    $html[1] .= $a['text'] ? $a['text'] : '';
                     $a['buttons'] = [
                         'enable' =>[
                             'cls' => $a['cls'][0],
@@ -1139,7 +1144,9 @@ class getTable
                 }else{
                     $a['buttons'] = [];
                     if($a['icon']) $a['html'] = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'];
+                    $a['html'] .= $a['text'] ? $a['text'] : '';
                     if($a['href']) $a['attr'] .= ' href="'.$a['href'].'"';
+                    
                     if(isset($a['row'])) $a['row']['buttons'] = [];
                 }
                 if(isset($a['topBar'])){
@@ -1235,7 +1242,9 @@ class getTable
         foreach($actions as $k=>$a){
             if(isset($a['row'])){
                 //$actions_row[$k] = ['buttons'=> $a['row']['buttons'],];
-                if(empty($a['buttons'])){
+                if(!empty($a['content'])){
+                    $actions_row[$k] = $a['content'];
+                }else if(empty($a['buttons'])){
                     $actions_row[$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
                     //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
                 }else{

@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.3-alpha
+- Добавлена инструкция content для action.
+
 1.7.2-alpha
 - Добавлен select data.
 - Исправлено обнуление даты.
