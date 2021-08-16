@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.7.4-alpha
+- Исправлено выделение в полях.
+- Исправлена навигация.
+
 1.7.3-alpha
 - Добавлена инструкция content для action.
 

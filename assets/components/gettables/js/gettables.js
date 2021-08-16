@@ -488,7 +488,6 @@
                     $table = $(this).closest('.get-table');
                     getTables.sendData.$GtsApp = $table;
 
-                    getTables.sendData.$form = $form;
                     page = +$table.children(".get-table-paginator-container").find('.get-nav-page').val();
                     if (page > 1) {
                         $table.children(".get-table-paginator-container").find('.get-nav-page').val(1);
@@ -530,7 +529,7 @@
                     page_max = +$table.children(".get-table-paginator-container").find('.get-nav-page').prop('max');
                     if (page < page_max) {
                         $table.children(".get-table-paginator-container").find('.get-nav-page').val(page_max);
-                        $table.children(".get-table-paginator-container").trigger('submit');
+                        getTables.Table.refresh();
                     }
                 });
             getTables.$doc

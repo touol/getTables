@@ -1,15 +1,15 @@
 .gts::selection{
-	background-color: transparent;
+    background-color: transparent;
 }
 .get-table td:not(.gts-selection-enabled) > *,
 .get-table th:not(.gts-selection-enabled) > *,
 .get-table td:not(.gts-selection-enabled),
 .get-table th:not(.gts-selection-enabled){
-	-webkit-user-select: none !important;
-	-khtml-user-select: none !important;
-	-moz-user-select: none !important;
-	-ms-user-select: none !important;
-	user-select: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
 }
 .get-table tr::selection,
 .get-table td:not(.gts-selection-enabled) > *::selection,
@@ -17,10 +17,10 @@
 .get-table td:not(.gts-selection-enabled)::selection,
 .get-table th:not(.gts-selection-enabled)::selection,
 .get-table br::selection{
-	background-color: transparent;
+    /*background-color: transparent;*/
 }
 .get-table tr::-moz-selection, .get-table td:not(.gts-selection-enabled)::-moz-selection, .get-table th:not(.gts-selection-enabled)::-moz-selection{
-	background-color: transparent;
+    /*background-color: transparent;*/
 }
 .get-table .gts-selected:not(.sel-from){
 /*	border: 1px double #4887C7;*/
@@ -29,11 +29,11 @@
 }
 
 .gtsCellsSelectionSum{
-	z-index: 5;
+    z-index: 5;
     background-color: #4887C7;
     padding: 2px 5px;
     margin: 10px 0px;
     transform: translate(2px, 5px);
 /*	background-color: rgba(51, 122, 183, 0.2);*/
-	/* opacity:0.1; */
+    /* opacity:0.1; */
 }

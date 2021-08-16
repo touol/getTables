@@ -18,7 +18,7 @@
         initialize: function () {
             //addEventListeners();
             document.addEventListener('keydown', function(event){
-                if (event.repeat == false && event.shiftKey && event.ctrlKey && ['S','S'].includes(event.key) ) {
+                if (event.repeat == false && event.shiftKey && event.ctrlKey && event.code == "KeyS" ) {
                     if(isSelectEnable){
                         deselectAll2();
                         removeEventListeners();
