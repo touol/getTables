@@ -63,6 +63,10 @@ class getModal
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->fetchModalRemove($data);
                 break;
+            case 'fetchModalProgress':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->fetchModalProgress($data);
+                break;
             default:
                 return $this->error("Метод $action в классе $class не найден!");
         }
@@ -77,6 +81,13 @@ class getModal
     {
         
         $html = $this->pdoTools->getChunk($this->config['getTableModalRemoveTpl']);
+        
+        return $this->success('',array('html'=>$html));
+    }
+    public function fetchModalProgress($data)
+    {
+        
+        $html = $this->pdoTools->getChunk('getTable.Modal.Progress.tpl');
         
         return $this->success('',array('html'=>$html));
     }

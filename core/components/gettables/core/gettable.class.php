@@ -1180,15 +1180,18 @@ class getTable
                     $html = '';
                     $html = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'];
                     $html .= $a['text'] ? $a['text'] : '';
+                    
+                    $data = $a['data'] ? $a['data'] : [];
+                    $data['name'] = $k;
+                    $data['action'] = $a['action'];
+                    if($a['long_process']) $data['long_process'] = 1;
+
                     $a['buttons'] = [
                         $k =>[
                             'cls' => $a['cls'],
                             'html' => $html,
                             'title'=> $a['title'],
-                            'data' =>[
-                                'name'=>$k,
-                                'action'=>$a['action'],
-                            ],
+                            'data' =>$data,
                         ],
                     ];
                     if(isset($a['modal'])){

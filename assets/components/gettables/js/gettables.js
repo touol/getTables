@@ -31,6 +31,7 @@
             custom: getTablesConfig.callbacksObjectTemplate(),
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
             get_tree_child: getTablesConfig.callbacksObjectTemplate(),
+            long_process: getTablesConfig.callbacksObjectTemplate(),
         },
         Autocomplect: {
             load: getTablesConfig.callbacksObjectTemplate(),
@@ -342,6 +343,7 @@
             autosave: getTablesConfig.callbacksObjectTemplate(),
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
             get_tree_child: getTablesConfig.callbacksObjectTemplate(),
+            long_process: getTablesConfig.callbacksObjectTemplate(),
         },
         setup: function () {
 
@@ -391,6 +393,9 @@
                     }else if (button_data.name == 'remove') {
                         trs_data = [tr_data];
                         getTables.Table.remove(button_data, table_data, trs_data);
+                    }else if (button_data.long_process == 1) {
+                        trs_data = [tr_data];
+                        getTables.Table.long_process(button_data, table_data, trs_data);
                     }else {
                         trs_data = [tr_data];
                         getTables.Table.sets(button_data, table_data, trs_data);
@@ -479,6 +484,8 @@
                         getTables.Modal.load(button_data, table_data, trs_data);
                     }else if (button_data.name == 'remove') {
                         getTables.Table.remove(button_data, table_data, trs_data);
+                    }else if (button_data.long_process == 1) {
+                        getTables.Table.long_process(button_data, table_data, trs_data);
                     }else{
                         getTables.Table.sets(button_data, table_data, trs_data);
                     }
@@ -811,6 +818,52 @@
                 button_data: button_data,
                 trs_data: trs_data
             };
+            return;
+        },
+        long_process: function (button_data, table_data, trs_data) {
+            getTables.Message.close();
+
+            getTables.sendData.data = {
+                gts_action: 'getModal/fetchModalProgress',
+                hash: table_data.hash,
+            };
+
+            var callbacks = getTables.Modal.callbacks;
+
+            callbacks.load.response.success = function (response) {
+                $(response.data.html).modal('show');
+                getTables.$doc.on('hidden.bs.modal', function (event) {
+                    $('.gts_progress').remove();
+                });
+                getTables.sendData.data = {
+                    gts_action: button_data.action,
+                    hash: table_data.hash,
+                    table_name: table_data.name,
+                    table_data: table_data,
+                    button_data: button_data,
+                    trs_data: trs_data,
+                    offset: 0
+                };
+                var callbacks2 = getTables.Table.callbacks;
+    
+                callbacks2.long_process.response.success = function (response) {
+                    if(response.data.completed){
+                        $('.gts_progress').modal('hide');
+                        getTables.Message.success(response.data.message);
+                    }else{
+                        if(typeof $('.gts_progress')[0] !== "undefined"){
+                            $('.gts_progress .progress-bar').css("width", parseInt(response.data.procent));
+                            getTables.sendData.data.offset = response.data.offset;
+                            getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
+                        }
+                    }
+                };
+    
+                return getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
+            };
+
+            getTables.send(getTables.sendData.data, getTables.Modal.callbacks.load, getTables.Callbacks.Modal.load);
+
             return;
         },
         remove2: function () {

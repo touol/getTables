@@ -79,4 +79,8 @@ return [
         'file' => 'getTable.Modal.Remove',
         'description' => '',
     ],
+    'getTable.Modal.Progress.tpl' => [
+        'file' => 'getTable.Modal.Progress',
+        'description' => '',
+    ],
 ];
