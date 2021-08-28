@@ -120,8 +120,23 @@ class getTable
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->filter_checkbox_load($action, $table, $data);
                 break;
+            case 'get_tree_child':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->get_tree_child($action, $table, $data);
+                break;
         }
         return $this->error("Метод $action в классе $class не найден!");
+    }
+    public function get_tree_child($action, $table, $data)
+    {
+        $table2 = $this->generateData($table);
+        //$this->getTables->addDebug($table2,'refresh  table 2');
+        $html = '';
+        foreach($table2['tbody']['trs'] as $tr){
+            $html .= $tr['html'];
+        }
+        
+        return $this->success('',array('html'=>$html));
     }
     public function filter_checkbox_load($action, $table, $data)
     {
@@ -391,6 +406,16 @@ class getTable
         $table['pdoTools2']['return'] = 'data';
         
         $table['pdoTools2']['where'] = array_merge($table['pdoTools2']['where'],$table['query']['where']);
+        //tree
+        if($table['tree']){
+            $tree_where = $table['pdoTools2']['where'];
+            if(isset($this->getTables->REQUEST['gts_tree']['parent'])){
+                $table['pdoTools2']['where'][$table['class'].".".$table['tree']['parentIdField']] = (int)$this->getTables->REQUEST['gts_tree']['parent'];
+            }else{
+                $table['pdoTools2']['where'][$table['class'].".".$table['tree']['parentIdField']] = (int)$table['tree']['rootParentId'];
+            }
+            
+        }
         $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
         //file_put_contents(__DIR__ ."/". "222_initialize.txt",json_encode($this->pdoTools->config,JSON_PRETTY_PRINT));
         //$this->pdoTools->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));
@@ -489,7 +514,32 @@ class getTable
                     $td['content'] = $td['value'];
                     $autosave = true;
                 }
-                
+                //tree
+                if($table['tree']){
+                    if($table['tree']['treeShowField'] == $td['edit']['field']){
+                        $level = (int)$this->getTables->REQUEST['gts_tree']['level'];
+                        $expand = "";
+                        if($level){
+                            for($i=0;$i<=$level;$i++){
+                                $expand .= '<span class="gtstree-indent"></span>';
+                            }
+                        }
+                        $level++;
+                        $tree_where[$table['class'].".".$table['tree']['parentIdField']] = $row[$table['tree']['idField']];
+                        $table['pdoTools2']['where'] = $tree_where;
+                        $table['pdoTools2']['select'] = $table['class'].".".'id';
+
+                        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
+                        $treerows = $this->pdoTools->run();
+                        $child_count = count($treerows);
+                        if($child_count){
+                            $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].'" class="gtstree-expander gtstree-expander-collapsed"></span>';
+                        }else{
+                            $expand .= '<class="gtstree-expander"></span>';
+                        }
+                        $td['content'] = $expand.$td['content'];
+                    }
+                }
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
                 //$this->getTables->addDebug($td,'gen1  td');
                 //$this->pdoTools->addTime("getTable generateData td ".print_r($td,1));
@@ -548,7 +598,11 @@ class getTable
                 }
             }
             $r['data'] = $data;
-            
+            //tree
+            if($table['tree']){
+                $r['data']['gts_tree_child'] = $row[$table['tree']['idField']];
+                $r['data']['gts_tree_parent'] = $row[$table['tree']['parentIdField']];
+            }
             //$this->getTables->addDebug($r,'genData  $r');
             //$this->pdoTools->addTime("getTable generateData r cls {ignore}{$r['cls']} {/ignore}");
             if($r['cls']) $r['cls'] = $this->pdoTools->getChunk('@INLINE '.$r['cls'], $row);
@@ -1477,7 +1531,7 @@ class getTable
             'edits'=>$edits,
             'defaultFieldSet'=>$defaultFieldSet,
             //'commands'=>$table['commands'],
-            'loadModels'=>$this->config['loadModels']
+            'loadModels'=>$this->config['loadModels'],
         ];
         if(isset($table['export'])) $table_compile['export'] = $table['export'];
         if(isset($table['autosave'])) $table_compile['autosave'] = $table['autosave'];
@@ -1486,6 +1540,9 @@ class getTable
         if(!empty($table['event'])) $table_compile['event'] = $table['event'];
         if(isset($table['sortable']) and is_array($table['sortable'])){
             $table_compile['sortable'] = $table['sortable'];
+        }
+        if(isset($table['tree']) and is_array($table['tree'])){
+            $table_compile['tree'] = $table['tree'];
         }
         //if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
         return $table_compile;

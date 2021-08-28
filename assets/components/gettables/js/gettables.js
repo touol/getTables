@@ -30,6 +30,7 @@
             autosave: getTablesConfig.callbacksObjectTemplate(),
             custom: getTablesConfig.callbacksObjectTemplate(),
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
+            get_tree_child: getTablesConfig.callbacksObjectTemplate(),
         },
         Autocomplect: {
             load: getTablesConfig.callbacksObjectTemplate(),
@@ -340,6 +341,7 @@
             remove: getTablesConfig.callbacksObjectTemplate(),
             autosave: getTablesConfig.callbacksObjectTemplate(),
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
+            get_tree_child: getTablesConfig.callbacksObjectTemplate(),
         },
         setup: function () {
 
@@ -677,6 +679,62 @@
 
                     getTables.Table.refresh();
                 });
+            getTables.$doc
+                .on('click', '.gtstree-expander-expanded', function (e) {
+                    e.preventDefault();
+                    $table = $(this).closest('.get-table');
+                    $row = $(this).closest('.get-table-tr');
+                    $row.find('.gtstree-expander').removeClass('gtstree-expander-expanded').addClass('gtstree-expander-collapsed');
+                    $table.find('tr[data-gts_tree_parent="'+$row.data('gts_tree_child')+'"]').remove();
+                });
+            getTables.$doc
+                .on('click', '.gtstree-expander-collapsed', function (e) {
+                    e.preventDefault();
+                    $table = $(this).closest('.get-table');
+                    $row = $(this).closest('.get-table-tr');
+
+                    getTables.sendData.$GtsApp = $table;
+                    getTables.sendData.$row = $row;
+
+                    hash = $table.data('hash');
+                    gts_tree = $(this).data();
+                    getTables.sendData.data = {
+                        gts_action: 'getTable/get_tree_child',
+                        hash: hash,
+                        table_name:$table.data('name'),
+                        gts_tree: gts_tree,
+                    };
+                    if($table.data('sub_where_current') !== undefined){
+                        getTables.sendData.data['sub_where_current'] = $table.data('sub_where_current');
+                    }
+                    if($table.data('parent_current') !== undefined){
+                        getTables.sendData.data['parent_current'] = $table.data('parent_current');
+                    }
+                    filters = getTables.Table.getFilters($table);
+                    
+                    $.each(filters, function( key, value ) {
+                        //console.log( 'Свойство: ' +key + '; Значение: ' + value );
+                        getTables.sendData.data[key] = value;
+                    });
+                    getTables.sendData.data['page'] = $table.children(".get-table-paginator-container").find('[name="page"]').val();
+                    getTables.sendData.data['limit'] = 0;
+                    var callbacks = getTables.Table.callbacks;
+
+                    callbacks.get_tree_child.response.success = function (response) {
+                        $row = getTables.sendData.$row;
+                        $row.find('.gtstree-expander').removeClass('gtstree-expander-collapsed').addClass('gtstree-expander-expanded');
+                        $row.after(response.data.html);
+
+                        $('.get-date').each(function () {
+                            $(this).datepicker();
+                        });
+                        $('.get-select-multiple').each(function () {
+                            $(this).multiselect();
+                        });
+                    };
+
+                    return getTables.send(getTables.sendData.data, getTables.Table.callbacks.get_tree_child, getTables.Callbacks.Table.get_tree_child);
+                        });
         },
         check_filter: function ($th) {
             //выделение фильтра разобраться

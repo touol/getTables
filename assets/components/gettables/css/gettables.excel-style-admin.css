@@ -219,7 +219,7 @@
 }
 
 .get-table-tr {
-    text-align: center;
+    /*text-align: center;*/
     vertical-align: center;
 }
 
@@ -619,4 +619,23 @@ div.select-box {
     background-color: #fff;
     padding: 1rem;
 }
-
+/*tree*/
+.gtstree-expander-expanded {
+    background-image: url(../img/collapse.png);
+}
+.gtstree-expander-collapsed {
+    background-image: url(../img/expand.png);
+}
+.gtstree-expander {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+.gtstree-indent {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: relative;
+}
