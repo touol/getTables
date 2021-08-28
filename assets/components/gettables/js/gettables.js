@@ -685,7 +685,9 @@
                     $table = $(this).closest('.get-table');
                     $row = $(this).closest('.get-table-tr');
                     $row.find('.gtstree-expander').removeClass('gtstree-expander-expanded').addClass('gtstree-expander-collapsed');
-                    $table.find('tr[data-gts_tree_parent="'+$row.data('gts_tree_child')+'"]').remove();
+                    //$childs = $table.find('tr[data-gts_tree_parent="'+$row.data('gts_tree_child')+'"]').remove();
+                    getTables.Table.childs_remove($table,$row.data('gts_tree_child'));
+                    
                 });
             getTables.$doc
                 .on('click', '.gtstree-expander-collapsed', function (e) {
@@ -735,6 +737,13 @@
 
                     return getTables.send(getTables.sendData.data, getTables.Table.callbacks.get_tree_child, getTables.Callbacks.Table.get_tree_child);
                         });
+        },
+        childs_remove: function ($table,gts_tree_parent) {
+            $childs = $table.find('tr[data-gts_tree_parent="'+gts_tree_parent+'"]');
+            $childs.each(function(){
+                getTables.Table.childs_remove($table,$(this).data('gts_tree_child'));
+                $(this).remove();
+            });
         },
         check_filter: function ($th) {
             //выделение фильтра разобраться
