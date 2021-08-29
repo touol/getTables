@@ -852,7 +852,7 @@
                         getTables.Message.success(response.data.message);
                     }else{
                         if(typeof $('.gts_progress')[0] !== "undefined"){
-                            $('.gts_progress .progress-bar').css("width", parseInt(response.data.procent));
+                            $('.gts_progress .progress-bar').css("width", response.data.procent+"%").attr('aria-valuenow',response.data.procent);
                             getTables.sendData.data.offset = response.data.offset;
                             getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
                         }
