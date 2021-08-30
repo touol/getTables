@@ -83,4 +83,9 @@ return [
         'file' => 'getTable.Modal.Progress',
         'description' => '',
     ],
+    'getTable.menu.tpl' => [
+        'file' => 'getTable.menu',
+        'description' => '',
+    ],
+    
 ];

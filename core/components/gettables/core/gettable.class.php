@@ -1180,7 +1180,7 @@ class getTable
                     $html = '';
                     $html = $a['icon'] ? '<i class="'.$a['icon'].'"></i>' : $a['title'];
                     $html .= $a['text'] ? $a['text'] : '';
-                    
+
                     $data = $a['data'] ? $a['data'] : [];
                     $data['name'] = $k;
                     $data['action'] = $a['action'];
@@ -1296,21 +1296,41 @@ class getTable
         
         $actions = $this->compileActions($actions);
         $actions_row = [];
+        $row_menus = [];
         foreach($actions as $k=>$a){
             if(isset($a['row'])){
                 //$actions_row[$k] = ['buttons'=> $a['row']['buttons'],];
-                if(!empty($a['content'])){
-                    $actions_row[$k] = $a['content'];
-                }else if(empty($a['buttons'])){
-                    $actions_row[$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
-                    //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                if(isset($a['row']['menu'])){
+                    if(!empty($a['content'])){
+                        $row_menus[$a['row']['menu']][$k] = $a['content'];
+                    }else if(empty($a['buttons'])){
+                            $a['html'] = $a['html']."<span>".$a['title']."</span>";
+                            // $a['attr'] .= ' type="button"';
+                            // $a['cls'] .= ' dropdown-item';
+                        $row_menus[$a['row']['menu']][$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+                        //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                    }else{
+                        $row_menus[$a['row']['menu']][$k] = $this->compileActionButtons($a);
+                    }
                 }else{
-                    $actions_row[$k] = $this->compileActionButtons($a);
+                    if(!empty($a['content'])){
+                        $actions_row[$k] = $a['content'];
+                    }else if(empty($a['buttons'])){
+                        $actions_row[$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
+                        //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
+                    }else{
+                        $actions_row[$k] = $this->compileActionButtons($a);
+                    }
                 }
             } 
             if(isset($a['modal'])) $modal[$a['action']] = $a['modal'];
         }
-        
+        if(!empty($row_menus) and !empty($table['menu'])){
+            foreach($table['menu'] as $mname=>$mval){
+                $mval['buttons'] = $row_menus[$mname];
+                $actions_row[$mname] = $this->pdoTools->getChunk('getTable.menu.tpl', $mval);
+            }
+        }
         if(isset($table['checkbox']) and $table['checkbox']){
             $checkbox = [
                 'th' => '<input type="checkbox" class="get-table-check-all">',
@@ -1571,6 +1591,11 @@ class getTable
                     $ta['html'] = $arb['html'];
                     $ta['style'] = $arb['style'];
                     $ta['tag'] = $a['tag'];
+                    if(isset($a['row']['menu'])){
+                        $ta['html'] = $ta['html']."<span>".$ta['title']."</span>";
+                        // $ta['attr'] .= ' type="button"';
+                        // $ta['cls'] .= ' dropdown-item';
+                    }
                     $buttons_toggle[$arbk] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $ta);
 
                     //$buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.$str_data.
@@ -1596,6 +1621,11 @@ class getTable
                     $ta['html'] = $arb['html'];
                     $ta['style'] = $arb['style'].' {if '.$t.'$'.$field.'}display:none;{/if}';
                     $ta['tag'] = $a['tag'];
+                    if(isset($a['row']['menu'])){
+                        $ta['html'] = $ta['html']."<span>".$ta['title']."</span>";
+                        // $ta['attr'] .= ' type="button"';
+                        // $ta['cls'] .= ' dropdown-item';
+                    }
                     $buttons_toggle[$arbk] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $ta);
                     //$buttons_toggle[$arbk] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.
                     //$str_data.' style="{if '.$t.'$'.$field.'}display:none;{/if}" title="'.$arb['title'].'"> '.$arb['html'].'</button>';
@@ -1613,7 +1643,13 @@ class getTable
                     $a['attr'] .= ' '.$str_data;
                     $a['title'] = $arb['title'];
                     $a['html'] .= $arb['html'];
-                    
+
+                    if(isset($a['row']['menu'])){
+                        $a['html'] = $a['html']."<span>".$a['title']."</span>";
+                        // $a['attr'] .= ' type="button"';
+                        // $a['cls'] .= ' dropdown-item';
+                    }
+
                     $buttons[] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
 
                     //$buttons[] ='<button type = "button" class="btn get-table-row '.$arb['cls'].'" '.
