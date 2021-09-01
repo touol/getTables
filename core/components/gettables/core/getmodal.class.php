@@ -102,7 +102,7 @@ class getModal
         $table_name = !empty($data['table_data']['name'])
             ? (string)$data['table_data']['name']
             : false;
-		$action_name = !empty($data['button_data']['name'])
+        $action_name = !empty($data['button_data']['name'])
             ? (string)$data['button_data']['name']
             : false;
         $tr_data = !empty($data['tr_data']) ? $data['tr_data'] : [];
@@ -118,7 +118,7 @@ class getModal
         }
         //$table = $this->config['getTable'][$table_name];
         //echo json_encode($table);
-		//$this->getTables->addDebug($table,'fetchTableModal $table ');
+        //$this->getTables->addDebug($table,'fetchTableModal $table ');
         $modal = $table['actions'][$action_name]['modal'];
         $edits = $table['edits'];
         $modal['hash'] = $this->config['hash'];
@@ -145,21 +145,25 @@ class getModal
         //if(!empty($table['force'])) $edits = $this->defaultFieldSet($edits,$table['force']);
         //return $this->error("getModal fetchTableModal modal! ",$tr_data);
         if(isset($this->config[$modal['EditFormtpl']])){
-			$EditFormtpl = $this->config[$modal['EditFormtpl']];
-		}else{
-			$EditFormtpl = $modal['EditFormtpl'];
-		}
+            $EditFormtpl = $this->config[$modal['EditFormtpl']];
+        }else{
+            $EditFormtpl = $modal['EditFormtpl'];
+        }
         foreach($edits as $k=>&$edit){
-            if($edit['skip_modal']) unset($edits[$k]);
-            $edit['modal_content'] = $this->pdoTools->getChunk($EditFormtpl, ['edit'=>$edit]);
+            if($edit['skip_modal']){
+                unset($edits[$k]);
+            }else{
+                $edit['modal_content'] = $this->pdoTools->getChunk($EditFormtpl, ['edit'=>$edit]);
+            }
+            
         }
         $modal['edits'] = $edits;
         //$this->getTables->addDebug($modal,'fetchTableModal $modal ');
-		if(isset($this->config[$modal['tpl']])){
-			$tpl = $this->config[$modal['tpl']];
-		}else{
-			$tpl = $modal['tpl'];
-		}
+        if(isset($this->config[$modal['tpl']])){
+            $tpl = $this->config[$modal['tpl']];
+        }else{
+            $tpl = $modal['tpl'];
+        }
         $html = $this->pdoTools->getChunk($tpl, ['modal'=>$modal]);
         
         return $this->success('',array('html'=>$html));
