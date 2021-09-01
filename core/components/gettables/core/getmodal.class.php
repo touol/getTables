@@ -149,7 +149,8 @@ class getModal
 		}else{
 			$EditFormtpl = $modal['EditFormtpl'];
 		}
-        foreach($edits as &$edit){
+        foreach($edits as $k=>&$edit){
+            if($edit['skip_modal']) unset($edits[$k]);
             $edit['modal_content'] = $this->pdoTools->getChunk($EditFormtpl, ['edit'=>$edit]);
         }
         $modal['edits'] = $edits;

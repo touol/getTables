@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.13-alpha
+- Добавлена инструкция skip_modal.
+
 1.7.12-alpha
 - Доработка долгих процессов.
 

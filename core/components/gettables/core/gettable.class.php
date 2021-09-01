@@ -1413,6 +1413,9 @@ class getTable
             }else{
                 $edit['as'] = $value['as'];
             }
+            if($value['skip_modal']){
+                $edit['skip_modal'] = $value['skip_modal'];
+            }
             if($value['field'] == 'id') $edit['type'] = 'row_view';
             if(!empty($value['default'])) $edit['default'] = $value['default'];
             if(!empty($value['force'])) $edit['force'] = $value['force'];
