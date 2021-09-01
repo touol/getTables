@@ -28,6 +28,7 @@ $_lang['gettables_yes'] = 'Yes';//
 $_lang['gettables_no'] = 'No';//
 $_lang['gettables_from'] = 'From';//From
 $_lang['gettables_to'] = 'To';//
+$_lang['gettables_stop'] = 'Stop';//Stop
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'Load';

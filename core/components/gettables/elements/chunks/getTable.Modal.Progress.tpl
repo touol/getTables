@@ -8,12 +8,15 @@
         <h4 class="modal-title" id="myModalLabel"></h4>
       </div>
       <div class="modal-body">
+        <div class="progress-info">
+          <span class="progress-procent"></span> <span class="progress-message"></span>
+        </div>
         <div class="progress">
           <div class="progress-bar" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{'gettables_close' | lexicon}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{'gettables_stop' | lexicon}</button>
       </div>
     </div>
   </div>

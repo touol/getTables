@@ -1,5 +1,7 @@
 (function (window, document, $, getTablesConfig) {
     var getTables = getTables || {};
+    var progress_offset = 0;
+
     getTablesConfig.callbacksObjectTemplate = function () {
         return {
             // return false to prevent send data
@@ -853,12 +855,22 @@
                     }else{
                         if(typeof $('.gts_progress')[0] !== "undefined"){
                             $('.gts_progress .progress-bar').css("width", response.data.procent+"%").attr('aria-valuenow',response.data.procent);
+                            $('.gts_progress .progress-procent').text(response.data.procent +'%');
+                            $('.gts_progress .progress-message').text(response.data.message);
+                            getTables.progress_offset = response.data.offset;
                             getTables.sendData.data.offset = response.data.offset;
                             getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
                         }
                     }
                 };
-    
+                callbacks2.long_process.ajax.fail = function (response) {
+                    if(typeof $('.gts_progress')[0] !== "undefined"){
+                        $('.gts_progress .progress-message').text(response.status+" "+response.statusText);
+                        //console.info(response);
+                        getTables.sendData.data.offset = getTables.progress_offset;
+                        getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
+                    }
+                };
                 return getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
             };
 

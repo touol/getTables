@@ -321,6 +321,7 @@ class getTableProcessor
                         $saved[] = $resp1;
                     }
                 }
+                $resp = $this->run_triggers($table['class'], 'after', 'copy', [], $old_row,$row);
             }
             
         }
@@ -336,6 +337,7 @@ class getTableProcessor
             }
         }
         if(!$error){
+            
             return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
         }else{
             return $this->error($error,$saved);
