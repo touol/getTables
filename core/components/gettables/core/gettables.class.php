@@ -40,16 +40,7 @@ class getTables
             'jsUrl' => $assetsUrl . 'js/',
             'ctx' => $this->modx->context->key,
             'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
-            
-           /* 'getTableOuterTpl' => 'getTable.outer.tpl',
-            'getTableNavTpl' => 'getTable.nav.tpl',
-            'getTableRowTpl' => 'getTable.row.tpl',
-            'getTableEditRowTpl' => 'getTable.EditRow.tpl',
-            'getTableModalCreateUpdateTpl' => 'getTable.Modal.CreateUpdate.tpl',
-            'getTableFilterTpl' => 'getTable.Filter.tpl',
-            'getTabsTpl' => 'getTabs.tpl',
-            
-            */
+            'date_format' => $this->modx->getOption('gettables_date_format','','Y-m-d'),
             
         ], $config);
         if($this->config['ctx'] == 'mgr') $this->config['frontend_framework_style'] = $this->modx->getOption('gettables_mgr_framework_style',null,'bootstrap_v3');
@@ -57,7 +48,7 @@ class getTables
         $this->models['getTable']['class'] = 'gettable.class.php';
         $this->models['getModal']['class'] = 'getmodal.class.php';
         $this->models['getSelect']['class'] = 'getselect.class.php';
-        
+        $this->models['getForm']['class'] = 'getform.class.php';
         
         //$this->modx->addPackage('gettables', $this->config['modelPath']);
         $this->modx->lexicon->load('gettables:default');
@@ -106,14 +97,14 @@ class getTables
         $this->getModels();
 
         $this->config['hash'] = sha1(json_encode($this->config));
-		if(!empty($config['toJSON'])){
-			unset($config['toJSON']);
-			$this->pdoTools->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
-		}
+        if(!empty($config['toJSON'])){
+            unset($config['toJSON']);
+            $this->pdoTools->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
+        }
         if(!empty($config['toFenom'])){
-			unset($config['toFenom']);
-			$this->pdoTools->addTime('toFenom '.$this->varexport($config,1));
-		}
+            unset($config['toFenom']);
+            $this->pdoTools->addTime('toFenom '.$this->varexport($config,1));
+        }
         $this->pdoTools->addTime('__construct');
     }
 
@@ -171,26 +162,26 @@ class getTables
         $this->models = array_merge($this->models,$models);
 
         //Загрузка тригеров
-		if(!$this->config['isAjax']){
-			$this->config['triggers'] = [];
-			foreach($models as $name =>$v){
-				$response = $this->loadService($name);
-				
-				if(is_array($response) and $response['success']){
-					$service = $this->models[$name]['service'];
-					$this->pdoTools->addTime("getModels triggers $name");
-					if(method_exists($service,'regTriggers')){ 
-						$triggers =  $service->regTriggers();
-						foreach($triggers as &$trigger){
-							$trigger['model'] = $name;
-						}
-						$this->config['triggers'] = array_merge($this->config['triggers'],$triggers);
-					}
-				}else{
-					$this->pdoTools->addTime("getModels triggers. Not load $name.");
-				}
-			}
-		}
+        if(!$this->config['isAjax']){
+            $this->config['triggers'] = [];
+            foreach($models as $name =>$v){
+                $response = $this->loadService($name);
+                
+                if(is_array($response) and $response['success']){
+                    $service = $this->models[$name]['service'];
+                    $this->pdoTools->addTime("getModels triggers $name");
+                    if(method_exists($service,'regTriggers')){ 
+                        $triggers =  $service->regTriggers();
+                        foreach($triggers as &$trigger){
+                            $trigger['model'] = $name;
+                        }
+                        $this->config['triggers'] = array_merge($this->config['triggers'],$triggers);
+                    }
+                }else{
+                    $this->pdoTools->addTime("getModels triggers. Not load $name.");
+                }
+            }
+        }
         
     }
     
@@ -445,6 +436,11 @@ class getTables
         $this->modx->regClientStartupScript(
             '<script type="text/javascript">getTablesConfig = ' . $CSS_JS['data'] . ';</script>', true
         );
+        if($CSS_JS['js_datepicker']){
+            $this->modx->regClientScript(
+                $CSS_JS['js_datepicker'], true
+            );
+        }
         $this->config['registerCSS_JS'] = true;
     }
 
@@ -506,9 +502,45 @@ class getTables
         $jss[] = $CSS_JS['js']['frontend_message_js'];
         if(!empty($CSS_JS['js']['frontend_gettabs_js'])) $jss[] = $CSS_JS['js']['frontend_gettabs_js'];
         
+        $js_datepicker = false;
         if($CSS_JS['load']['load_add_lib']){
             $jss[] = $CSS_JS['js']['add_lib_datepicker'];
-            $jss[] = $CSS_JS['js']['add_lib_datepicker_ru'];
+            //$jss[] = $CSS_JS['js']['add_lib_datepicker_ru'];
+            $js_datepicker = '<script type="text/javascript">( function( factory ) {
+                if ( typeof define === "function" && define.amd ) {
+            
+                    // AMD. Register as an anonymous module.
+                    define( [ "../widgets/datepicker" ], factory );
+                } else {
+            
+                    // Browser globals
+                    factory( jQuery.datepicker );
+                }
+            }( function( datepicker ) {
+            
+            datepicker.regional.ru = {
+                closeText: "Закрыть",
+                prevText: "&#x3C;Пред",
+                nextText: "След&#x3E;",
+                currentText: "Сегодня",
+                monthNames: [ "Январь","Февраль","Март","Апрель","Май","Июнь",
+                "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь" ],
+                monthNamesShort: [ "Янв","Фев","Мар","Апр","Май","Июн",
+                "Июл","Авг","Сен","Окт","Ноя","Дек" ],
+                dayNames: [ "воскресенье","понедельник","вторник","среда","четверг","пятница","суббота" ],
+                dayNamesShort: [ "вск","пнд","втр","срд","чтв","птн","сбт" ],
+                dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ],
+                weekHeader: "Нед",
+                dateFormat: "'.$this->modx->getOption('gettables_date_format_datepicker','','yy-mm-dd').'",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: "" };
+            datepicker.setDefaults( datepicker.regional.ru );
+            
+            return datepicker.regional.ru;
+            
+            } ) );</script>';
             $jss[] = $CSS_JS['js']['add_lib_multiselect'];
         }
         if($CSS_JS['load']['load_cellsselection']){
@@ -551,6 +583,7 @@ class getTables
             'js' => $jss,
             'css' => $csss,
             'data' => $data,
+            'js_datepicker' => $js_datepicker,
             'placeholders' => $placeholders,
         ];
     }

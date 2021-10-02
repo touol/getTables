@@ -246,13 +246,13 @@ class getTableProcessor
     }
     public function sort($table, $edit_tables, $data = array())
     {
-		$class = $table["class"];
+        $class = $table["class"];
         $source = $this->modx->getObject($class, $data['source_id']);
-		$target = $this->modx->getObject($class, $data['target_id']);
+        $target = $this->modx->getObject($class, $data['target_id']);
         
         if (empty($source) || empty($target)) {
-			return $this->error('gettables_empty_indexes');
-		}
+            return $this->error('gettables_empty_indexes');
+        }
         if(isset($table['sortable']) and is_array($table['sortable'])){
             if($table['sortable']['field']){
                 $field = $table['sortable']['field'];
@@ -500,22 +500,22 @@ class getTableProcessor
         $set_data[$data['td']['field']] = $data['td']['value'];
 
         foreach($edit_tables as $class_edits){
-			foreach($class_edits as $edit){
-				if($edit['force']){
-					switch($edit['type']){
-						case 'date':
-							$edit['force'] = date('Y-m-d',strtotime($edit['force']));
-							break;
-					}
-					switch($edit['force']){
-						case 'user_id':
-							$edit['force'] = $this->modx->user->id;
-							break;
-					}
-					$set_data[$edit['field']] = $edit['force'];
-				}
-			}
-		}
+            foreach($class_edits as $edit){
+                if($edit['force']){
+                    switch($edit['type']){
+                        case 'date':
+                            $edit['force'] = date('Y-m-d',strtotime($edit['force']));
+                            break;
+                    }
+                    switch($edit['force']){
+                        case 'user_id':
+                            $edit['force'] = $this->modx->user->id;
+                            break;
+                    }
+                    $set_data[$edit['field']] = $edit['force'];
+                }
+            }
+        }
         $set_data['table_name'] = $data['table_name'];
         return $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
     }
@@ -662,8 +662,12 @@ class getTableProcessor
                 if($data[$edit['field']] !== null)
                     $set_data[$edit['field']] = $data[$edit['field']];
 
-                if($edit['type'] == 'date' and isset($data[$edit['field']]) and $data[$edit['field']] === ''){
-                    $set_data[$edit['field']] = null;
+                if($edit['type'] == 'date'){
+                    if(isset($data[$edit['field']]) and $data[$edit['field']] === ''){
+                        $set_data[$edit['field']] = null;
+                    }else{
+                        $set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
+                    }
                 }
             }
             foreach($table['defaultFieldSet'] as $df=>$dfv){
@@ -713,7 +717,7 @@ class getTableProcessor
                             if ($c->prepare() && $c->stmt->execute()) {
                                 $max = $c->stmt->fetchColumn();
                             }
-			                $set_data[$table['sortable']['field']] = $max + 1;
+                            $set_data[$table['sortable']['field']] = $max + 1;
                         }
                     }
                     // $this->getTables->addDebug($table['sortable'],'sortable update');

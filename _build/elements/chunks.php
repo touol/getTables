@@ -87,5 +87,8 @@ return [
         'file' => 'getTable.menu',
         'description' => '',
     ],
-    
+    'getTable.Form.tpl' => [
+        'file' => 'getTable.Form',
+        'description' => '',
+    ],
 ];

@@ -160,4 +160,14 @@ return [
         'value' => true,
         'area' => 'gettables_main',
     ],
+    'date_format' => [
+        'xtype' => 'textfield',
+        'value' => 'd.m.Y',
+        'area' => 'gettables_main',
+    ],
+    'date_format_datepicker' => [
+        'xtype' => 'textfield',
+        'value' => 'dd.mm.yy',
+        'area' => 'gettables_main',
+    ],
 ];

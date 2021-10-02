@@ -91,7 +91,7 @@
                             {/if}
                     </div>
                 </div>
-                {case 'autocomplect'}
+            {case 'autocomplect'}
                 <div class="form-group get-autocomplect" data-action="getSelect/autocomplect" data-name="{$edit.select.name}"
                 {if $edit.search}data-search="{$edit.search}"{/if}
                     data-modal="1">

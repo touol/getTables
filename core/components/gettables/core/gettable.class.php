@@ -490,6 +490,9 @@ class getTable
                         $td['value'] = number_format($td['value'],$td['number'][0],$td['number'][1],$td['number'][2]);
                     }
                 }
+                if($td['edit']['type'] == "date"){
+                    $td['value'] = date($this->config['date_format'],strtotime($td['value']));
+                }
                 // if($td['edit']['type'] == 'textarea' and $this->getTables->REQUEST['gts_action'] != 'getTable/export_excel'){
                 //     $td['value'] = '{ignore}'.$td['value'].'{/ignore}';
                 // }
@@ -753,6 +756,7 @@ class getTable
                             case 'date':
                                 $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
                                 break;
+                                
                         }
                         switch($filter['default']){
                             case 'user_id':
@@ -824,7 +828,10 @@ class getTable
                 
                 switch($filter['edit']['type']){
                     case 'date':
-                        $date = $this->getTables->REQUEST[$filter['edit']['field']];
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
+                            $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
+                            $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
                         break;
                     default:
                         $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
@@ -854,12 +861,15 @@ class getTable
             if(!empty($date)){
                 if(!empty($date['from'])){
                     $query[$filter['edit']['where_field'].':>='] = $date['from'];
-                    $filter['value']['from'] = $date['from'];
+                    $filter['value']['from'] = date($this->config['date_format'],strtotime($date['from']));
                 }
                 if(!empty($date['to'])){
                     $query[$filter['edit']['where_field'].':<='] = $date['to'];
-                    $filter['value']['to'] = $date['to'];
+                    $filter['value']['to'] = date($this->config['date_format'],strtotime($date['to']));
                 }
+                $this->getTables->addDebug($query,'addFilterTable  $query');
+                $this->getTables->addDebug($filter,'addFilterTable  $filter');
+                $this->getTables->addDebug($date['from'],'addFilterTable  $date');
             }
 
             if(!empty($filter['edit']['multiple'])){

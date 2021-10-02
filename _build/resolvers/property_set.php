@@ -115,6 +115,15 @@ if ($transport->xpdo) {
                         'area' => '',
                         'value' => 'getTable.Modal.Remove.tpl',
                     ),
+                    'getTableFormTpl' => array(
+                        'name' => 'getTableFormTpl',
+                        'desc' => 'getTableFormTpl',
+                        'type' => 'textfield',
+                        'options' => array(),
+                        'lexicon' => '',
+                        'area' => '',
+                        'value' => 'getTable.Form.tpl',
+                    ),
                 ),
             ));
             if ($prop_bootstrap_v3->save()) {
@@ -230,6 +239,15 @@ if ($transport->xpdo) {
                         'lexicon' => '',
                         'area' => '',
                         'value' => 'getTable.Modal.Remove.tpl',
+                    ),
+                    'getTableFormTpl' => array(
+                        'name' => 'getTableFormTpl',
+                        'desc' => 'getTableFormTpl',
+                        'type' => 'textfield',
+                        'options' => array(),
+                        'lexicon' => '',
+                        'area' => '',
+                        'value' => 'getTable.Form.tpl',
                     ),
                 ),
             ));

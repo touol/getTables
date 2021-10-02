@@ -1,6 +1,6 @@
 <?php
 
-class getModal
+class getForm
 {
     public $modx;
     /** @var pdoFetch $pdoTools */
@@ -177,7 +177,7 @@ class getModal
             if($edit['force']){
                 switch($edit['type']){
                     case 'date':
-                        $edit['force'] = date($this->config['date_format'],strtotime($edit['force']));
+                        $edit['force'] = date('Y-m-d',strtotime($edit['force']));
                         break;
                 }
                 switch($edit['force']){
@@ -236,9 +236,6 @@ class getModal
                 }
                 if(isset($edit['field_content'])){
                     $edit['content'] = $row[$edit['field_content']];
-                }
-                if($edit['type'] == "date"){
-                    $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
                 }
                 //$this->getTables->addDebug($edit,'$edit generateEditsData');
             }
