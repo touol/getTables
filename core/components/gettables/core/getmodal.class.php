@@ -7,7 +7,7 @@ class getModal
     public $pdoTools;
     
     public $getTables;
-    public $debug = [];
+
     /**
      * @param modX $modx
      * @param array $config
@@ -25,16 +25,7 @@ class getModal
         ], $config);
         
     }
-    public function checkAccsess($action)
-    {
-        switch($action){
-            case 'fetchTableModal':
-                return true;
-                break;
-            default:
-                return false;
-        }
-    }
+
     public function handleRequest($action, $data = array())
     {
         $class = get_class($this);
@@ -210,51 +201,41 @@ class getModal
         
         
         //$this->getTables->addDebug($rows,'$rows ');
-        
-        foreach($rows as $row){
-            foreach($edits as &$edit){
-                if(!empty($edit['multiple']) and isset($edit['pdoTools']) and !empty($edit['search_fields'])){
-                    if(empty($edit['pdoTools']['class'])) $edit['pdoTools']['class'] = $edit['class'];
-                    $where = [];
-                    foreach($edit['search_fields'] as $field=>$row_field){
-                        $where[$field] = $row[$row_field];
+        if(is_array($rows) and count($rows) == 1){
+            foreach($rows as $row){
+                foreach($edits as &$edit){
+                    if(!empty($edit['multiple']) and isset($edit['pdoTools']) and !empty($edit['search_fields'])){
+                        if(empty($edit['pdoTools']['class'])) $edit['pdoTools']['class'] = $edit['class'];
+                        $where = [];
+                        foreach($edit['search_fields'] as $field=>$row_field){
+                            $where[$field] = $row[$row_field];
+                        }
+                        $edit['pdoTools']['where'] = $where;
+                        $edit['pdoTools']['limit'] = 0;
+                        
+                        $this->pdoTools->config = array_merge($this->config['pdoClear'],$edit['pdoTools']);
+                        $edit['value'] = $this->pdoTools->run();
+                        $value = [];
+                        foreach($edit['value'] as $v){
+                            $value[$v[$edit['field']]] = $v[$edit['field']];
+                        }
+                        $edit['value'] = $value;
+                        $edit['json'] = json_encode($value);
+                        
+                    }else{
+                        $edit['value'] = $row[$edit['as']];
                     }
-                    $edit['pdoTools']['where'] = $where;
-                    $edit['pdoTools']['limit'] = 0;
-                    
-                    $this->pdoTools->config = array_merge($this->config['pdoClear'],$edit['pdoTools']);
-                    $edit['value'] = $this->pdoTools->run();
-                    $value = [];
-                    foreach($edit['value'] as $v){
-                        $value[$v[$edit['field']]] = $v[$edit['field']];
+                    if(isset($edit['field_content'])){
+                        $edit['content'] = $row[$edit['field_content']];
                     }
-                    $edit['value'] = $value;
-                    $edit['json'] = json_encode($value);
-                    
-                }else{
-                    $edit['value'] = $row[$edit['as']];
+                    if($edit['type'] == "date"){
+                        $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
+                    }
+                    //$this->getTables->addDebug($edit,'$edit generateEditsData');
                 }
-                if(isset($edit['field_content'])){
-                    $edit['content'] = $row[$edit['field_content']];
-                }
-                if($edit['type'] == "date"){
-                    $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
-                }
-                //$this->getTables->addDebug($edit,'$edit generateEditsData');
             }
         }
         return $edits;
-    }
-    
-    public function getStyleChunks()
-    {
-        /*if($this->config['frontend_framework_style'] != 'bootstrap_v3' and $this->config['getTabsTpl'] == 'getTabs.tpl'){
-            if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_'.$this->config['frontend_framework_style']))){
-                if($chunk = $this->modx->getObject('modChunk', array('name' => $propSet->getTabsTpl))){
-                    $this->config['getTabsTpl'] = $propSet->getTabsTpl;
-                }
-            }
-        }*/
     }
     
     public function error($message = '', $data = array())

@@ -21,6 +21,10 @@
         Modal: {
             load: getTablesConfig.callbacksObjectTemplate(),
         },
+        Form: {
+            save: getTablesConfig.callbacksObjectTemplate(),
+            autosave: getTablesConfig.callbacksObjectTemplate(),
+        },
         Table: {
             update: getTablesConfig.callbacksObjectTemplate(),
             refresh: getTablesConfig.callbacksObjectTemplate(),
@@ -144,6 +148,7 @@
 
         getTables.Modal.initialize();
         getTables.Table.initialize();
+        getTables.Form.initialize();
     };
     getTables.controller = function () {
         var self = this;
@@ -322,12 +327,63 @@
 
             callbacks.load.response.success = function (response) {
 
-                //$('body').append(response.data.html);
                 $(response.data.html).modal('show');
 
             };
 
             return getTables.send(getTables.sendData.data, getTables.Modal.callbacks.load, getTables.Callbacks.Modal.load);
+        },
+
+    };
+
+    getTables.Form = {
+        callbacks: {
+            save: getTablesConfig.callbacksObjectTemplate(),
+            autosave: getTablesConfig.callbacksObjectTemplate(),
+        },
+        setup: function () {
+
+        },
+        initialize: function () {
+            getTables.Form.setup();
+            
+            $('.get-date').each(function () {
+                $(this).datepicker();
+            });
+            $('.get-select-multiple').each(function () {
+                $(this).multiselect();
+            });
+
+            getTables.$doc
+                .on('click', '.btn-gts-getform', function (e) {
+                    e.preventDefault();
+                    $form = $(this).closest('.gts-getform');
+                    action = $(this).val();
+                    getTables.Form.save(action, $form);
+                });
+        },
+
+        save: function (action, $form) {
+            getTables.Message.close();
+
+            getTables.sendData.$form = $form;
+
+            getTables.sendData.data = $form.serializeArray();
+            getTables.sendData.data.push({
+                name: 'action',
+                value: action
+            });
+
+            var callbacks = getTables.Form.callbacks;
+
+            callbacks.save.response.success = function (response) {
+
+                //$('body').append(response.data.html);
+                //$(response.data.html).modal('show');
+
+            };
+
+            return getTables.send(getTables.sendData.data, getTables.Form.callbacks.save, getTables.Callbacks.Form.save);
         },
 
     };
@@ -1013,8 +1069,12 @@
                 $table = getTables.sendData.$GtsApp;
                 //console.log('response',response);
                 $table.find('tbody').html(response.data.html);
-                if (response.data.nav_total > 0) {
-                    $table.find('.get-table-nav').html(response.data.nav);
+                
+                $table.find('.get-table-nav').html(response.data.nav);
+                
+
+                if (response.data.top > 0) {
+                    $table.find('.get-table-top').html(response.data.top);
                 }
 
                 $('.get-date').each(function () {

@@ -18,6 +18,8 @@ class getTables
     
     public $registryAppName = [];
     public $REQUEST = [];
+
+    public $selects_compile = false;
     /**
      * @param modX $modx
      * @param array $config
@@ -94,7 +96,9 @@ class getTables
             }
             $this->config['pdoClear'] = $this->pdoTools->config;
         }
+        $this->pdoTools->addTime('__construct pdoTools');
         $this->getModels();
+        $this->pdoTools->addTime('__construct getModels');
 
         $this->config['hash'] = sha1(json_encode($this->config));
         if(!empty($config['toJSON'])){
@@ -639,11 +643,9 @@ class getTables
                 
                 unset($actions[0]); 
                 $class_action = implode("/",$actions);
-                if(method_exists($service,'handleRequest')){ // and $service->checkAccsess($class_action)){
-                    //$response =  $this->error(['lexicon'=>'access_denied'],$data);
+                if(method_exists($service,'handleRequest')){ 
                     $response =  $service->handleRequest($class_action, $data);
                 }else{
-                    //$response = $this->error("Доступ запрешен $class_action");
                     $class = get_class($service);
                     $response = $this->error("Не найден $class/$class_action");
                 }

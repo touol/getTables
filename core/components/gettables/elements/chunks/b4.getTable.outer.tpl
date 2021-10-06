@@ -12,6 +12,11 @@
             <button class="get-table-close-subtable">X</button>
         {/if}
     </div>
+    {if $top}
+        <div class="get-table-top">
+        {$top}
+        </div>
+    {/if}
     <div class="gts-form get-table-filter-container get-table-paginator-container">
         <div class="row">
             <div class="col-md-2 get-table-topline-first">

@@ -611,7 +611,7 @@ class getTable
             if($r['cls']) $r['cls'] = $this->pdoTools->getChunk('@INLINE '.$r['cls'], $row);
             
             $sub = ['cls'=>'hidden'];
-            $html = $this->pdoTools->getChunk($this->config['getTableRowTpl'],['tr'=>$r,'sub'=>$sub]);
+            $html = $this->pdoTools->getChunk($this->config['getTableRowTpl'],['tr'=>$r,'sub'=>$sub],true);
             $trs[] = [
                 'tr'=>$r,
                 'sub'=>$sub,
@@ -622,6 +622,7 @@ class getTable
         
         
         $table['tbody']['trs'] = $trs;
+        $this->pdoTools->addTime('generateData end');
         //$this->getTables->addDebug($table,'generateData $table');
         //echo "getTable generateData inner <pre>".print_r($table['tbody']['inner'],1)."</pre>";
         return $table;
@@ -634,8 +635,20 @@ class getTable
         foreach($table2['tbody']['trs'] as $tr){
             $html .= $tr['html'];
         }
-        
-        return $this->success('',array('html'=>$html,'nav'=>$table2['page']['content'],'nav_total'=>$table2['page']['total']));
+
+        $top = '';
+        if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
+            $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
+            $resp = $this->getTables->handleRequest('getForm/fetch',$table['top']['form']);
+            if($resp['success']) $top = $resp['data']['html'];
+        }
+
+        return $this->success('',[
+            'html'=>$html,
+            'nav'=>$table2['page']['content'],
+            'nav_total'=>$table2['page']['total'],
+            'top'=>$top,
+        ]);
     }
     
     public function fetch($table = array())
@@ -646,25 +659,47 @@ class getTable
         //$this->pdoTools->addTime("getTable fetch table ".print_r($this->config,1));
         //echo "<pre>{ignore}".print_r($this->config,1)."{/ignore}</pre>";
         if(empty($table)){
-            if(!empty($this->config['table'])) $table = $this->config['table'];
+            if(!empty($this->config['table'])){
+                $table = $this->config['table'];
+            }else{
+                return $this->error("Нет конфига table!");
+            }
         }
         //$table['pdoTools']['return'] = 'data';
-        //if(!empty($table['pdoTools'])) $this->pdoTools->setConfig($table['pdoTools']);
+        $top = '';
+        if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
+            $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
+            $this->pdoTools->addTime("document id = {$this->getTables->REQUEST['id']}");
+            $resp =$this->getTables->handleRequest('getForm/test',$table['top']['form']);
+            if(!$resp['success']){
+                return $this->error("Документ не найден!");
+            }
+            foreach($table['role']['where'] as $k=>$v){
+                if($v == 'id'){
+                    $table['pdoTools']['where'][$k] = (int)$table['role']['id'];
+                }else{
+                    $table['pdoTools']['where'][$k] = $v;
+                }
+            }
+            $resp = $this->getTables->handleRequest('getForm/fetch',$table['top']['form']);
+            if($resp['success']) $top = $resp['data']['html'];
+        }
         
         if(is_string($table) and strpos(ltrim($table), '{') === 0) $table = json_decode($table, true);
         //$this->pdoTools->addTime("getTable fetch table ".print_r($table,1));
         if($table['row']){
             //$this->pdoTools->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
             if(isset($this->config['selects'])){
-                if(empty($this->config['compile']) and $selects = $this->getTables->getClassCache('getSelect','all')){
+                if(!$selects = $this->getTables->getClassCache('getSelect','all')){
+                    if(!empty($this->config['compile']) and !$this->getTables->selects_compile){
+                        $request = $this->getTables->handleRequest('getSelect/compile',$this->config['selects']);
+                        $selects = $request['data']['selects'];
                     
-                }else{
-                    $request = $this->getTables->handleRequest('getSelect/compile',$this->config['selects']);
-                    $selects = $request['data']['selects'];
+                        $this->getTables->setClassConfig('getSelect','all', $selects);
+                        $this->getTables->selects_compile = true;
+                    }
                 }
-                $this->getTables->setClassConfig('getSelect','all', $selects);
                 $this->config['selects'] = $selects;
-                //$this->pdoTools->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
             }
             //if(empty($table['compile'])){
                 if(empty($this->config['compile']) and $table_compile = $this->getTables->getClassCache('getTable',$table['name'])){
@@ -707,8 +742,14 @@ class getTable
             }
             //echo "getTable table_compile table ".print_r($table_compile,1);
             
-            $html = $this->pdoTools->getChunk($this->config['getTableOuterTpl'], $this->generateData($table_compile));
-            
+            $this->pdoTools->addTime('generateData start');
+            $generateData = $this->generateData($table_compile);
+            $this->pdoTools->addTime('generateData end');
+            $generateData['top'] = $top;
+
+            $html = $this->pdoTools->getChunk($this->config['getTableOuterTpl'], $generateData,true);
+            $this->pdoTools->addTime('getChunk outer');
+
             //$this->pdoTools->addTime("getTable fetch table registryAppName  {ignore}".print_r($this->getTables->registryAppName,1)."{/ignore}");
             //if(!$this->config['isAjax']) $this->registerActionJS($table);
             
@@ -1580,6 +1621,13 @@ class getTable
         if(isset($table['tree']) and is_array($table['tree'])){
             $table_compile['tree'] = $table['tree'];
         }
+        if(isset($table['role']) and is_array($table['role'])){
+            $table_compile['role'] = $table['role'];
+        }
+        if(isset($table['top']) and is_array($table['top'])){
+            $table_compile['top'] = $table['top'];
+        }
+        //$table['role']['type'] == 'document' and $table['top']['type'] == 'form'
         //if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
         return $table_compile;
     }
