@@ -663,11 +663,13 @@ class getTableProcessor
                     $set_data[$edit['field']] = $data[$edit['field']];
 
                 if($edit['type'] == 'date'){
-                    if(isset($data[$edit['field']]) and $data[$edit['field']] === ''){
-                        $set_data[$edit['field']] = null;
-                    }else{
-                        $set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
-                    }
+					if(isset($data[$edit['field']])){
+						if($data[$edit['field']] == ''){
+							$set_data[$edit['field']] = null;
+						}else{
+							$set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
+						}
+					}
                 }
             }
             foreach($table['defaultFieldSet'] as $df=>$dfv){

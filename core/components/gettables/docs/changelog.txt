@@ -1,6 +1,7 @@
 Changelog for getTables.
 1.7.15-alpha
 - правка readonly date.
+- Исправлена нулевая дата.
 
 1.7.14-alpha
 - Добавлена настройка формата даты.

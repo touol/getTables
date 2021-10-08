@@ -491,7 +491,8 @@ class getTable
                     }
                 }
                 if($td['edit']['type'] == "date"){
-                    $td['value'] = date($this->config['date_format'],strtotime($td['value']));
+					if($td['value'])
+						$td['value'] = date($this->config['date_format'],strtotime($td['value']));
                 }
                 // if($td['edit']['type'] == 'textarea' and $this->getTables->REQUEST['gts_action'] != 'getTable/export_excel'){
                 //     $td['value'] = '{ignore}'.$td['value'].'{/ignore}';
@@ -691,7 +692,7 @@ class getTable
             //$this->pdoTools->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
             if(isset($this->config['selects'])){
                 if(!$selects = $this->getTables->getClassCache('getSelect','all')){
-                    if(!empty($this->config['compile']) and !$this->getTables->selects_compile){
+                    if(!empty($this->config['compile']) or !$this->getTables->selects_compile){
                         $request = $this->getTables->handleRequest('getSelect/compile',$this->config['selects']);
                         $selects = $request['data']['selects'];
                     
@@ -795,7 +796,7 @@ class getTable
                     if(!is_array($filter['default'])){
                         switch($filter['edit']['type']){
                             case 'date':
-                                $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
+                                if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
                                 break;
                                 
                         }
@@ -822,7 +823,7 @@ class getTable
                 if(!is_array($filter['force'])){
                     switch($filter['type']){
                         case 'date':
-                            $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
+                            if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
                             break;
                     }
                     switch($filter['force']){
