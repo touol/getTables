@@ -377,7 +377,7 @@
             var callbacks = getTables.Form.callbacks;
 
             callbacks.save.response.success = function (response) {
-
+                if(response.data.modal) $(response.data.modal).modal('show');
                 //$('body').append(response.data.html);
                 //$(response.data.html).modal('show');
 
@@ -844,6 +844,7 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.autosave.response.success = function (response) {
+                
                 //console.log('callbacks.update.response.success',getTables.sendData);
                 //getTables.Table.refresh();
 
@@ -907,7 +908,11 @@
                 callbacks2.long_process.response.success = function (response) {
                     if(response.data.completed){
                         $('.gts_progress').modal('hide');
-                        getTables.Message.success(response.data.message);
+                        if(response.data.modal){
+                            $(response.data.modal).modal('show');
+                        }else{
+                            getTables.Message.success(response.data.message);
+                        }
                     }else{
                         if(typeof $('.gts_progress')[0] !== "undefined"){
                             $('.gts_progress .progress-bar').css("width", response.data.procent+"%").attr('aria-valuenow',response.data.procent);
@@ -977,6 +982,7 @@
 
             callbacks.sets.response.success = function (response) {
                 //console.log('callbacks.update.response.success',getTables.sendData);
+                if(response.data.modal) $(response.data.modal).modal('show');
                 getTables.Table.refresh();
             };
 
