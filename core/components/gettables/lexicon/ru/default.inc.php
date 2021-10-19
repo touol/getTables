@@ -29,6 +29,7 @@ $_lang['gettables_no'] = 'Нет';//No
 $_lang['gettables_from'] = 'От';//From
 $_lang['gettables_to'] = 'До';//To 
 $_lang['gettables_stop'] = 'Остановить';//Stop
+$_lang['gettables_stop_message'] = '<h2>Остановка</h2> <p>Дождитесь завершения процесса для избежания ошибок!</p>';//gettables_stop_message
 
 //фильтры
 $_lang['filtr_btn_checkbox_load'] = 'Загрузить';

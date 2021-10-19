@@ -2,9 +2,6 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="{'gettables_close' | lexicon}">
-          <span aria-hidden="true">×</span>
-        </button>
         <h4 class="modal-title" id="myModalLabel"></h4>
       </div>
       <div class="modal-body">
@@ -14,9 +11,15 @@
         <div class="progress">
           <div class="progress-bar" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
+        <div class="progress-stop-message" style="display:none;">
+          {'gettables_stop_message' | lexicon}
+        </div>
+        <div class="progress-log">
+          
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{'gettables_stop' | lexicon}</button>
+        <button type="button" class="btn btn-default progress-stop" data-stop="0">{'gettables_stop' | lexicon}</button>
       </div>
     </div>
   </div>

@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.17-alpha
+- log для долгих процессов.
+
 1.7.15-alpha
 - Вывод модалки если есть response.data.modal.
 

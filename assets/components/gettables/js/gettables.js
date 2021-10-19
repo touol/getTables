@@ -887,6 +887,16 @@
                 hash: table_data.hash,
             };
 
+            getTables.$doc
+                .on('click', '.gts_progress .progress-stop', function (e) {
+                    e.preventDefault();
+                    $(this).data("stop",1);
+                    $('.gts_progress .progress-info').hide();
+                    $('.gts_progress .progress').hide();
+                    $('.gts_progress .progress-log').hide();
+                    $('.gts_progress .progress-stop-message').show();
+                });
+
             var callbacks = getTables.Modal.callbacks;
 
             callbacks.load.response.success = function (response) {
@@ -906,6 +916,10 @@
                 var callbacks2 = getTables.Table.callbacks;
     
                 callbacks2.long_process.response.success = function (response) {
+                    if($('.gts_progress .progress-stop').data("stop") == 1){
+                        $('.gts_progress').modal('hide');
+                        //$('.gts_progress').remove();
+                    }
                     if(response.data.completed){
                         $('.gts_progress').modal('hide');
                         if(response.data.modal){
@@ -914,10 +928,11 @@
                             getTables.Message.success(response.data.message);
                         }
                     }else{
-                        if(typeof $('.gts_progress')[0] !== "undefined"){
+                        if(typeof $('.gts_progress')[0] !== "undefined" && $('.gts_progress .progress-stop').data("stop") == 0){
                             $('.gts_progress .progress-bar').css("width", response.data.procent+"%").attr('aria-valuenow',response.data.procent);
                             $('.gts_progress .progress-procent').text(response.data.procent +'%');
                             $('.gts_progress .progress-message').text(response.data.message);
+                            if(response.data.log) $('.gts_progress .progress-log').html(response.data.log);
                             getTables.progress_offset = response.data.offset;
                             getTables.sendData.data.offset = response.data.offset;
                             getTables.send(getTables.sendData.data, getTables.Table.callbacks.long_process, getTables.Callbacks.Table.long_process);
@@ -925,7 +940,7 @@
                     }
                 };
                 callbacks2.long_process.ajax.fail = function (response) {
-                    if(typeof $('.gts_progress')[0] !== "undefined"){
+                    if(typeof $('.gts_progress')[0] !== "undefined" && $('.gts_progress .progress-stop').data("stop") == 0){
                         $('.gts_progress .progress-message').text(response.status+" "+response.statusText);
                         //console.info(response);
                         getTables.sendData.data.offset = getTables.progress_offset;
