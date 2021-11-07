@@ -341,8 +341,8 @@ class getTables
                 'frontend_framework_js' => $this->modx->getOption('gettables_frontend_framework_js',null,'[[+jsUrl]]gettables.js'),
                 'frontend_framework_style_js' => $this->modx->getOption('gettables_frontend_framework_style_js',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/js/bootstrap.min.js'),
                 'frontend_message_js' => $this->modx->getOption('gettables_frontend_message_js',null,'[[+jsUrl]]gettables.message.js'),
-                'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.js',
-                'add_lib_datepicker_ru' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/datepicker-ru.js',
+                'add_lib_datepicker' => '[[+assetsUrl]]vendor/air-datepicker/dist/air-datepicker.js',
+                //'add_lib_datepicker_ru' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/datepicker-ru.js',
                 'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
                 'ace' => '[[+assetsUrl]]vendor/ace/ace.min.js',
                 'ckeditor' => '[[+assetsUrl]]vendor/ckeditor/ckeditor.js',
@@ -353,7 +353,7 @@ class getTables
                 'frontend_framework_style_css' => $this->modx->getOption('gettables_frontend_framework_style_css',null,'[[+assetsUrl]]vendor/bootstrap_v3_3_6/css/bootstrap.min.css'),
                 'frontend_excel_style' => $this->modx->getOption('gettables_frontend_excel_style',null,'[[+cssUrl]]gettables.excel-style.css'),
                 'frontend_message_css' => $this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.message.css'),
-                'add_lib_datepicker' => '[[+assetsUrl]]vendor/jquery-ui-1.11.4.custom/jquery-ui.min.css',
+                'add_lib_datepicker' => '[[+assetsUrl]]vendor/air-datepicker/dist/air-datepicker.css',
                 'add_lib_multiselect' => '[[+assetsUrl]]vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
                 'cellsselection' => '[[+cssUrl]]gettables.cellsselection.css',
                 'sortable' => '[[+cssUrl]]gettables.sortable.css',
@@ -440,11 +440,11 @@ class getTables
         $this->modx->regClientStartupScript(
             '<script type="text/javascript">getTablesConfig = ' . $CSS_JS['data'] . ';</script>', true
         );
-        if($CSS_JS['js_datepicker']){
-            $this->modx->regClientScript(
-                $CSS_JS['js_datepicker'], true
-            );
-        }
+        // if($CSS_JS['js_datepicker']){
+        //     $this->modx->regClientScript(
+        //         $CSS_JS['js_datepicker'], true
+        //     );
+        // }
         $this->config['registerCSS_JS'] = true;
     }
 
@@ -510,41 +510,41 @@ class getTables
         if($CSS_JS['load']['load_add_lib']){
             $jss[] = $CSS_JS['js']['add_lib_datepicker'];
             //$jss[] = $CSS_JS['js']['add_lib_datepicker_ru'];
-            $js_datepicker = '<script type="text/javascript">( function( factory ) {
-                if ( typeof define === "function" && define.amd ) {
+            // $js_datepicker = '<script type="text/javascript">( function( factory ) {
+            //     if ( typeof define === "function" && define.amd ) {
             
-                    // AMD. Register as an anonymous module.
-                    define( [ "../widgets/datepicker" ], factory );
-                } else {
+            //         // AMD. Register as an anonymous module.
+            //         define( [ "../widgets/datepicker" ], factory );
+            //     } else {
             
-                    // Browser globals
-                    factory( jQuery.datepicker );
-                }
-            }( function( datepicker ) {
+            //         // Browser globals
+            //         factory( jQuery.datepicker );
+            //     }
+            // }( function( datepicker ) {
             
-            datepicker.regional.ru = {
-                closeText: "Закрыть",
-                prevText: "&#x3C;Пред",
-                nextText: "След&#x3E;",
-                currentText: "Сегодня",
-                monthNames: [ "Январь","Февраль","Март","Апрель","Май","Июнь",
-                "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь" ],
-                monthNamesShort: [ "Янв","Фев","Мар","Апр","Май","Июн",
-                "Июл","Авг","Сен","Окт","Ноя","Дек" ],
-                dayNames: [ "воскресенье","понедельник","вторник","среда","четверг","пятница","суббота" ],
-                dayNamesShort: [ "вск","пнд","втр","срд","чтв","птн","сбт" ],
-                dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ],
-                weekHeader: "Нед",
-                dateFormat: "'.$this->modx->getOption('gettables_date_format_datepicker','','yy-mm-dd').'",
-                firstDay: 1,
-                isRTL: false,
-                showMonthAfterYear: false,
-                yearSuffix: "" };
-            datepicker.setDefaults( datepicker.regional.ru );
+            // datepicker.regional.ru = {
+            //     closeText: "Закрыть",
+            //     prevText: "&#x3C;Пред",
+            //     nextText: "След&#x3E;",
+            //     currentText: "Сегодня",
+            //     monthNames: [ "Январь","Февраль","Март","Апрель","Май","Июнь",
+            //     "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь" ],
+            //     monthNamesShort: [ "Янв","Фев","Мар","Апр","Май","Июн",
+            //     "Июл","Авг","Сен","Окт","Ноя","Дек" ],
+            //     dayNames: [ "воскресенье","понедельник","вторник","среда","четверг","пятница","суббота" ],
+            //     dayNamesShort: [ "вск","пнд","втр","срд","чтв","птн","сбт" ],
+            //     dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ],
+            //     weekHeader: "Нед",
+            //     dateFormat: "'.$this->modx->getOption('gettables_date_format_datepicker','','yy-mm-dd').'",
+            //     firstDay: 1,
+            //     isRTL: false,
+            //     showMonthAfterYear: false,
+            //     yearSuffix: "" };
+            // datepicker.setDefaults( datepicker.regional.ru );
             
-            return datepicker.regional.ru;
+            // return datepicker.regional.ru;
             
-            } ) );</script>';
+            // } ) );</script>';
             $jss[] = $CSS_JS['js']['add_lib_multiselect'];
         }
         if($CSS_JS['load']['load_cellsselection']){
@@ -587,7 +587,7 @@ class getTables
             'js' => $jss,
             'css' => $csss,
             'data' => $data,
-            'js_datepicker' => $js_datepicker,
+            //'js_datepicker' => $js_datepicker,
             'placeholders' => $placeholders,
         ];
     }

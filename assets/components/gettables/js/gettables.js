@@ -102,17 +102,27 @@
         this.temp = null;
         this.timeout = 300;
     };
+    getTables.setPlugins = function () {
+        $('.get-select-multiple').each(function () {
+            $(this).multiselect();
+        });
+    };
     getTables.initialize = function () {
         getTables.setup();
         // Indicator of active ajax request
 
-        $('.get-date').each(function () {
-            $(this).datepicker();
+        getTables.setPlugins();
+        getTables.$doc.on('focus','.get-date',function () {
+            if(!$(this).hasClass('air_datepicker')){
+                new AirDatepicker(this,{
+                    autoClose:true,
+                    onSelect({datepicker}) {
+                        $(datepicker.$el).trigger('change');
+                    }
+                });
+                $(this).addClass('air_datepicker');
+            }
         });
-        $('.get-select-multiple').each(function () {
-            $(this).multiselect();
-        });
-
         //noinspection JSUnresolvedFunction
         getTables.$doc
             .ajaxStart(function () {
@@ -302,12 +312,7 @@
                 $('.gts_modal').remove();
             });
             getTables.$doc.on('shown.bs.modal', function (event) {
-                $('.get-date').each(function () {
-                    $(this).datepicker();
-                });
-                $('.get-select-multiple').each(function () {
-                    $(this).multiselect();
-                });
+                getTables.setPlugins();
             });
 
         },
@@ -347,12 +352,7 @@
         initialize: function () {
             getTables.Form.setup();
             
-            $('.get-date').each(function () {
-                $(this).datepicker();
-            });
-            $('.get-select-multiple').each(function () {
-                $(this).multiselect();
-            });
+            getTables.setPlugins();
 
             getTables.$doc
                 .on('click', '.btn-gts-getform', function (e) {
@@ -792,12 +792,7 @@
                         $row.find('.gtstree-expander').removeClass('gtstree-expander-collapsed').addClass('gtstree-expander-expanded');
                         $row.after(response.data.html);
 
-                        $('.get-date').each(function () {
-                            $(this).datepicker();
-                        });
-                        $('.get-select-multiple').each(function () {
-                            $(this).multiselect();
-                        });
+                        getTables.setPlugins();
                     };
 
                     return getTables.send(getTables.sendData.data, getTables.Table.callbacks.get_tree_child, getTables.Callbacks.Table.get_tree_child);
@@ -1031,9 +1026,7 @@
                 $row.find('.get-sub-show').hide();
                 $row.find('.get-sub-hide').show();
 
-                $('.get-date').each(function () {
-                    $(this).datepicker();
-                });
+                getTables.setPlugins();
                 $('.get-select-multiple').each(function () {
                     $(this).multiselect();
                 });
@@ -1098,12 +1091,7 @@
                     $table.find('.get-table-top').html(response.data.top);
                 }
 
-                $('.get-date').each(function () {
-                    $(this).datepicker();
-                });
-                $('.get-select-multiple').each(function () {
-                    $(this).multiselect();
-                });
+                getTables.setPlugins();
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.refresh, getTables.Callbacks.Table.refresh);

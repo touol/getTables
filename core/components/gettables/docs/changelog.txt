@@ -1,8 +1,11 @@
 Changelog for getTables.
+1.7.18-alpha
+- Замена датапикера на AirDatepicker.
+
 1.7.17-alpha
 - log для долгих процессов.
 
-1.7.15-alpha
+1.7.16-alpha
 - Вывод модалки если есть response.data.modal.
 
 1.7.15-alpha
