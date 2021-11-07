@@ -113,6 +113,13 @@ class getForm
                         $set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
                     }
                 }
+                if($edit['type'] == 'datetime'){
+                    if(isset($data[$edit['field']]) and $data[$edit['field']] === ''){
+                        $set_data[$edit['field']] = null;
+                    }else{
+                        $set_data[$edit['field']] = date('Y-m-d H:i',strtotime($data[$edit['field']]));
+                    }
+                }
             }
 
             if($create){
@@ -155,9 +162,6 @@ class getForm
                 
                 if(!empty($edit['search_fields'])){
                     $saveobj = ['success'=>false,'class'=>$class,'field'=>$edit['field']];
-                    //$this->getTables->addDebug($edit,'$edit update search_fields '.$edit['field']);
-                    //$this->getTables->addDebug($tr_data,'$tr_data');
-                    //$this->getTables->addDebug($edit['search_fields'],'111 update $edit[search_fields]');
                     $search_fields = [];
                     foreach($edit['search_fields'] as $k=>$v){
                         $search_fields[$k] = $v;
@@ -222,6 +226,9 @@ class getForm
                                 switch($edit['type']){
                                     case 'date':
                                         $edit['force'] = date('Y-m-d',strtotime($edit['force']));
+                                        break;
+                                    case 'datetime':
+                                        $edit['force'] = date('Y-m-d H:i',strtotime($edit['force']));
                                         break;
                                 }
                                 switch($edit['force']){
@@ -380,6 +387,9 @@ class getForm
                     case 'date':
                         $edit['force'] = date($this->config['date_format'],strtotime($edit['force']));
                         break;
+                    case 'datetime':
+                        $edit['force'] = date($this->config['datetime_format'],strtotime($edit['force']));
+                        break;
                 }
                 switch($edit['force']){
                     case 'user_id':
@@ -447,11 +457,11 @@ class getForm
                         }else{
                             $edit['value'] = $row[$edit['as']];
                         }
-                        // if(isset($edit['field_content'])){
-                        //     $edit['content'] = $row[$edit['field_content']];
-                        // }
                         if($edit['type'] == "date"){
                             $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
+                        }
+                        if($edit['type'] == "datetime"){
+                            $edit['value'] = date($this->config['datetime_format'],strtotime($edit['value']));
                         }
                         if(isset($edit['content'])){
                             $edit['form_content'] = $this->pdoTools->getChunk('@INLINE '.$edit['content'], $row);

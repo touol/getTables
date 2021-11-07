@@ -170,6 +170,9 @@ class getModal
                     case 'date':
                         $edit['force'] = date($this->config['date_format'],strtotime($edit['force']));
                         break;
+                    case 'datetime':
+                        $edit['force'] = date($this->config['datetime_format'],strtotime($edit['force']));
+                        break;
                 }
                 switch($edit['force']){
                     case 'user_id':
@@ -230,6 +233,9 @@ class getModal
                     }
                     if($edit['type'] == "date"){
                         $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
+                    }
+                    if($edit['type'] == "datetime"){
+                        $edit['value'] = date($this->config['datetime_format'],strtotime($edit['value']));
                     }
                     //$this->getTables->addDebug($edit,'$edit generateEditsData');
                 }

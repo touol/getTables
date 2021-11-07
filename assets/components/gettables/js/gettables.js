@@ -114,10 +114,47 @@
         getTables.setPlugins();
         getTables.$doc.on('focus','.get-date',function () {
             if(!$(this).hasClass('air_datepicker')){
+                if($(this).val()){
+                    var dateString = $(this).val(); //"25/04/1987"; yyyy-mm-dd dd/mm/yyyy
+                    dateString = dateString.substring(6, 10)+"-"+dateString.substring(3, 5)+"-"+dateString.substring(0, 2);
+                    var startDate = new Date(dateString);
+                }else{
+                    var startDate = new Date();
+                }
                 new AirDatepicker(this,{
+                    startDate:startDate,
                     autoClose:true,
                     onSelect({datepicker}) {
                         $(datepicker.$el).trigger('change');
+                    }
+                });
+                $(this).addClass('air_datepicker');
+            }
+        });
+        getTables.$doc.on('focus','.get-datetime',function () {
+            if(!$(this).hasClass('air_datepicker')){
+                if($(this).val()){
+                    var dateString = $(this).val(); //"25/04/1987"; yyyy-mm-dd dd/mm/yyyy
+                    dateString = dateString.substring(6, 10)+"-"+dateString.substring(3, 5)+"-"+dateString.substring(0, 2)+" "+dateString.substring(11);
+                    var startDate = new Date(dateString);
+                }else{
+                    var startDate = new Date();
+                }
+                var time1;
+                new AirDatepicker(this,{
+                    startDate:startDate,
+                    autoClose:true,
+                    timepicker:true,
+                    onSelect({date,datepicker}) {
+                        time1 = date; 
+                        setTimeout(
+                          () => {
+                            if(time1 == date){
+                                $(datepicker.$el).trigger('change');
+                            }
+                          },
+                          1000
+                        );
                     }
                 });
                 $(this).addClass('air_datepicker');

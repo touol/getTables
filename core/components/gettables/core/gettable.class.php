@@ -167,7 +167,7 @@ class getTable
         $rows = $this->pdoTools->run();
         $checkboxs = [];
         switch($checkbox_edit['type']){
-            case 'date': case 'text': case 'decimal': case 'row_view': 
+            case 'date': case 'datetime': case 'text': case 'decimal': case 'row_view': 
                 foreach($rows as $row){
                     $checkboxs[] = [
                         'value'=>$row[$data['field']],
@@ -238,23 +238,23 @@ class getTable
         $table2 = $this->generateData($table);
         
         $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
-		require_once $PHPExcelPath . 'PHPExcel.php';
-		require_once $PHPExcelPath . 'PHPExcel/Writer/Excel2007.php';
-		
-		$xls = new PHPExcel();
-		$xls->setActiveSheetIndex(0);
-		$sheet = $xls->getActiveSheet();
-		$sheet->setTitle('Лист1');
+        require_once $PHPExcelPath . 'PHPExcel.php';
+        require_once $PHPExcelPath . 'PHPExcel/Writer/Excel2007.php';
+        
+        $xls = new PHPExcel();
+        $xls->setActiveSheetIndex(0);
+        $sheet = $xls->getActiveSheet();
+        $sheet->setTitle('Лист1');
 
         $i = 1;$k = 0;
-		foreach($table2['edits'] as $edit){
+        foreach($table2['edits'] as $edit){
             if(!$edit['modal_only']){
                 $sheet->setCellValueByColumnAndRow($k, $i, $edit['label']);
                 $k++;
             }
-		}
-		$i++;
-		foreach($table2['tbody']['trs'] as $row){
+        }
+        $i++;
+        foreach($table2['tbody']['trs'] as $row){
             $k = 0;
             foreach($row['tr']['tds'] as $v){
                 if($v['field']){
@@ -299,20 +299,20 @@ class getTable
                     $k++;
                 }
                 
-			}
-			$i++;
-		}
+            }
+            $i++;
+        }
 
-		header("Expires: Mon, 1 Apr 1974 05:00:00 GMT");
-		header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-		header("Cache-Control: no-cache, must-revalidate");
-		header("Pragma: no-cache");
-		header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		header("Content-Disposition: attachment; filename={$table2['name']}.xlsx");
-		
-		$objWriter = new PHPExcel_Writer_Excel2007($xls);
-		$objWriter->save('php://output'); 
-		exit();
+        header("Expires: Mon, 1 Apr 1974 05:00:00 GMT");
+        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-Disposition: attachment; filename={$table2['name']}.xlsx");
+        
+        $objWriter = new PHPExcel_Writer_Excel2007($xls);
+        $objWriter->save('php://output'); 
+        exit();
     }
     public function subtable($action, $table, $data)
     {
@@ -491,8 +491,12 @@ class getTable
                     }
                 }
                 if($td['edit']['type'] == "date"){
-					if($td['value'])
-						$td['value'] = date($this->config['date_format'],strtotime($td['value']));
+                    if($td['value'])
+                        $td['value'] = date($this->config['date_format'],strtotime($td['value']));
+                }
+                if($td['edit']['type'] == "datetime"){
+                    if($td['value'])
+                        $td['value'] = date($this->config['datetime_format'],strtotime($td['value']));
                 }
                 // if($td['edit']['type'] == 'textarea' and $this->getTables->REQUEST['gts_action'] != 'getTable/export_excel'){
                 //     $td['value'] = '{ignore}'.$td['value'].'{/ignore}';
@@ -545,25 +549,7 @@ class getTable
                     }
                 }
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
-                //$this->getTables->addDebug($td,'gen1  td');
-                //$this->pdoTools->addTime("getTable generateData td ".print_r($td,1));
-                
-                
-                /*if($td['edit']['default'] and empty($td['value'])){
-                    $td['edit']['force'] = $td['edit']['default'];
-                
-                    if($td['edit']['force']){
-                        switch($td['edit']['type']){
-                            case 'date':
-                                $td['edit']['force'] = date('Y-m-d',strtotime($td['edit']['force']));
-                                break;
-                            case 'select':
-                                if($td['edit']['force'] == 'user_id') $td['edit']['force'] = $this->modx->user->id;
-                                break;
-                        }
-                        $td['value'] = $td['edit']['force'];
-                    }
-                }*/
+
                 if(!empty($table['autosave']) and !empty($td['edit']) and $autosave){
                     
                     //autocomplect
@@ -786,6 +772,7 @@ class getTable
         
         foreach($table['filters'] as $k=>&$filter){
             $date=[];
+            $datetime=[];
             //if(empty($filter['edit']['where_field'])) $filter['edit']['where_field'] = $filter['where'];
             if(!empty($filter['where'])) $filter['edit']['where_field'] = $filter['where'];
             
@@ -798,7 +785,9 @@ class getTable
                             case 'date':
                                 if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
                                 break;
-                                
+                            case 'datetime':
+                                if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d H:i',strtotime($filter['default']))];
+                                break;
                         }
                         switch($filter['default']){
                             case 'user_id':
@@ -825,6 +814,9 @@ class getTable
                         case 'date':
                             if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
                             break;
+                        case 'datetime':
+                            if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d H:i',strtotime($filter['force']))];
+                            break;
                     }
                     switch($filter['force']){
                         case 'user_id':
@@ -838,6 +830,9 @@ class getTable
                 if(!empty($filter['force']['from'])){
                     $date['from'] = date('Y-m-d',strtotime($filter['force']['from']));
                 }
+                if(!empty($filter['force']['from'])){
+                    $datetime['from'] = date('Y-m-d H:i',strtotime($filter['force']['from']));
+                }
                 if(!empty($filter['force']['default'])){
                     $query[$filter['edit']['where_field']] = $filter['force']['default'];
                     $filter['value'] = $filter['force']['default'];
@@ -845,7 +840,6 @@ class getTable
                 if(is_array($filter['force']['in'])){
                     $query[$filter['edit']['where_field']] = $filter['force']['in'];
                     $filter['value'] = $filter['force']['in'];
-                    //$date['from'] = date('Y-m-d',strtotime($filter['default']['from']));
                 }
             
                 if($filter['force']['user_id'] ){
@@ -874,6 +868,12 @@ class getTable
                             $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
                         if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
                             $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                        break;
+                    case 'datetime':
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
+                            $datetime['from'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
+                            $datetime['to'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
                         break;
                     default:
                         $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
@@ -909,11 +909,17 @@ class getTable
                     $query[$filter['edit']['where_field'].':<='] = $date['to'];
                     $filter['value']['to'] = date($this->config['date_format'],strtotime($date['to']));
                 }
-                $this->getTables->addDebug($query,'addFilterTable  $query');
-                $this->getTables->addDebug($filter,'addFilterTable  $filter');
-                $this->getTables->addDebug($date['from'],'addFilterTable  $date');
             }
-
+            if(!empty($datetime)){
+                if(!empty($datetime['from'])){
+                    $query[$filter['edit']['where_field'].':>='] = $datetime['from'];
+                    $filter['value']['from'] = date($this->config['datetime_format'],strtotime($datetime['from']));
+                }
+                if(!empty($datetime['to'])){
+                    $query[$filter['edit']['where_field'].':<='] = $datetime['to'];
+                    $filter['value']['to'] = date($this->config['datetime_format'],strtotime($datetime['to']));
+                }
+            }
             if(!empty($filter['edit']['multiple'])){
                 $value = [];
                 foreach($filter['value'] as $v){

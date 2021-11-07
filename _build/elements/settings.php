@@ -165,9 +165,9 @@ return [
         'value' => 'd.m.Y',
         'area' => 'gettables_main',
     ],
-    'date_format_datepicker' => [
+    'datetime_format' => [
         'xtype' => 'textfield',
-        'value' => 'dd.mm.yy',
+        'value' => 'd.m.Y H:i',
         'area' => 'gettables_main',
     ],
 ];

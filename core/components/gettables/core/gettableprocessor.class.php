@@ -506,6 +506,9 @@ class getTableProcessor
                         case 'date':
                             $edit['force'] = date('Y-m-d',strtotime($edit['force']));
                             break;
+                        case 'datetime':
+                            $edit['force'] = date('Y-m-d H:i',strtotime($edit['force']));
+                            break;
                     }
                     switch($edit['force']){
                         case 'user_id':
@@ -663,13 +666,23 @@ class getTableProcessor
                     $set_data[$edit['field']] = $data[$edit['field']];
 
                 if($edit['type'] == 'date'){
-					if(isset($data[$edit['field']])){
-						if($data[$edit['field']] == ''){
-							$set_data[$edit['field']] = null;
-						}else{
-							$set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
-						}
-					}
+                    if(isset($data[$edit['field']])){
+                        if($data[$edit['field']] == ''){
+                            $set_data[$edit['field']] = null;
+                        }else{
+                            $set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
+                        }
+                    }
+                }
+                
+                if($edit['type'] == 'datetime'){
+                    if(isset($data[$edit['field']])){
+                        if($data[$edit['field']] == ''){
+                            $set_data[$edit['field']] = null;
+                        }else{
+                            $set_data[$edit['field']] = date('Y-m-d H:i',strtotime($data[$edit['field']]));
+                        }
+                    }
                 }
             }
             foreach($table['defaultFieldSet'] as $df=>$dfv){
@@ -848,6 +861,9 @@ class getTableProcessor
                                     case 'date':
                                         $edit['force'] = date('Y-m-d',strtotime($edit['force']));
                                         break;
+                                    case 'datetime':
+                                        $edit['force'] = date('Y-m-d H:i',strtotime($edit['force']));
+                                        break;
                                 }
                                 switch($edit['force']){
                                     case 'user_id':
@@ -855,6 +871,25 @@ class getTableProcessor
                                         break;
                                 }
                                 $data[$edit['field']] = $edit['force'];
+                            }
+                            if($edit['type'] == 'date'){
+                                if(isset($data[$edit['field']])){
+                                    if($data[$edit['field']] == ''){
+                                        $data[$edit['field']] = null;
+                                    }else{
+                                        $data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
+                                    }
+                                }
+                            }
+                            
+                            if($edit['type'] == 'datetime'){
+                                if(isset($data[$edit['field']])){
+                                    if($data[$edit['field']] == ''){
+                                        $data[$edit['field']] = null;
+                                    }else{
+                                        $data[$edit['field']] = date('Y-m-d H:i',strtotime($data[$edit['field']]));
+                                    }
+                                }
                             }
                             //$this->getTables->addDebug($edit,"$class  edit");
                             //$this->getTables->addDebug($search_fields,"$class {$edit['field']} {$edit['value_field']} {$data[$edit['field']]} search_fields");

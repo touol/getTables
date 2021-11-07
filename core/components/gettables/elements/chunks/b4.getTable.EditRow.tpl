@@ -104,6 +104,11 @@
         placeholder="{$edit.placeholder}" class="form-control {if !$edit.readonly}get-date{/if} get-table-autosave" {if $edit.style} style="{$edit.style}"{/if}
         {if $edit.readonly}readonly{/if}
         autocomplect="off"/>
+    {case 'datetime'}
+        <input type="text"  data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
+        placeholder="{$edit.placeholder}" class="form-control {if !$edit.readonly}get-datetime{/if} get-table-autosave" {if $edit.style} style="{$edit.style}"{/if}
+        {if $edit.readonly}readonly{/if}
+        autocomplect="off"/>
 {/switch}
 {if $edit.buttons}
     <span class="input-group-btn" >{$edit.buttons}</span>

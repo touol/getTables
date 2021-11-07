@@ -101,4 +101,19 @@
                 </div>
             </div>
         </div>
+    {case 'datetime'}
+        <div class="row">
+            <div class="form-group col-md-6">
+                <div class="controls">
+                    <input type="text" name="{$filter.edit.field}[from]" value="{$filter.value.from}" 
+                    placeholder="{'gettables_from' | lexicon} {$filter.edit.placeholder}" class="form-control get-datetime get-table-filter" autocomplect="off"/>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="controls">
+                    <input type="text" name="{$filter.edit.field}[to]" value="{$filter.value.to}" 
+                    placeholder="{'gettables_to' | lexicon} {$filter.edit.placeholder}" class="form-control get-datetime get-table-filter" autocomplect="off"/>
+                </div>
+            </div>
+        </div>
 {/switch}
