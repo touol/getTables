@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.19-alpha
+- Проводка пустых дат в доптаблице.
+
 1.7.18-alpha
 - Замена датапикера на AirDatepicker.
 - Добавлен тип поля datetime.

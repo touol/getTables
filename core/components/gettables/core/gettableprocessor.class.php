@@ -872,6 +872,13 @@ class getTableProcessor
                                 }
                                 $data[$edit['field']] = $edit['force'];
                             }
+                            //$this->getTables->addDebug($edit,"$class  edit");
+                            //$this->getTables->addDebug($search_fields,"$class {$edit['field']} {$edit['value_field']} {$data[$edit['field']]} search_fields");
+                            //продумать для удаления пустых записей в БВ. Наверно тригером.
+                            if(!isset($data[$edit['field']])){
+                                $saveobj['success'] = true;
+                                continue;
+                            }
                             if($edit['type'] == 'date'){
                                 if(isset($data[$edit['field']])){
                                     if($data[$edit['field']] == ''){
@@ -891,13 +898,7 @@ class getTableProcessor
                                     }
                                 }
                             }
-                            //$this->getTables->addDebug($edit,"$class  edit");
-                            //$this->getTables->addDebug($search_fields,"$class {$edit['field']} {$edit['value_field']} {$data[$edit['field']]} search_fields");
-                            //продумать для удаления пустых записей в БВ. Наверно тригером.
-                            if(!isset($data[$edit['field']])){
-                                $saveobj['success'] = true;
-                                continue;
-                            }
+                            
                             
                             /*if(isset($table['defaultFieldSet'][$edit['field']])){
                                 $data[$edit['field']] == $table['defaultFieldSet'][$edit['field']];
