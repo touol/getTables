@@ -810,7 +810,7 @@ class getTable
             }
             if($filter['force']){
                 if(!is_array($filter['force'])){
-                    switch($filter['type']){
+                    switch($filter['edit']['type']){
                         case 'date':
                             if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
                             break;
@@ -828,10 +828,14 @@ class getTable
                     }
                 }
                 if(!empty($filter['force']['from'])){
-                    $date['from'] = date('Y-m-d',strtotime($filter['force']['from']));
-                }
-                if(!empty($filter['force']['from'])){
-                    $datetime['from'] = date('Y-m-d H:i',strtotime($filter['force']['from']));
+                    switch($filter['edit']['type']){
+                        case 'date':
+                            $date['from'] = date('Y-m-d',strtotime($filter['force']['from']));
+                            break;
+                        case 'datetime':
+                            $datetime['from'] = date('Y-m-d H:i',strtotime($filter['force']['from']));
+                            break;
+                    }
                 }
                 if(!empty($filter['force']['default'])){
                     $query[$filter['edit']['where_field']] = $filter['force']['default'];
