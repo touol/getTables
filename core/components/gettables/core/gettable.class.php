@@ -558,7 +558,7 @@ class getTable
                     }
                     $td['edit']['value'] = $td['value'];
                     //$this->getTables->addDebug($td,'gen1  td');
-                    $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>$td['edit']]);
+                    $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit']]);
                     //$this->getTables->addDebug($td,'gen2  td');
                 }else{
                     if($td['edit']['type'] == "checkbox"){

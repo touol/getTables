@@ -45,7 +45,9 @@
                         class="form-control get-select-multiple get-table-autosave" multiple="multiple" {if $edit.style} style="{$edit.style}"{/if}
                         >
                         {foreach $edit.select.data as $d}
-                            <option value="{$d.id}" {if $edit.value[$d.id]}selected{else} {if $edit.readonly}disabled{/if}{/if}>{$d.content}</option>
+                            <option value="{$d.id}" 
+                            {if $edit.value[$d.id]}selected {set $edit.title = $d.content}{else}
+                            {if $edit.readonly}disabled{/if}{/if}>{$d.content}</option>
                         {/foreach}
                     </select>
                 {else}
@@ -56,7 +58,14 @@
                         
                         <option value="" {if $edit.readonly}disabled{/if}></option>
                         {foreach $edit.select.data as $d}
-                            <option value="{$d.id}" {if $edit.value == $d.id}selected{else} {if $edit.readonly}disabled{/if}{/if}>{$d.content}</option>
+                            <option value="{$d.id}" 
+                                {if $edit.value == $d.id}
+                                    selected
+                                    {set $edit.title = $d.content}
+                                {else} 
+                                {if $edit.readonly}disabled{/if}{/if}>
+                                {$d.content}
+                            </option>
                         {/foreach}
                     </select>
                  {/if}
@@ -81,6 +90,7 @@
                             <button class="arr-btn arr-btn__bottom"></button>
                         </span>
                     </span>
+                    {set $edit.title = $edit.content}
                     <input type="search" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"
                     {if $edit.readonly}readonly{/if}
                     />
