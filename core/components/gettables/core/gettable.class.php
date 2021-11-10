@@ -1561,6 +1561,10 @@ class getTable
                 $td['style'] = 'display:none;';
                 $th['style'] = 'display:none;';
             }
+            if($value['style']){
+                $td['style'] = $td['style'].$value['style'];
+                $th['style'] = $th['style'].$value['style'];
+            }
             $ths[] = $th;
             $tds[] = $td;
         }
