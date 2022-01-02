@@ -662,6 +662,22 @@ class getTableProcessor
         if($edit_tables[$class]){
             $set_data = [];
             foreach($edit_tables[$class] as $edit){
+                if($edit['force']){
+                    switch($edit['type']){
+                        case 'date':
+                            $edit['force'] = date('Y-m-d',strtotime($edit['force']));
+                            break;
+                        case 'datetime':
+                            $edit['force'] = date('Y-m-d H:i',strtotime($edit['force']));
+                            break;
+                    }
+                    switch($edit['force']){
+                        case 'user_id':
+                            $edit['force'] = $this->modx->user->id;
+                            break;
+                    }
+                    $data[$edit['field']] = $edit['force'];
+                }
                 if($data[$edit['field']] !== null)
                     $set_data[$edit['field']] = $data[$edit['field']];
 
