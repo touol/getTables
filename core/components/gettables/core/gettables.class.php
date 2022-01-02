@@ -182,6 +182,13 @@ class getTables
                         }
                         $this->config['triggers'] = array_merge($this->config['triggers'],$triggers);
                     }
+                    if(method_exists($service,'regModalTriggers')){ 
+                        $triggers =  $service->regModalTriggers();
+                        foreach($triggers as &$trigger){
+                            $trigger['model'] = $name;
+                        }
+                        $this->config['modaltriggers'] = array_merge($this->config['triggers'],$triggers);
+                    }
                 }else{
                     $this->pdoTools->addTime("getModels triggers. Not load $name.");
                 }
@@ -548,7 +555,65 @@ class getTables
             'placeholders' => $placeholders,
         ];
     }
-    
+    /**
+     * Handle frontend requests with actions
+     *
+     * @param $action
+     * @param array $data
+     *
+     * @return array|bool|string
+     */
+    public function handleRequestInt($action, $data = array())
+    {
+        //$this->pdoTools->addTime("getTables handleRequest $action");
+        $this->pdoTools->addTime("handleRequestInt $action");
+        
+
+        $actions = explode("/",$action);
+        $class = $actions[0];
+        if($actions[0] == "processor"){
+                /*unset($actions[0]);
+                $action = implode("/",$actions);
+                $otherProps = array(
+                    'processors_path' => $this->config['corePath'].'processors/'
+                );
+                $response =  $this->modx->runProcessor($action, $data, $otherProps);*/
+                $response = $this->error("Доступ запрешен processor $action");
+        }else if(count($actions) == 1){
+            $response = $this->error("Доступ запрешен method_exists $action");
+            /*$class = get_class($this);
+            if(method_exists($this,$action)){
+                $response = $this->$action($data);
+            }else{
+                $response = $this->error("Метод $action в классе $class не найден!");
+            }*/
+        }else if(isset($this->models[$actions[0]])){
+            $response = $this->loadService($class);
+            if(!is_array($response) or !$response['success']){
+                $response = $response;
+            }else{
+                $service = $this->models[$class]['service'];
+                
+                //unset($actions[0]); 
+                //$class_action = implode("/",$actions);
+                if(method_exists($service,$actions[1])){ 
+                    $response =  $service->{$actions[1]}($data);
+                }else{
+                    $class = get_class($service);
+                    $response = $this->error("Не найден $class/{$actions[0]}");
+                }
+            }
+        }else{
+            
+        }
+        //$this->addDebug($response,"handleRequest");
+        if(!$response) {
+            $class = get_class($this);
+            $response = $this->error("Ошибка {$class} handleRequestInt!");
+        }
+        
+        return $response;
+    }
     /**
      * Handle frontend requests with actions
      *

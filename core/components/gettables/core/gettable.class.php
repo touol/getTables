@@ -626,7 +626,7 @@ class getTable
         $top = '';
         if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
             $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
-            $resp = $this->getTables->handleRequest('getForm/fetch',$table['top']['form']);
+            $resp = $this->getTables->handleRequestInt('getForm/fetch',$table['top']['form']);
             if($resp['success']) $top = $resp['data']['html'];
         }
 
@@ -657,7 +657,7 @@ class getTable
         if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
             $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
             $this->pdoTools->addTime("document id = {$this->getTables->REQUEST['id']}");
-            $resp =$this->getTables->handleRequest('getForm/test',$table['top']['form']);
+            $resp =$this->getTables->handleRequestInt('getForm/test',$table['top']['form']);
             if(!$resp['success']){
                 return $this->error("Документ не найден!");
             }
@@ -668,7 +668,7 @@ class getTable
                     $table['pdoTools']['where'][$k] = $v;
                 }
             }
-            $resp = $this->getTables->handleRequest('getForm/fetch',$table['top']['form']);
+            $resp = $this->getTables->handleRequestInt('getForm/fetch',$table['top']['form']);
             if($resp['success']) $top = $resp['data']['html'];
         }
         

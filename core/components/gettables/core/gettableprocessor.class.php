@@ -689,7 +689,18 @@ class getTableProcessor
                 if($dfv['class'] == $class)
                     $set_data[$df] = $dfv['value'];
             }
-            
+            foreach($table['role']['where'] as $k=>$v){
+                $k = str_replace("`","",$k);
+                $arr = explode(".",$k);
+                if($arr[0] == $class){
+                    if($v == 'id'){
+                        $set_data[$arr[1]] = (int)$table['role']['id'];
+                    }else{
+                        $set_data[$arr[1]] = $v;
+                    }
+                }
+                
+            }
             
             $set_data_event = $set_data;
             if(isset($this->current_action['processors'][$class])){

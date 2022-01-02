@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.7.23-alpha
+- Добавлено handleRequestInt.
+- Добавлено событие getTablesRunModalTriggers и триггер modaltriggers.
+
 1.7.22-alpha
 - Инструкция style для ячеек таблицы.
 

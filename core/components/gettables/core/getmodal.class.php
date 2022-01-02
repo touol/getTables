@@ -132,7 +132,14 @@ class getModal
             }
         }
         $edits = $this->defaultFieldSet($edits);
-        
+        $method = 'update';
+        foreach($edits as &$edit){
+            if($edit['field'] == 'id' and empty($edit['value'])){
+                $method = 'create';
+            }
+        }
+        $resp = $this->run_triggers($table, $method, $edits);
+
         //if(!empty($table['force'])) $edits = $this->defaultFieldSet($edits,$table['force']);
         //return $this->error("getModal fetchTableModal modal! ",$tr_data);
         if(isset($this->config[$modal['EditFormtpl']])){
@@ -158,6 +165,38 @@ class getModal
         $html = $this->pdoTools->getChunk($tpl, ['modal'=>$modal]);
         
         return $this->success('',array('html'=>$html));
+    }
+    public function run_triggers($table, $method, &$edits)
+    {
+        $class = $table['class'];
+        $getTablesRunModalTriggers = $this->modx->invokeEvent('getTablesRunModalTriggers', array(
+            'class'=>$class,
+            'table'=>$table,
+            'method'=>$method,
+            'edits'=>&$edits,
+        ));
+        if (is_array($getTablesRunModalTriggers)) {
+            $canSave = false;
+            foreach ($getTablesRunModalTriggers as $msg) {
+                if (!empty($msg)) {
+                    $canSave .= $msg."\n";
+                }
+            }
+        } else {
+            $canSave = $getTablesRunModalTriggers;
+        }
+        if(!empty($canSave)) return $this->error($canSave);
+
+        $triggers = $this->config['modaltriggers'];
+        if(isset($triggers[$class]['function']) and isset($triggers[$class]['model'])){
+            $response = $this->getTables->loadService($triggers[$class]['model']);
+            if(is_array($response) and $response['success']){
+                $service = $this->getTables->models[$triggers[$class]['model']]['service'];
+                if(method_exists($service,$triggers[$class]['function'])){ 
+                    return  $service->{$triggers[$class]['function']}($class, $table, $method, $edits);
+                }
+            }
+        }
     }
     public function defaultFieldSet($edits)
     {

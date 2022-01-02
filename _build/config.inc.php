@@ -11,7 +11,7 @@ if (!defined('MODX_CORE_PATH')) {
 return [
     'name' => 'getTables',
     'name_lower' => 'gettables',
-    'version' => '1.7.22',
+    'version' => '1.7.23',
     'release' => 'alpha',
     // Install package to site right after build
     'install' => true,
