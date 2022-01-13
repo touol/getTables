@@ -58,6 +58,10 @@ class getModal
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->fetchModalProgress($data);
                 break;
+            case 'fetchModal2Step':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->fetchModal2Step($data);
+                break;
             default:
                 return $this->error("Метод $action в классе $class не найден!");
         }
@@ -67,6 +71,37 @@ class getModal
         }else{
             return $this->error("Метод $action в классе $class не найден!");
         }*/
+    }
+    public function fetchModal2Step($data)
+    {
+        $table_action = !empty($data['button_data']['action'])
+            ? (string)$data['button_data']['action']
+            : false;
+        $table_name = !empty($data['table_data']['name'])
+            ? (string)$data['table_data']['name']
+            : false;
+        $action_name = !empty($data['button_data']['name'])
+            ? (string)$data['button_data']['name']
+            : false;
+        $tr_data = !empty($data['tr_data']) ? $data['tr_data'] : [];
+
+        if(!$table = $this->getTables->getClassCache('getTable',$table_name)){
+            return $this->error("Таблица $table_name не найдено",$this->config);
+        }
+        $modal = $table['actions'][$action_name]['modal'];
+        $modal['hash'] = $this->config['hash'];
+        $modal['table_name'] = $table_name;
+        $modal['table_action'] = $table_action;
+        $modal['tr_data'] = json_encode($tr_data);
+
+        if(isset($modal['tpl'])){
+            $tpl = $modal['tpl'];
+        }else{
+            return $this->error("Шаблон модального окна не найден!",$this->config);
+        }
+        $html = $this->pdoTools->getChunk($tpl, ['modal'=>$modal]);
+        
+        return $this->success('',array('html'=>$html));
     }
     public function fetchModalRemove($data)
     {

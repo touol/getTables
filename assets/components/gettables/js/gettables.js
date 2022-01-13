@@ -1124,7 +1124,7 @@
                 $table.find('.get-table-nav').html(response.data.nav);
                 
 
-                if (response.data.top > 0) {
+                if (response.data.top) {
                     $table.find('.get-table-top').html(response.data.top);
                 }
 
