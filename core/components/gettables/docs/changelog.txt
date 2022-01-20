@@ -1,6 +1,7 @@
 Changelog for getTables.
 1.7.28-alpha
 - Исправленно sub_where.
+- Добавлены стили расцветки таблиц.
 
 1.7.25-alpha
 - Добавлено fetchModal2Step.

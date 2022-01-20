@@ -272,7 +272,34 @@
 .table > thead > tr > th.attention {
     background-color: rgba(252, 3, 3, 0.8);
 }
-
+.table > tbody > tr.work > td,
+.table > tbody > tr.work > th,
+.table > tbody > tr > td.work,
+.table > tbody > tr > th.work,
+.table > tfoot > tr.work > td,
+.table > tfoot > tr.work > th,
+.table > tfoot > tr > td.work,
+.table > tfoot > tr > th.work,
+.table > thead > tr.work > td,
+.table > thead > tr.work > th,
+.table > thead > tr > td.work,
+.table > thead > tr > th.work {
+    background-color: #89d7f1;
+}
+.table > tbody > tr.outwork > td,
+.table > tbody > tr.outwork > th,
+.table > tbody > tr > td.outwork,
+.table > tbody > tr > th.outwork,
+.table > tfoot > tr.outwork > td,
+.table > tfoot > tr.outwork > th,
+.table > tfoot > tr > td.outwork,
+.table > tfoot > tr > th.outwork,
+.table > thead > tr.outwork > td,
+.table > thead > tr.outwork > th,
+.table > thead > tr > td.outwork,
+.table > thead > tr > th.outwork {
+    background-color: #f19989;
+}
 .get-table .table select.get-table-autosave {
     cursor: pointer;
 }
