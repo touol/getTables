@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.28-alpha
+- Исправленно sub_where.
+
 1.7.25-alpha
 - Добавлено fetchModal2Step.
 

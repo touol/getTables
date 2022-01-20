@@ -332,6 +332,7 @@ class getTable
         $where = $pdoConfig['where'] ? $pdoConfig['where'] : [];
         //$this->getTables->addDebug($current_action,'subtable current_action');
         foreach($subtable['sub_where'] as $where_field=>$where_value){
+            if(is_numeric($where_value)) $where[$where_field] = (int)$where_value;
             foreach($data['tr_data'] as $tr_field =>$tr_value){
                 if($tr_field == $where_value)
                     $where[$where_field] = $tr_value;
