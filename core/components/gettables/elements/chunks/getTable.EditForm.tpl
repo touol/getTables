@@ -96,35 +96,37 @@
                 {if $edit.search}data-search="{$edit.search}"{/if}
                     data-modal="1">
                     <label class="control-label" for="{$edit.field}">{$edit.label}</label>
-                    <div class="input-group">
-                    <input type="hidden" class="get-autocomplect-hidden-id" 
-                            value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" 
+                    <div class="controls">
+                        <div class="input-group">
+                            <input type="hidden" class="get-autocomplect-hidden-id" 
+                                    value="{$edit.value}" data-field="{$edit.field}" name="{$edit.field}" 
+                                    {if $edit.readonly}readonly{/if}/>
+                            <span class="input-group-addon {if $edit.hide_id}hidden{/if}" style="width:20%;padding: 0;">
+                                <span class="input-number__box ">
+                                    <input type="number" class="get-autocomplect-id" 
+                                        value="{$edit.value}"  
+                                        placeholder="id" min="0"
+                                        {if $edit.readonly}readonly{/if}
+                                        style="width:100%;height: 30px;padding: 0;"/>
+                                    <button class="arr-btn arr-btn__top"></button>
+                                    <button class="arr-btn arr-btn__bottom"></button>
+                                </span>
+                            </span>
+                            <input type="search" class="form-control get-autocomplect-content" value="{$edit.content}" 
+                            placeholder="{$edit.placeholder}" 
                             {if $edit.readonly}readonly{/if}/>
-                    <span class="input-group-addon {if $edit.hide_id}hidden{/if}" style="width:20%;padding: 0;">
-                        <span class="input-number__box ">
-                            <input type="number" class="get-autocomplect-id" 
-                                value="{$edit.value}"  
-                                placeholder="id" min="0"
-                                {if $edit.readonly}readonly{/if}
-                                style="width:100%;height: 30px;padding: 0;"/>
-                            <button class="arr-btn arr-btn__top"></button>
-                            <button class="arr-btn arr-btn__bottom"></button>
-                        </span>
-                    </span>
-                    <input type="search" class="form-control get-autocomplect-content" value="{$edit.content}" 
-                    placeholder="{$edit.placeholder}" 
-                    {if $edit.readonly}readonly{/if}/>
-                    {if !$edit.readonly}
-                        <div class="input-group-btn">
-                            <button class="btn get-autocomplect-all">
-                                <span class="caret"></span>
-                            </button>
+                            {if !$edit.readonly}
+                                <div class="input-group-btn">
+                                    <button class="btn get-autocomplect-all">
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                            {/if}
                         </div>
-                    {/if}
+                        <ul class="dropdown-menu get-autocomplect-menu" role="menu">
+                            
+                        </ul>
                     </div>
-                    <ul class="dropdown-menu get-autocomplect-menu" role="menu">
-                        
-                    </ul>
                 </div>
         {/switch}
     {case 'date'}

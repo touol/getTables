@@ -679,7 +679,7 @@ class getTable
             //$this->pdoTools->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
             if(isset($this->config['selects'])){
                 if(!$selects = $this->getTables->getClassCache('getSelect','all')){
-                    if(!empty($this->config['compile']) or !$this->getTables->selects_compile){
+                    if(!$this->getTables->selects_compile){
                         $request = $this->getTables->handleRequest('getSelect/compile',$this->config['selects']);
                         $selects = $request['data']['selects'];
                     

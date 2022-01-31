@@ -415,9 +415,12 @@
 
             callbacks.save.response.success = function (response) {
                 if(response.data.modal) $(response.data.modal).modal('show');
-                //$('body').append(response.data.html);
-                //$(response.data.html).modal('show');
-
+                if(response.data.replaceHtml){
+                    $.each(response.data.replaceHtml, function( key, value ) {
+                        //console.log( 'Свойство: ' +key + '; Значение: ' + value );
+                        $(key).html(value);
+                    });
+                }
             };
 
             return getTables.send(getTables.sendData.data, getTables.Form.callbacks.save, getTables.Callbacks.Form.save);
@@ -1030,7 +1033,8 @@
             callbacks.sets.response.success = function (response) {
                 //console.log('callbacks.update.response.success',getTables.sendData);
                 if(response.data.modal) $(response.data.modal).modal('show');
-                getTables.Table.refresh();
+                if(response.data.redirect) location = response.data.redirect;
+                if(!(response.data.redirect || response.data.modal)) getTables.Table.refresh();
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.sets, getTables.Callbacks.Table.sets);
@@ -1245,7 +1249,8 @@
                 .on('click', '.get-autocomplect-all', function (e) {
                     e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
-                    $table = $(this).closest('.get-table');
+                    $table = $(this).closest('.get-table,.gts-getform');
+                    
                     var search_on = false;
                     var search = [];
                     var search1;
@@ -1257,9 +1262,8 @@
                     }
                     
                     hash = $table.data('hash');
-                    if($autocomplect.data('modal') == 1){
+                    if(typeof(hash) == "undefined" && $autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
-                        //console.info("hash",hash);
                         var parent_current0 = $(this).closest('.gts-form').find('input[name="parent_current"]').val();
                         if(parent_current0 != undefined){
                             var parent_current = JSON.parse(parent_current0);
@@ -1324,11 +1328,11 @@
                     }
                     e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
-                    $table = $(this).closest('.get-table');
+                    $table = $(this).closest('.get-table,.gts-getform');
                     //table_data = $table.data();
                     //getTables.sendData.$GtsApp = $table;
                     hash = $table.data('hash');
-                    if($autocomplect.data('modal') == 1){
+                    if(typeof(hash) == "undefined" && $autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
                         
                     } 
@@ -1353,7 +1357,7 @@
                 .on('keyup', '.get-autocomplect-content', function (e) {
                     e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
-                    $table = $(this).closest('.get-table');
+                    $table = $(this).closest('.get-table,.gts-getform');
                     //table_data = $table.data();
                     hash = $table.data('hash');
                     var search_on = false;
@@ -1367,7 +1371,7 @@
                     }
                     
                     hash = $table.data('hash');
-                    if($autocomplect.data('modal') == 1){
+                    if(typeof(hash) == "undefined" && $autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
                         //console.info("hash",hash);
                         var parent_current0 = $(this).closest('.gts-form').find('input[name="parent_current"]').val();
@@ -1465,16 +1469,5 @@
         }
     });
     
-//    код - щуп. Удалить на боевой версии 
-    //  let calendar = $('.ui-state-default');
-    
-    // $(document).on('click', function(e){
-    //     console.log(e.target);
-    // });
-    // calendar.on('click', function(e){
-        
-    //     alert("Aringilda boltushka");
-    // });
-//    код щуп - конец
 })(); 
 

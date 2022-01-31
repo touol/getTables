@@ -1,4 +1,4 @@
-<form action="" method="post" class="gts-getform {$form.cls}">
+<form action="" method="post" class="gts-getform {$form.cls}" data-hash="{$form.hash}">
     <input type="hidden" name="hash" value="{$form.hash}">
     <input type="hidden" name="form_name" value="{$form.name}">
     <div class="form-body">

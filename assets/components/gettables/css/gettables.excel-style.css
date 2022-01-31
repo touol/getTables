@@ -666,3 +666,7 @@ div.select-box {
     display: inline-block;
     position: relative;
 }
+/*autoselect в getForm.*/
+.gts-getform.form-inline .get-autocomplect{
+    width: 300px;
+}

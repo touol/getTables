@@ -1,4 +1,10 @@
 Changelog for getTables.
+1.7.31-alpha
+- Добавлена возможность редиректа в sets.
+
+1.7.29-alpha
+- Исправленно autoselect в getForm.
+
 1.7.28-alpha
 - Исправленно sub_where.
 - Добавлены стили расцветки таблиц.
