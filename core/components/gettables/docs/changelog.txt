@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.32-alpha
+- Добавлен класс canceled для окраски строк.
+
 1.7.31-alpha
 - Добавлена возможность редиректа в sets.
 

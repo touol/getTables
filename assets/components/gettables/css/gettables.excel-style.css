@@ -300,6 +300,20 @@
 .table > thead > tr > th.outwork {
     background-color: #f19989;
 }
+.table > tbody > tr.canceled > td,
+.table > tbody > tr.canceled > th,
+.table > tbody > tr > td.canceled,
+.table > tbody > tr > th.canceled,
+.table > tfoot > tr.canceled > td,
+.table > tfoot > tr.canceled > th,
+.table > tfoot > tr > td.canceled,
+.table > tfoot > tr > th.canceled,
+.table > thead > tr.canceled > td,
+.table > thead > tr.canceled > th,
+.table > thead > tr > td.canceled,
+.table > thead > tr > th.canceled {
+    background-color: #ff684c;
+}
 .get-table .table select.get-table-autosave {
     cursor: pointer;
 }
