@@ -28,7 +28,7 @@
         <span class="error_{$edit.field}"></span>
     {case 'textarea'}
         <textarea  data-field="{$edit.field}" name="{$edit.field}" placeholder="{$edit.placeholder}" class="form-control  get-table-autosave"
-            style="height: 34px;" {if $edit.readonly}readonly{/if}>{$edit.value}</textarea>
+            {if $edit.style} style="{$edit.style}"{else}style="height: 34px;"{/if} {if $edit.readonly}readonly{/if}>{$edit.value}</textarea>
         <span class="error_{$edit.field}"></span>
     {case 'checkbox'}
         {if $edit.only_view or $edit.readonly}

@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.7.33-alpha
+- Добавлен style для textarea.
+
 1.7.32-alpha
 - Добавлен класс canceled для окраски строк.
 

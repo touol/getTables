@@ -54,12 +54,8 @@
     border: 0;
 }
 
-.table .th {
-    border: 1px solid
-}
-
 .table > thead > tr > th {
-    border: 1px solid transparent;
+    border: 1px solid #555;
 }
 
 /*выравниваю кнопку крестик шапке модалки*/
@@ -208,7 +204,7 @@
     line-height: 1.42857143;
     /*    border-top: 1px solid #ddd;*/
     /*    border-left: 1px solid #ddd;*/
-    border: 1px solid #ddd;
+    border: 1px solid #555;
     vertical-align: middle;
 }
 
@@ -683,4 +679,7 @@ div.select-box {
 /*autoselect в getForm.*/
 .gts-getform.form-inline .get-autocomplect{
     width: 300px;
+}
+.get-table textarea,.gts-form textarea{
+    resize: auto !important;
 }
