@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.8.2-alpha
+- Правка модал title.
+
 1.8.0-alpha
 - Подготовка компонента для стилизации без Bootstrap.
 - Добавлена валидация полей на create. Инструкция edit->validate.

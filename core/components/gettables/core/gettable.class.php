@@ -1104,16 +1104,23 @@ class getTable
                 if(!isset($a['action'])){
                     if(isset($default_actions[$k])){
                         //Прописываем дефолтовое действие, например для  $actions['create'=>[]]
+                        if(is_array($actions[$k]['modal']) and is_array($default_actions[$k]['modal'])){
+                            $actions[$k]['modal'] = array_merge($default_actions[$k]['modal'],$actions[$k]['modal']);
+                        }
                         $compile_actions[$k] = array_merge($default_actions[$k],$actions[$k]);
                     }else{
                         $this->pdoTools->addTime("Не определено действие $k =>".print_r($actions[$k],1));
                     }
+                    //$this->pdoTools->addTime(" действия {$k}. Действие  $k ".print_r($compile_actions[$k],1));
                 }else{
                     if(is_string($a['action'])){
                         //Прописываем дефолтовое действие, например для  $actions['create'=>['action'=>'getTable/create',]]. Чтобы можно было задать много getTable/create 
                         $ta = explode("/",$a['action']);
                         if($ta[0] == "getTable"){
                             if(isset($default_actions[$ta[1]])){
+                                if(is_array($actions[$k]['modal']) and is_array($default_actions[$ta[1]]['modal'])){
+                                    $actions[$k]['modal'] = array_merge($default_actions[$ta[1]]['modal'],$actions[$k]['modal']);
+                                }
                                 $compile_actions[$k] = array_merge($default_actions[$ta[1]],$actions[$k]);
                                 //$this->pdoTools->addTime(" действия {$ta[1]}. Действие  $k ".print_r($compile_actions[$k],1));
                             }else{
@@ -1582,7 +1589,7 @@ class getTable
         }
         $body_tr['data'] = array_merge($table['data'],$data);
         //if(empty($body_tr['data'])) $body_tr['data'] = ['id'];
-        $this->pdoTools->addTime("getTable compile table actions_row".print_r($actions_row,1));
+        //$this->pdoTools->addTime("getTable compile table actions_row".print_r($actions_row,1));
         if(!empty($actions_row)){
             //собираем кнопки
             //$buttons = $this->compileActionButtons($actions_row);
