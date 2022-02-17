@@ -5,6 +5,7 @@
         data-parent_current='{$parent_current}'
     {/if}
     data-hash="{$hash}" class="get-table {$cls} {if $in_all_page}in_all_page{/if}" style="{if $width}width:{$width}%;{/if}">
+    {if $label}<h2>{$label}</h2>{/if}
     <div class="form-inline">
         {if $parent_current}
             <button class="pull-right get-table-in_all_page"><span class="glyphicon glyphicon-resize-full"></span></button>
@@ -62,8 +63,8 @@
             </div>
         </div>
     </div>
-    <table class="table">
-      <thead>
+    <table class="table get-table-table">
+      <thead class="get-table-thead">
         <tr>
             {foreach $thead.tr.ths as $th}
                 <th class="{$th.cls}" style="{$th.style}" data-field="{$th.field}">
@@ -94,7 +95,7 @@
             {/foreach}
         </tr>
       </thead>
-      <tbody>
+      <tbody class="get-table-tbody">
         {foreach $tbody.trs as $tr}
             {$tr.html}
         {/foreach}

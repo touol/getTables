@@ -618,7 +618,16 @@ class getTableProcessor
         }
     }
 
-    
+    public function validate($type,$label,$value)
+    {
+        $type2 = explode(":",$type);
+        switch($type[0]){
+            case 1: default:
+                if(empty($value)) return $this->error($this->modx->lexicon('gettables_validate_field_required',['label'=>$label]));
+            break;
+        }
+        return $this->success();
+    }
     public function update($table, $edit_tables, $data = array(), $create = false, $tr_data = [])
     {
         $saved = [];
@@ -640,8 +649,20 @@ class getTableProcessor
             if(!empty($canSave)) return $this->error($canSave);
         }
         ////$this->getTables->addDebug($edit_tables,'update $edit_tables ');
+        $validates_messages = [];
+        $validates_error_fields = [];
         foreach($table['edits'] as $edit){
             if(isset($data[$edit['field']])){
+                if($edit['validate']){
+                    $resp = $this->validate($edit['validate'],$edit['label'],$data[$edit['field']]);
+                    if(!$resp['success']){
+                        $validates_messages[] = $resp['message'];
+                        $validates_error_fields[$edit['field']] = $resp['message'];
+                    }
+                }
+                if($edit['check'] and $edit['check'] == 'user_id'){
+                    if($data[$edit['field']] != $this->modx->user->id) return $this->error(['lexicon'=>'access_denied']);
+                }
                 if($edit['type'] == "textarea"){
                     if(!$edit['skip_sanitize']){
                         $temp = json_decode($data[$edit['field']],1);
@@ -657,6 +678,8 @@ class getTableProcessor
                 }
             }
         }
+        if(!empty($validates_messages)) return $this->error(implode("<br>",$validates_messages),
+            ['validates_error_fields'=>$validates_error_fields]);
 
         $class = $table['class'];
         if($edit_tables[$class]){

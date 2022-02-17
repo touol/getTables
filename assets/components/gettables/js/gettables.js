@@ -28,7 +28,6 @@
         Table: {
             update: getTablesConfig.callbacksObjectTemplate(),
             refresh: getTablesConfig.callbacksObjectTemplate(),
-            //filter: getTablesConfig.callbacksObjectTemplate(),
             sets: getTablesConfig.callbacksObjectTemplate(),
             sub_show: getTablesConfig.callbacksObjectTemplate(),
             sub_hide: getTablesConfig.callbacksObjectTemplate(),
@@ -210,11 +209,7 @@
             case 'getTable/remove':
                 getTables.Table.remove2();
                 break;
-            // case 'getTable/filter':
-            //     getTables.Table.filter();
-            //     break;
             default:
-                //console.log('self',self);
                 getTables.Table.custom();
         }
     };
@@ -274,6 +269,7 @@
                     if (response.message) {
                         getTables.Message.success(response.message);
                     }
+                    getTables.Modal.close();
                     runCallback(callbacks.response.success, getTables, response);
                     runCallback(userCallbacks.response.success, getTables, response);
                 } else {
@@ -375,7 +371,9 @@
 
             return getTables.send(getTables.sendData.data, getTables.Modal.callbacks.load, getTables.Callbacks.Modal.load);
         },
-
+        close: function () {
+            $('.gts_modal').modal('hide');
+        },
     };
 
     getTables.Form = {
@@ -450,7 +448,7 @@
             //checkbox all
             getTables.$doc
                 .on('change', '.get-table-check-all', function (e) {
-                    $(this).closest('table').children('tbody').children('.get-table-tr').find('.get-table-check-row').prop('checked', $(this).prop('checked'));
+                    $(this).closest('.get-table-table').children('.get-table-tbody').children('.get-table-tr').find('.get-table-check-row').prop('checked', $(this).prop('checked'));
                 });
 
             getTables.$doc
@@ -564,8 +562,7 @@
                         window.open(getTablesConfig.actionUrl + '?' + query + '&gts_action=getTable/export_excel&ctx=' + getTablesConfig.ctx, '_blank');
                         return;
                     }
-                    $trs_check = $table.children('table').children('tbody').children('.get-table-tr').find('.get-table-check-row:checked');
-                    //console.info('$trs',$('table').children('tbody').children('.get-table-tr'));
+                    $trs_check = $table.children('.get-table-table').children('.get-table-tbody').children('.get-table-tr').find('.get-table-check-row:checked');
 
                     trs_data = [];
                     $trs = [];
@@ -836,7 +833,15 @@
                     };
 
                     return getTables.send(getTables.sendData.data, getTables.Table.callbacks.get_tree_child, getTables.Callbacks.Table.get_tree_child);
-                        });
+            });
+            getTables.$doc
+                .on('keyup', '.gts-form input', function (e) {
+                    if($(this).hasClass('error')) $(this).removeClass('error');
+                });
+            getTables.$doc
+                .on('change', '.gts-form select', function (e) {
+                    if($(this).hasClass('error')) $(this).removeClass('error');
+                });
         },
         childs_remove: function ($table,gts_tree_parent) {
             $childs = $table.find('tr[data-gts_tree_parent="'+gts_tree_parent+'"]');
@@ -997,7 +1002,6 @@
             callbacks.remove.response.success = function (response) {
                 //console.log('callbacks.update.response.success',getTables.sendData);
                 getTables.Table.refresh();
-                $('.gts_modal').modal('hide');
             };
 
             return getTables.send(getTables.temp, getTables.Table.callbacks.remove, getTables.Callbacks.Table.remove);
@@ -1011,9 +1015,15 @@
             callbacks.update.response.success = function (response) {
                 //console.log('callbacks.update.response.success',getTables.sendData);
                 getTables.Table.refresh();
-                $('.gts_modal').modal('hide');
             };
-
+            callbacks.update.response.error = function (response) {
+                if(response.data.validates_error_fields){
+                    for(key in response.data.validates_error_fields){
+                        $('.gts-form [name="'+key+'"').addClass('error');
+                    }
+                    
+                }
+            };
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.update, getTables.Callbacks.Table.update);
         },
 
@@ -1123,7 +1133,7 @@
             callbacks.refresh.response.success = function (response) {
                 $table = getTables.sendData.$GtsApp;
                 //console.log('response',response);
-                $table.find('tbody').html(response.data.html);
+                $table.find('.get-table-tbody').html(response.data.html);
                 
                 $table.find('.get-table-nav').html(response.data.nav);
                 
@@ -1164,36 +1174,12 @@
             return filters;
         },
 
-        // filter: function () {
-        //     getTables.Message.close();
-
-        //     var callbacks = getTables.Table.callbacks;
-
-        //     callbacks.filter.response.success = function (response) {
-        //         $table = getTables.sendData.$GtsApp;
-        //         //console.log('response',response);
-        //         $table.find('tbody').html(response.data.html);
-        //         if (response.data.nav_total > 0) {
-        //             $table.find('.get-table-nav').html(response.data.nav);
-        //         }
-
-        //         $('.get-date').each(function () {
-        //             $(this).datepicker();
-        //         });
-        //         $('.get-select-multiple').each(function () {
-        //             $(this).multiselect();
-        //         });
-        //     };
-
-        //     return getTables.send(getTables.sendData.data, getTables.Table.callbacks.filter, getTables.Callbacks.Table.filter);
-        // },
         custom: function () {
             getTables.Message.close();
             var callbacks = getTables.Table.callbacks;
 
             callbacks.custom.response.success = function (response) {
                 getTables.Table.refresh();
-                $('.gts_modal').modal('hide');
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.custom, getTables.Callbacks.Table.custom);
@@ -1201,26 +1187,6 @@
     };
 
     $(document).ready(function ($) {
-        /*if (typeof($.fn.datepicker) != 'function') {
-            $.getScript(getTablesConfig.jsUrl + 'lib/jquery-ui-1.11.4.custom/jquery-ui.min.js', function () {
-                $('<link/>', {
-                    rel: 'stylesheet',
-                    type: 'text/css',
-                    href: getTablesConfig.jsUrl + 'lib/jquery-ui-1.11.4.custom/jquery-ui.min.css'
-                 }).appendTo('head');
-            });
-            $.getScript(getTablesConfig.jsUrl + 'lib/jquery-ui-1.11.4.custom/datepicker-ru.js', function () {
-            });
-        }
-        if (typeof($.fn.multiselect) != 'function') {
-            $.getScript(getTablesConfig.jsUrl + 'lib/bootstrap-multiselect/js/bootstrap-multiselect.js', function () {
-                $('<link/>', {
-                    rel: 'stylesheet',
-                    type: 'text/css',
-                    href: getTablesConfig.jsUrl + 'lib/bootstrap-multiselect/css/bootstrap-multiselect.css'
-                 }).appendTo('head');
-            });
-        }*/
         getTables.initialize();
 
         var html = $('html');

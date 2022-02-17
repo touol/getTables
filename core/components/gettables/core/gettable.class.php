@@ -1361,7 +1361,7 @@ class getTable
         $actions_row = [];
         $row_menus = [];
         foreach($actions as $k=>$a){
-            if(isset($a['row'])){
+            if($a['row']){
                 //$actions_row[$k] = ['buttons'=> $a['row']['buttons'],];
                 if(isset($a['row']['menu'])){
                     if(!empty($a['content'])){
@@ -1582,7 +1582,7 @@ class getTable
         }
         $body_tr['data'] = array_merge($table['data'],$data);
         //if(empty($body_tr['data'])) $body_tr['data'] = ['id'];
-        //$this->pdoTools->addTime("getTable compile table body_tr".print_r($body_tr['data'],1));
+        $this->pdoTools->addTime("getTable compile table actions_row".print_r($actions_row,1));
         if(!empty($actions_row)){
             //собираем кнопки
             //$buttons = $this->compileActionButtons($actions_row);
@@ -1610,6 +1610,7 @@ class getTable
         
         $table_compile = [
             'name'=>$name,
+            'label'=>$table['label']?:'',
             'pdoTools'=>$table['pdoTools'],
             'hash'=> $this->config['hash'],
             'class'=>$class,

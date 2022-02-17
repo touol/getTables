@@ -37,6 +37,7 @@ $_lang['filtr_btn_checkbox_clear'] = 'Clean';
 $_lang['filtr_btn_checkbox_apply'] = 'Apply';
 $_lang['filtr_checkbox_select_all'] = 'Select all';
 
+$_lang['gettables_validate_field_required'] = 'Field [[+label]] required!';
 //не используется
 $_lang['gettables_menu_desc'] = 'A sample Extra to develop from.';
 $_lang['gettables_intro_msg'] = 'You can select multiple items by holding Shift or Ctrl button.';

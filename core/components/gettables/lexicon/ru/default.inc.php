@@ -37,6 +37,8 @@ $_lang['filtr_btn_checkbox_clear'] = 'Очистить';
 $_lang['filtr_btn_checkbox_apply'] = 'Применить';
 $_lang['filtr_checkbox_select_all'] = 'Выбрать всё';
 
+$_lang['gettables_validate_field_required'] = 'Поле [[+label]] требуется!';
+
 //не используется
 $_lang['gettables_menu_desc'] = 'Пример расширения для разработки.';
 $_lang['gettables_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
@@ -68,3 +70,4 @@ $_lang['gettables_item_err_save'] = 'Ошибка при сохранении П
 
 $_lang['gettables_grid_search'] = 'Поиск';
 $_lang['gettables_grid_actions'] = 'Действия';
+
