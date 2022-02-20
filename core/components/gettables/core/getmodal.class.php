@@ -105,8 +105,20 @@ class getModal
     }
     public function fetchModalRemove($data)
     {
-        
-        $html = $this->pdoTools->getChunk($this->config['getTableModalRemoveTpl']);
+        $table_action = !empty($data['button_data']['action'])
+            ? (string)$data['button_data']['action']
+            : false;
+        $table_name = !empty($data['table_data']['name'])
+            ? (string)$data['table_data']['name']
+            : false;
+        $action_name = !empty($data['button_data']['name'])
+            ? (string)$data['button_data']['name']
+            : false;
+        if(!$table = $this->getTables->getClassCache('getTable',$table_name)){
+            return $this->error("Таблица $table_name не найдено",$this->config);
+        }
+        $modal = $table['actions'][$action_name]['modal'];
+        $html = $this->pdoTools->getChunk($this->config['getTableModalRemoveTpl'],['modal'=>$modal]);
         
         return $this->success('',array('html'=>$html));
     }

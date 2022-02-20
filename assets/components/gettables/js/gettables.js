@@ -350,6 +350,9 @@
 
         },
 
+        show: function (modal_html) {
+            $(modal_html).modal('show');
+        },
         load: function (button_data, table_data, tr_data) {
             getTables.Message.close();
 
@@ -364,9 +367,7 @@
             var callbacks = getTables.Modal.callbacks;
 
             callbacks.load.response.success = function (response) {
-
-                $(response.data.html).modal('show');
-
+                getTables.Modal.show(response.data.html);
             };
 
             return getTables.send(getTables.sendData.data, getTables.Modal.callbacks.load, getTables.Callbacks.Modal.load);
@@ -412,7 +413,7 @@
             var callbacks = getTables.Form.callbacks;
 
             callbacks.save.response.success = function (response) {
-                if(response.data.modal) $(response.data.modal).modal('show');
+                if(response.data.modal) getTables.Modal.show(response.data.modal);
                 if(response.data.replaceHtml){
                     $.each(response.data.replaceHtml, function( key, value ) {
                         //console.log( 'Свойство: ' +key + '; Значение: ' + value );
@@ -899,12 +900,15 @@
             getTables.sendData.data = {
                 gts_action: 'getModal/fetchModalRemove',
                 hash: table_data.hash,
+                table_name: table_data.name,
+                table_data: table_data,
+                button_data: button_data,
             };
 
             var callbacks = getTables.Modal.callbacks;
 
             callbacks.load.response.success = function (response) {
-                $(response.data.html).modal('show');
+                getTables.Modal.show(response.data.html);
             };
 
             getTables.send(getTables.sendData.data, getTables.Modal.callbacks.load, getTables.Callbacks.Modal.load);
@@ -918,6 +922,17 @@
                 trs_data: trs_data
             };
             return;
+        },
+        remove2: function () {
+            getTables.Message.close();
+
+            var callbacks = getTables.Table.callbacks;
+
+            callbacks.remove.response.success = function (response) {
+                getTables.Table.refresh();
+            };
+
+            return getTables.send(getTables.temp, getTables.Table.callbacks.remove, getTables.Callbacks.Table.remove);
         },
         long_process: function (button_data, table_data, trs_data) {
             getTables.Message.close();
@@ -940,7 +955,7 @@
             var callbacks = getTables.Modal.callbacks;
 
             callbacks.load.response.success = function (response) {
-                $(response.data.html).modal('show');
+                getTables.Modal.show(response.data.html);
                 getTables.$doc.on('hidden.bs.modal', function (event) {
                     $('.gts_progress').remove();
                 });
@@ -957,13 +972,12 @@
     
                 callbacks2.long_process.response.success = function (response) {
                     if($('.gts_progress .progress-stop').data("stop") == 1){
-                        $('.gts_progress').modal('hide');
-                        //$('.gts_progress').remove();
+                        getTables.Modal.close();
                     }
                     if(response.data.completed){
-                        $('.gts_progress').modal('hide');
+                        getTables.Modal.close();
                         if(response.data.modal){
-                            $(response.data.modal).modal('show');
+                            getTables.Modal.show(response.data.modal);
                         }else{
                             getTables.Message.success(response.data.message);
                         }
@@ -994,18 +1008,7 @@
 
             return;
         },
-        remove2: function () {
-            getTables.Message.close();
-
-            var callbacks = getTables.Table.callbacks;
-
-            callbacks.remove.response.success = function (response) {
-                //console.log('callbacks.update.response.success',getTables.sendData);
-                getTables.Table.refresh();
-            };
-
-            return getTables.send(getTables.temp, getTables.Table.callbacks.remove, getTables.Callbacks.Table.remove);
-        },
+        
         
         update: function (button_data, table_data, tr_data) {
             getTables.Message.close();
@@ -1042,7 +1045,7 @@
 
             callbacks.sets.response.success = function (response) {
                 //console.log('callbacks.update.response.success',getTables.sendData);
-                if(response.data.modal) $(response.data.modal).modal('show');
+                if(response.data.modal) getTables.Modal.show(response.data.modal);
                 if(response.data.redirect) location = response.data.redirect;
                 if(!(response.data.redirect || response.data.modal)) getTables.Table.refresh();
             };

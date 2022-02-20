@@ -385,6 +385,237 @@ class getTable
         $export = join(PHP_EOL, array_filter(["["] + $array));
         if ((bool)$return) return $export; else echo $export;
     }
+    public function addFilterTable($table)
+    {
+        $query = [];
+        
+        if($table['sub_where'] and $this->getTables->REQUEST['sub_where_current']){
+            $sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
+            foreach($sub_where_current as $field =>$v){
+                if($table['sub_where'][$field]){
+                    $query[$field] = (int)$v;
+                }
+            }
+            if(isset($table['sub_default'])){
+                $sub_default = [];
+                $pdoConfig = $table['pdoTools2'];
+                foreach($sub_where_current as $where_field=>$where_value){
+                    if($table['sub_default'][$where_field]){
+                        $sub_default[$where_field] = $where_value;
+                    }    
+                }
+                array_walk_recursive($pdoConfig,array(&$this, 'walkFunc'),$sub_default);
+                $table['pdoTools2'] = $pdoConfig;
+            }
+        }
+        
+        
+        foreach($table['filters'] as $k=>&$filter){
+            $date=[];
+            $datetime=[];
+            //if(empty($filter['edit']['where_field'])) $filter['edit']['where_field'] = $filter['where'];
+            if(!empty($filter['where'])) $filter['edit']['where_field'] = $filter['where'];
+            
+            //$this->pdoTools->addTime("getTable addFilterTable filter ".print_r($filter,1));
+            
+            if($filter['default'] and empty($this->getTables->REQUEST[$filter['edit']['field']]) and $this->getTables->REQUEST[$filter['edit']['field']] !== "0"){
+                if($filter['default']){
+                    if(!is_array($filter['default'])){
+                        switch($filter['edit']['type']){
+                            case 'date':
+                                if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
+                                break;
+                            case 'datetime':
+                                if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d H:i',strtotime($filter['default']))];
+                                break;
+                        }
+                        switch($filter['default']){
+                            case 'user_id':
+                                $filter['default'] = ['user_id'=>[$this->modx->user->get('id')]];
+                                break;
+                            default:
+                                $filter['default'] = ['default'=>$filter['default']];
+                                break;
+                        }
+                    }
+                }
+                
+                if(empty($filter['force'])){
+                    $filter['force'] = $filter['default'];
+                }else if(is_array($filter['default'])){
+                    $filter['force'] = array_merge($filter['default'],$filter['force']);
+                }
+                //$filter['edit']['force'] = array_merge($filter['edit']['default'],$filter['edit']['force']);
+                //$this->pdoTools->addTime("getTable addFilterTable filter force ".print_r($filter,1));
+            }
+            if($filter['force']){
+                if(!is_array($filter['force'])){
+                    switch($filter['edit']['type']){
+                        case 'date':
+                            if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
+                            break;
+                        case 'datetime':
+                            if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d H:i',strtotime($filter['force']))];
+                            break;
+                    }
+                    switch($filter['force']){
+                        case 'user_id':
+                            $filter['force'] = ['user_id'=>[$this->modx->user->get('id')]];
+                            break;
+                        default:
+                            $filter['force'] = ['default'=>$filter['force']];
+                            break;
+                    }
+                }
+                if(!empty($filter['force']['from'])){
+                    switch($filter['edit']['type']){
+                        case 'date':
+                            $date['from'] = date('Y-m-d',strtotime($filter['force']['from']));
+                            break;
+                        case 'datetime':
+                            $datetime['from'] = date('Y-m-d H:i',strtotime($filter['force']['from']));
+                            break;
+                    }
+                }
+                if(!empty($filter['force']['default'])){
+                    $query[$filter['edit']['where_field']] = $filter['force']['default'];
+                    $filter['value'] = $filter['force']['default'];
+                }
+                if(is_array($filter['force']['in'])){
+                    $query[$filter['edit']['where_field']] = $filter['force']['in'];
+                    $filter['value'] = $filter['force']['in'];
+                }
+            
+                if($filter['force']['user_id'] ){
+                    if(!$this->modx->user->isMember('Administrator')){
+                        //$this->pdoTools->addTime("getTable filter default ".print_r($filter['default'],1));
+                        if(is_array($filter['force']['modx_user_id'])) $filter['force']['user_id'] = array_merge($filter['force']['user_id'],$filter['force']['modx_user_id']);
+                        if(is_array($filter['force']['user_id']) and in_array($this->modx->user->id,$filter['force']['user_id'])){
+                            $query[$filter['edit']['where_field'].':IN'] = $filter['force']['user_id'];
+                            //$filter['value'] = $filter['edit']['force']['user_id'];
+                        }
+                        $filter['section'] = ""; continue;
+                    }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']]==='0'){
+                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
+                        if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
+                            $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
+                        }
+                        $query[$filter['edit']['where_field']] = $filter['value'];
+                    }
+                }
+                //$this->pdoTools->addTime("getTable addFilterTable query force ".print_r($query,1));
+            }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']] ==='0'){
+                
+                switch($filter['edit']['type']){
+                    case 'date':
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
+                            $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
+                            $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                        break;
+                    case 'datetime':
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
+                            $datetime['from'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
+                            $datetime['to'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                        break;
+                    default:
+                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
+                        if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
+                            if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
+                                $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
+                            }
+                            if(strpos($filter['edit']['where_field'], ':IN') !== false){
+                                if(!is_array($filter['value'])){
+                                    $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                                }else{
+                                    $query[$filter['edit']['where_field']] = $filter['value'];
+                                }
+                            }else{
+                                $query[$filter['edit']['where_field']] = $filter['value'];
+                            }
+                            
+                        }else{
+                            $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
+                        }
+                        //if(isset($filter['edit']['where_field'])) $query[$filter['edit']['where_field']] = $filter['value'];
+                }
+            }else{
+                $filter['value'] = '';
+            }
+            
+            if(!empty($date)){
+                if(!empty($date['from'])){
+                    $query[$filter['edit']['where_field'].':>='] = $date['from'];
+                    $filter['value']['from'] = date($this->config['date_format'],strtotime($date['from']));
+                }
+                if(!empty($date['to'])){
+                    $query[$filter['edit']['where_field'].':<='] = $date['to'];
+                    $filter['value']['to'] = date($this->config['date_format'],strtotime($date['to']));
+                }
+            }
+            if(!empty($datetime)){
+                if(!empty($datetime['from'])){
+                    $query[$filter['edit']['where_field'].':>='] = $datetime['from'];
+                    $filter['value']['from'] = date($this->config['datetime_format'],strtotime($datetime['from']));
+                }
+                if(!empty($datetime['to'])){
+                    $query[$filter['edit']['where_field'].':<='] = $datetime['to'];
+                    $filter['value']['to'] = date($this->config['datetime_format'],strtotime($datetime['to']));
+                }
+            }
+            if(!empty($filter['edit']['multiple'])){
+                $value = [];
+                foreach($filter['value'] as $v){
+                    $value[$v] = $v;
+                }
+                $filter['value'] = $value;
+            }    
+            //checkbox filter
+            if(isset($this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']])){
+                $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 
+                $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
+            }
+            $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
+        }
+        
+        if(!isset($table['pdoTools2']['where'])) $table['pdoTools2']['where'] = [];
+        $query = array_merge($table['pdoTools2']['where'],$query);
+        //$this->getTables->addDebug($query,'addFilterTable  $query');
+        $table['query'] = ['where'=>$query];
+        //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 1');
+        foreach($table['filters'] as $f){
+            if($f['section'] == 'topBar/topline/filters') $table['topBar'][$f['section']]['filters'][] = $f;
+            if($f['section'] == 'th'){
+                foreach($table['thead']['tr']['ths'] as &$th){
+                    if($th['field']==$f['edit']['field']){
+                        $th['filter'] = 1;
+                        $th['filters'][] = $f;
+                        if(!empty($f['value']) or $f['value'] === '0' or $f['value'] === 0){
+                            $th['filter_class'] = 'filter-active';
+                        }else{
+                            $th['filter_class'] = 'filter';
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        //$this->getTables->addDebug($table['filters'],'addFilterTable  $table[filters]');
+        //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 2');
+        if(isset($table['topBar']['topBar/topline/filters'])){
+            $offset = 0;
+            foreach($table['topBar']['topBar/topline/filters']['filters'] as $f){
+                $offset += $f['cols'];
+            }
+            $table['topBar']['topBar/topline/filters']['offset'] = 10-$offset;
+            $table['topBar']['topBar/topline/filters/search'] = array_pop($table['topBar']['topBar/topline/filters']['filters']);
+        }
+        
+        //$this->getTables->addDebug($table,'addFilterTable  $table');
+        return $table;
+    }
     public function generateData($table,$pdoConfig =[])
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
@@ -746,237 +977,7 @@ class getTable
             return $this->error("Нет конфига row!");
         }
     }
-    public function addFilterTable($table)
-    {
-        $query = [];
-        
-        if($table['sub_where'] and $this->getTables->REQUEST['sub_where_current']){
-            $sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
-            foreach($sub_where_current as $field =>$v){
-                if($table['sub_where'][$field]){
-                    $query[$field] = (int)$v;
-                }
-            }
-            if(isset($table['sub_default'])){
-                $sub_default = [];
-                $pdoConfig = $table['pdoTools2'];
-                foreach($sub_where_current as $where_field=>$where_value){
-                    if($table['sub_default'][$where_field]){
-                        $sub_default[$where_field] = $where_value;
-                    }    
-                }
-                array_walk_recursive($pdoConfig,array(&$this, 'walkFunc'),$sub_default);
-                $table['pdoTools2'] = $pdoConfig;
-            }
-        }
-        
-        
-        foreach($table['filters'] as $k=>&$filter){
-            $date=[];
-            $datetime=[];
-            //if(empty($filter['edit']['where_field'])) $filter['edit']['where_field'] = $filter['where'];
-            if(!empty($filter['where'])) $filter['edit']['where_field'] = $filter['where'];
-            
-            //$this->pdoTools->addTime("getTable addFilterTable filter ".print_r($filter,1));
-            
-            if($filter['default'] and empty($this->getTables->REQUEST[$filter['edit']['field']]) and $this->getTables->REQUEST[$filter['edit']['field']] !== "0"){
-                if($filter['default']){
-                    if(!is_array($filter['default'])){
-                        switch($filter['edit']['type']){
-                            case 'date':
-                                if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d',strtotime($filter['default']))];
-                                break;
-                            case 'datetime':
-                                if($filter['default']) $filter['default'] = ['from'=>date('Y-m-d H:i',strtotime($filter['default']))];
-                                break;
-                        }
-                        switch($filter['default']){
-                            case 'user_id':
-                                $filter['default'] = ['user_id'=>[$this->modx->user->get('id')]];
-                                break;
-                            default:
-                                $filter['default'] = ['default'=>$filter['default']];
-                                break;
-                        }
-                    }
-                }
-                
-                if(empty($filter['force'])){
-                    $filter['force'] = $filter['default'];
-                }else if(is_array($filter['default'])){
-                    $filter['force'] = array_merge($filter['default'],$filter['force']);
-                }
-                //$filter['edit']['force'] = array_merge($filter['edit']['default'],$filter['edit']['force']);
-                //$this->pdoTools->addTime("getTable addFilterTable filter force ".print_r($filter,1));
-            }
-            if($filter['force']){
-                if(!is_array($filter['force'])){
-                    switch($filter['edit']['type']){
-                        case 'date':
-                            if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d',strtotime($filter['force']))];
-                            break;
-                        case 'datetime':
-                            if($filter['force']) $filter['force'] = ['from'=>date('Y-m-d H:i',strtotime($filter['force']))];
-                            break;
-                    }
-                    switch($filter['force']){
-                        case 'user_id':
-                            $filter['force'] = ['user_id'=>[$this->modx->user->get('id')]];
-                            break;
-                        default:
-                            $filter['force'] = ['default'=>$filter['force']];
-                            break;
-                    }
-                }
-                if(!empty($filter['force']['from'])){
-                    switch($filter['edit']['type']){
-                        case 'date':
-                            $date['from'] = date('Y-m-d',strtotime($filter['force']['from']));
-                            break;
-                        case 'datetime':
-                            $datetime['from'] = date('Y-m-d H:i',strtotime($filter['force']['from']));
-                            break;
-                    }
-                }
-                if(!empty($filter['force']['default'])){
-                    $query[$filter['edit']['where_field']] = $filter['force']['default'];
-                    $filter['value'] = $filter['force']['default'];
-                }
-                if(is_array($filter['force']['in'])){
-                    $query[$filter['edit']['where_field']] = $filter['force']['in'];
-                    $filter['value'] = $filter['force']['in'];
-                }
-            
-                if($filter['force']['user_id'] ){
-                    if(!$this->modx->user->isMember('Administrator')){
-                        //$this->pdoTools->addTime("getTable filter default ".print_r($filter['default'],1));
-                        if(is_array($filter['force']['modx_user_id'])) $filter['force']['user_id'] = array_merge($filter['force']['user_id'],$filter['force']['modx_user_id']);
-                        if(is_array($filter['force']['user_id']) and in_array($this->modx->user->id,$filter['force']['user_id'])){
-                            $query[$filter['edit']['where_field'].':IN'] = $filter['force']['user_id'];
-                            //$filter['value'] = $filter['edit']['force']['user_id'];
-                        }
-                        $filter['section'] = ""; continue;
-                    }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']]==='0'){
-                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
-                        if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
-                            $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
-                        }
-                        $query[$filter['edit']['where_field']] = $filter['value'];
-                    }
-                }
-                //$this->pdoTools->addTime("getTable addFilterTable query force ".print_r($query,1));
-            }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']] ==='0'){
-                
-                switch($filter['edit']['type']){
-                    case 'date':
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
-                            $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
-                            $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
-                        break;
-                    case 'datetime':
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
-                            $datetime['from'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
-                            $datetime['to'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
-                        break;
-                    default:
-                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
-                        if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
-                            if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
-                                $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
-                            }
-                            if(strpos($filter['edit']['where_field'], ':IN') !== false){
-                                if(!is_array($filter['value'])){
-                                    $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
-                                }else{
-                                    $query[$filter['edit']['where_field']] = $filter['value'];
-                                }
-                            }else{
-                                $query[$filter['edit']['where_field']] = $filter['value'];
-                            }
-                            
-                        }else{
-                            $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
-                        }
-                        //if(isset($filter['edit']['where_field'])) $query[$filter['edit']['where_field']] = $filter['value'];
-                }
-            }else{
-                $filter['value'] = '';
-            }
-            
-            if(!empty($date)){
-                if(!empty($date['from'])){
-                    $query[$filter['edit']['where_field'].':>='] = $date['from'];
-                    $filter['value']['from'] = date($this->config['date_format'],strtotime($date['from']));
-                }
-                if(!empty($date['to'])){
-                    $query[$filter['edit']['where_field'].':<='] = $date['to'];
-                    $filter['value']['to'] = date($this->config['date_format'],strtotime($date['to']));
-                }
-            }
-            if(!empty($datetime)){
-                if(!empty($datetime['from'])){
-                    $query[$filter['edit']['where_field'].':>='] = $datetime['from'];
-                    $filter['value']['from'] = date($this->config['datetime_format'],strtotime($datetime['from']));
-                }
-                if(!empty($datetime['to'])){
-                    $query[$filter['edit']['where_field'].':<='] = $datetime['to'];
-                    $filter['value']['to'] = date($this->config['datetime_format'],strtotime($datetime['to']));
-                }
-            }
-            if(!empty($filter['edit']['multiple'])){
-                $value = [];
-                foreach($filter['value'] as $v){
-                    $value[$v] = $v;
-                }
-                $filter['value'] = $value;
-            }    
-            //checkbox filter
-            if(isset($this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']])){
-                $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 
-                $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
-            }
-            $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
-        }
-        
-        if(!isset($table['pdoTools2']['where'])) $table['pdoTools2']['where'] = [];
-        $query = array_merge($table['pdoTools2']['where'],$query);
-        //$this->getTables->addDebug($query,'addFilterTable  $query');
-        $table['query'] = ['where'=>$query];
-        //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 1');
-        foreach($table['filters'] as $f){
-            if($f['section'] == 'topBar/topline/filters') $table['topBar'][$f['section']]['filters'][] = $f;
-            if($f['section'] == 'th'){
-                foreach($table['thead']['tr']['ths'] as &$th){
-                    if($th['field']==$f['edit']['field']){
-                        $th['filter'] = 1;
-                        $th['filters'][] = $f;
-                        if(!empty($f['value']) or $f['value'] === '0' or $f['value'] === 0){
-                            $th['filter_class'] = 'filter-active';
-                        }else{
-                            $th['filter_class'] = 'filter';
-                        }
-                    }
-                }
-            }
-        }
-        
-        
-        //$this->getTables->addDebug($table['filters'],'addFilterTable  $table[filters]');
-        //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 2');
-        if(isset($table['topBar']['topBar/topline/filters'])){
-            $offset = 0;
-            foreach($table['topBar']['topBar/topline/filters']['filters'] as $f){
-                $offset += $f['cols'];
-            }
-            $table['topBar']['topBar/topline/filters']['offset'] = 10-$offset;
-            $table['topBar']['topBar/topline/filters/search'] = array_pop($table['topBar']['topBar/topline/filters']['filters']);
-        }
-        
-        //$this->getTables->addDebug($table,'addFilterTable  $table');
-        return $table;
-    }
+    
     
     
     public function compileActions($actions){
@@ -996,6 +997,7 @@ class getTable
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
                     'EditFormtpl'=>'getTableEditFormTpl',
+                    'title'=>'Создать',
                 ],
                 'tag' =>'button',
                 'attr' => '',
@@ -1012,6 +1014,7 @@ class getTable
                     'action' => 'getModal/fetchTableModal',
                     'tpl'=>'getTableModalCreateUpdateTpl',
                     'EditFormtpl'=>'getTableEditFormTpl',
+                    'title'=>'Редактировать',
                 ],
                 'tag' =>'button',
                 'attr' => '',
