@@ -38,6 +38,11 @@ $_lang['filtr_btn_checkbox_apply'] = 'Apply';
 $_lang['filtr_checkbox_select_all'] = 'Select all';
 
 $_lang['gettables_validate_field_required'] = 'Field [[+label]] required!';
+//сортировка
+$_lang['gettables_sort_asc'] = 'Sorting from A to Z';
+$_lang['gettables_sort_desc'] = 'Sorting from Z to A';
+$_lang['gettables_sort_rank'] = 'Sort Priority';
+
 //не используется
 $_lang['gettables_menu_desc'] = 'A sample Extra to develop from.';
 $_lang['gettables_intro_msg'] = 'You can select multiple items by holding Shift or Ctrl button.';

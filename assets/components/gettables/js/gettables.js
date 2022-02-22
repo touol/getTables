@@ -692,7 +692,6 @@
                     e.preventDefault();
                     
                     $th = $(this).closest('th');
-                    $th.find('.filtr-btn').removeClass('filter-active filter');
                     getTables.Table.check_filter($th);
 
                     $table = $(this).closest('.get-table');
@@ -712,7 +711,8 @@
                     });
                     $th.find('.filrt-checkbox-select-all').prop('checked', true);
                     $th.find('.filrt-checkbox-input').prop('checked', true);
-                    $th.find('.filtr-btn').removeClass('filter-active filter');
+                    $th.find('.filtr-btn').removeClass('filter-active filter filter-sort-down filter-sort-up');
+                    $th.find('.get-table-sort-sortdir.active').removeClass('active');
                     $th.find('.filtr-btn').addClass('filter');
 
                     $table = $(this).closest('.get-table');
@@ -783,6 +783,28 @@
                     getTables.Table.refresh();
                 });
             getTables.$doc
+                .on('click', '.get-table-sort-sortdir', function (e) {
+                    $th = $(this).closest('th');
+                    if($(this).hasClass('active')){
+                        $(this).removeClass('active');
+                    }else{
+                        $th.find('.get-table-sort-sortdir').removeClass('active');
+                        $(this).addClass('active');
+                    }
+                    getTables.Table.check_filter($th);
+                    $table = $(this).closest('.get-table');
+                    getTables.sendData.$GtsApp = $table;
+
+                    getTables.Table.refresh();
+                });
+            getTables.$doc
+                .on('click', '.get-table-sort-rank', function (e) {
+                    $table = $(this).closest('.get-table');
+                    getTables.sendData.$GtsApp = $table;
+
+                    getTables.Table.refresh();
+                });
+            getTables.$doc
                 .on('click', '.gtstree-expander-expanded', function (e) {
                     e.preventDefault();
                     $table = $(this).closest('.get-table');
@@ -843,6 +865,7 @@
                 .on('change', '.gts-form select', function (e) {
                     if($(this).hasClass('error')) $(this).removeClass('error');
                 });
+            
         },
         childs_remove: function ($table,gts_tree_parent) {
             $childs = $table.find('tr[data-gts_tree_parent="'+gts_tree_parent+'"]');
@@ -851,23 +874,7 @@
                 $(this).remove();
             });
         },
-        check_filter: function ($th) {
-            //выделение фильтра разобраться
-            $th.find('.filtr-btn').removeClass('filter-active filter');
-            filterclass = 'filter';
-            $th.find('.get-table-filter').each(function(){
-                if($(this).val() != "") filterclass = 'filter-active';
-            });
-            select_all = true;
-            $th.find('.filrt-checkbox-input').each(function(){
-                if($(this).prop('checked') == false){
-                    filterclass = 'filter-active';
-                    select_all = false;
-                }
-            });
-            $th.find('.filrt-checkbox-select-all').prop('checked', select_all);
-            $th.find('.filtr-btn').addClass(filterclass);
-        },
+        
         autosave: function (field, value, table_data, tr_data) {
             getTables.Message.close();
 
@@ -1173,10 +1180,45 @@
                         filters['filter_checkboxs'][$th.data('field')].push($(this).val());
                     });
                 }
+                $sort = $th.find('.get-table-sort-sortdir.active');
+                if($sort.length > 0){
+                    if(typeof(filters['filter_sort']) == "undefined")
+                        filters['filter_sort'] = {};
+                    if(typeof(filters['filter_sort'][$th.data('field')]) == "undefined")
+                        filters['filter_sort'][$th.data('field')] = {};
+                    filters['filter_sort'][$th.data('field')]['sortdir'] = $sort.data('sortdir');
+                    filters['filter_sort'][$th.data('field')]['rank'] = $th.find('.get-table-sort-rank').val();
+                }
             });
             return filters;
         },
 
+        check_filter: function ($th) {
+            //выделение фильтра разобраться
+            $th.find('.filtr-btn').removeClass('filter-active filter filter-sort-down filter-sort-up');
+            filterclass = 'filter';
+            $th.find('.get-table-filter').each(function(){
+                if($(this).val() != "") filterclass = 'filter-active';
+            });
+            select_all = true;
+            $th.find('.filrt-checkbox-input').each(function(){
+                if($(this).prop('checked') == false){
+                    filterclass = 'filter-active';
+                    select_all = false;
+                }
+            });
+            $th.find('.filrt-checkbox-select-all').prop('checked', select_all);
+            //сортировка
+            $sort = $th.find('.get-table-sort-sortdir.active');
+            if($sort.length > 0){
+                if($sort.data('sortdir') == 'ASC'){
+                    filterclass = 'filter-sort-up';
+                }else{
+                    filterclass = 'filter-sort-down';
+                }
+            }
+            $th.find('.filtr-btn').addClass(filterclass);
+        },
         custom: function () {
             getTables.Message.close();
             var callbacks = getTables.Table.callbacks;

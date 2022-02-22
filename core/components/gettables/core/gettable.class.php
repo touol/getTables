@@ -413,10 +413,8 @@ class getTable
         foreach($table['filters'] as $k=>&$filter){
             $date=[];
             $datetime=[];
-            //if(empty($filter['edit']['where_field'])) $filter['edit']['where_field'] = $filter['where'];
+
             if(!empty($filter['where'])) $filter['edit']['where_field'] = $filter['where'];
-            
-            //$this->pdoTools->addTime("getTable addFilterTable filter ".print_r($filter,1));
             
             if($filter['default'] and empty($this->getTables->REQUEST[$filter['edit']['field']]) and $this->getTables->REQUEST[$filter['edit']['field']] !== "0"){
                 if($filter['default']){
@@ -445,8 +443,7 @@ class getTable
                 }else if(is_array($filter['default'])){
                     $filter['force'] = array_merge($filter['default'],$filter['force']);
                 }
-                //$filter['edit']['force'] = array_merge($filter['edit']['default'],$filter['edit']['force']);
-                //$this->pdoTools->addTime("getTable addFilterTable filter force ".print_r($filter,1));
+                
             }
             if($filter['force']){
                 if(!is_array($filter['force'])){
@@ -503,7 +500,7 @@ class getTable
                         $query[$filter['edit']['where_field']] = $filter['value'];
                     }
                 }
-                //$this->pdoTools->addTime("getTable addFilterTable query force ".print_r($query,1));
+                
             }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']] ==='0'){
                 
                 switch($filter['edit']['type']){
@@ -581,9 +578,9 @@ class getTable
         
         if(!isset($table['pdoTools2']['where'])) $table['pdoTools2']['where'] = [];
         $query = array_merge($table['pdoTools2']['where'],$query);
-        //$this->getTables->addDebug($query,'addFilterTable  $query');
+
         $table['query'] = ['where'=>$query];
-        //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 1');
+
         foreach($table['filters'] as $f){
             if($f['section'] == 'topBar/topline/filters') $table['topBar'][$f['section']]['filters'][] = $f;
             if($f['section'] == 'th'){
@@ -601,9 +598,6 @@ class getTable
             }
         }
         
-        
-        //$this->getTables->addDebug($table['filters'],'addFilterTable  $table[filters]');
-        //$this->getTables->addDebug($table['topBar'],'addFilterTable  $table[topBar] 2');
         if(isset($table['topBar']['topBar/topline/filters'])){
             $offset = 0;
             foreach($table['topBar']['topBar/topline/filters']['filters'] as $f){
@@ -613,9 +607,9 @@ class getTable
             $table['topBar']['topBar/topline/filters/search'] = array_pop($table['topBar']['topBar/topline/filters']['filters']);
         }
         
-        //$this->getTables->addDebug($table,'addFilterTable  $table');
         return $table;
     }
+    
     public function generateData($table,$pdoConfig =[])
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
@@ -638,6 +632,28 @@ class getTable
         $table['pdoTools2']['return'] = 'data';
         
         $table['pdoTools2']['where'] = array_merge($table['pdoTools2']['where'],$table['query']['where']);
+        //сортировка
+        if(isset($this->getTables->REQUEST['filter_sort'])){
+            $filter_sort = $this->getTables->REQUEST['filter_sort'];
+            uasort($filter_sort, function ($a, $b) {
+                if($a['rank'] == $b['rank'])
+                    return 0;
+                return $a['rank'] < $b['rank'] ? -1 : 1;
+            });
+            $sort = [];
+            foreach($filter_sort as $field=>$value){
+                if($value['sortdir'] == "ASC"){
+                    $sortdir = "ASC";
+                }else{
+                    $sortdir = "DESC";
+                }
+                foreach($table['filters'] as $k=>$filter){
+                    if($filter['edit']['field'] == $field) $sort[$field] = $sortdir;
+                }
+            }
+            $table['pdoTools2']['sortby'] = $sort;
+            //$this->pdoTools->addTime("getTable generateData filter_sort ".print_r($filter_sort,1));
+        }
         //tree
         if($table['tree']){
             $tree_where = $table['pdoTools2']['where'];
@@ -648,6 +664,7 @@ class getTable
             }
             
         }
+
         $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
         //file_put_contents(__DIR__ ."/". "222_initialize.txt",json_encode($this->pdoTools->config,JSON_PRETTY_PRINT));
         //$this->pdoTools->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));

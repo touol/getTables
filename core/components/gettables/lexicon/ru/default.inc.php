@@ -38,6 +38,10 @@ $_lang['filtr_btn_checkbox_apply'] = 'Применить';
 $_lang['filtr_checkbox_select_all'] = 'Выбрать всё';
 
 $_lang['gettables_validate_field_required'] = 'Поле [[+label]] требуется!';
+//сортировка
+$_lang['gettables_sort_asc'] = 'Сортировка от А до Я';
+$_lang['gettables_sort_desc'] = 'Сортировка от Я до А';
+$_lang['gettables_sort_rank'] = 'Приоритет сортировки';
 
 //не используется
 $_lang['gettables_menu_desc'] = 'Пример расширения для разработки.';

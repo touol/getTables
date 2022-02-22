@@ -132,8 +132,6 @@
     margin-left: 15px;
 }
 
-.get-table .get-table-topline-filters {}
-
 .get-table .get-table-topline-filters .row {
     padding-right: 0px;
     padding-left: 0px;
@@ -141,10 +139,6 @@
 
 .get-table .get-table-topline-filters > .row > .col-md-3 {
     padding: 0;
-}
-
-.get-table .get-table-topline-filters .form-group {
-    /*    padding: 0;*/
 }
 
 .input-group .form-control,
@@ -348,10 +342,6 @@
 }
 
 /*end get-table v-style от Валентина*/
-
-.ui-datepicker {
-    /* z-index: 100 !important; */
-}
 
 /*стилизация элементов формы*/
 
@@ -634,7 +624,6 @@ div.select-box {
 .get-table .filrt-window .filrt-checkbox-container .filrt-checkbox-ul {
     padding: 0;
     text-align: left;
-
 }
 
 .get-table .filrt-window .filrt-checkbox-container .filrt-checkbox-ul .filrt-checkbox-item {
@@ -682,4 +671,16 @@ div.select-box {
 }
 .get-table textarea,.gts-form textarea{
     resize: auto !important;
+}
+/*сортировка*/
+.get-table .filrt-window .get-table-sort > div {
+    padding: 0;
+    text-align: left;
+}
+.get-table .get-table-sort-sortdir.active{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.get-table .get-table-sort-rank{
+    width: 40px;
+    border: none;
 }

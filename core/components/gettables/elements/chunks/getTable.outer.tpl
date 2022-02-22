@@ -72,6 +72,18 @@
                     {if $th.filter}
                         <button class="filtr-btn {$th.filter_class}"></button>
                         <div class="filrt-window">
+                            <div class="get-table-sort">
+                                <div>
+                                    <span class="get-table-sort-sortdir" data-sortdir="ASC">{'gettables_sort_asc' | lexicon}</span>
+                                </div>
+                                <div>
+                                    <span class="get-table-sort-sortdir" data-sortdir="DESC">{'gettables_sort_desc' | lexicon}</span>
+                                </div>
+                                <div>
+                                    <span>{'gettables_sort_rank' | lexicon}</span>
+                                    <input type="number" min="1" class="get-table-sort-rank" value="1">
+                                </div>
+                            </div>
                             <div class="filrt-standart">
                                 {foreach $th.filters as $f}
                                     <div class="">    
