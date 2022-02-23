@@ -269,7 +269,7 @@
                     if (response.message) {
                         getTables.Message.success(response.message);
                     }
-                    getTables.Modal.close();
+                    
                     runCallback(callbacks.response.success, getTables, response);
                     runCallback(userCallbacks.response.success, getTables, response);
                 } else {
@@ -936,6 +936,7 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.remove.response.success = function (response) {
+                getTables.Modal.close();
                 getTables.Table.refresh();
             };
 
@@ -1023,7 +1024,7 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.update.response.success = function (response) {
-                //console.log('callbacks.update.response.success',getTables.sendData);
+                getTables.Modal.close();
                 getTables.Table.refresh();
             };
             callbacks.update.response.error = function (response) {
@@ -1052,6 +1053,7 @@
 
             callbacks.sets.response.success = function (response) {
                 //console.log('callbacks.update.response.success',getTables.sendData);
+                //getTables.Modal.close();
                 if(response.data.modal) getTables.Modal.show(response.data.modal);
                 if(response.data.redirect) location = response.data.redirect;
                 if(!(response.data.redirect || response.data.modal)) getTables.Table.refresh();
