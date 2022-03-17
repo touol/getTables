@@ -332,10 +332,17 @@ class getTable
         $where = $pdoConfig['where'] ? $pdoConfig['where'] : [];
         //$this->getTables->addDebug($current_action,'subtable current_action');
         foreach($subtable['sub_where'] as $where_field=>$where_value){
-            if(is_numeric($where_value)) $where[$where_field] = (int)$where_value;
-            foreach($data['tr_data'] as $tr_field =>$tr_value){
-                if($tr_field == $where_value)
-                    $where[$where_field] = $tr_value;
+            if(strpos($where_field, ':IN') !== false){
+                foreach($data['tr_data'] as $tr_field =>$tr_value){
+                    if($tr_field == $where_value)
+                        $where[$where_field] = explode(",",$tr_value);
+                }
+            }else{
+                if(is_numeric($where_value)) $where[$where_field] = (int)$where_value;
+                foreach($data['tr_data'] as $tr_field =>$tr_value){
+                    if($tr_field == $where_value)
+                        $where[$where_field] = $tr_value;
+                }
             }
         }
         
@@ -577,7 +584,7 @@ class getTable
         }
         
         if(!isset($table['pdoTools2']['where'])) $table['pdoTools2']['where'] = [];
-        $query = array_merge($table['pdoTools2']['where'],$query);
+        //$query = array_merge($table['pdoTools2']['where'],$query);
 
         $table['query'] = ['where'=>$query];
 
@@ -609,7 +616,22 @@ class getTable
         
         return $table;
     }
-    
+    public function prepareRow($action,&$rows,$table){
+        $action = explode("/",$action);
+        if($action[0] == "snippet"){
+            if(!empty($action[1]) and $element = $this->modx->getObject('modSnippet', array('name' => $action[1]))){
+                $params = [
+                    'rows'=>$rows,
+                    'getTables'=>$this->getTables,
+                    'table'=>$table,
+                    'getTable'=>$this,
+                ];
+                if ($tmp = $element->process($params)) {
+                    $rows = $tmp;
+                }
+            }
+        }
+    }
     public function generateData($table,$pdoConfig =[])
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
@@ -697,6 +719,9 @@ class getTable
         if($table['export'] == 1){
             $this->pdoTools->addTime("getTable export ".$this->varexport($rows,1));   
         }
+        if(!empty($table['prepareRow'])){
+            $this->prepareRow($table['prepareRow'],$rows,$table);
+        }
         foreach($rows as $k => $row){
             //echo "getTable generateData row <pre>".print_r($row,1)."</pre>";
             
@@ -765,6 +790,11 @@ class getTable
                 
                 
                 if(isset($td['content'])){
+                    $filters = [];
+                    foreach($table['filters'] as $f){
+                        $filters[$f['edit']['field']] = $f;
+                    }
+                    $row['filters'] = $filters;
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);
                     $autosave = false;
                 }else{
@@ -1671,6 +1701,7 @@ class getTable
         if(isset($table['top']) and is_array($table['top'])){
             $table_compile['top'] = $table['top'];
         }
+        if(!empty($table['prepareRow'])) $table_compile['prepareRow'] = $table['prepareRow'];
         //$table['role']['type'] == 'document' and $table['top']['type'] == 'form'
         //if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
         return $table_compile;

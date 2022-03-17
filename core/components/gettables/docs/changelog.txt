@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.9.2-alpha
+- Вывод данных фильтров в content поля.
+
 1.9.1-alpha
 - Исправлена ошибка с модалкой.
 
