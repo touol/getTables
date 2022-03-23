@@ -467,6 +467,9 @@ class getForm
                             $edit['form_content'] = $this->pdoTools->getChunk('@INLINE '.$edit['content'], $row);
                             //$this->pdoTools->addTime("form generateData {ignore}".print_r($row,1)."{$edit['content']}{/ignore}");
                         }
+                        if(isset($edit['field_content'])){
+                            $edit['content'] = $row[$edit['field_content']];
+                        }
                         
                         //$this->getTables->addDebug($edit,'$edit generateEditsData');
                     }

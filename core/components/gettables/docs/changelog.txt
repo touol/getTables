@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.9.3-alpha
+- Правка form autocomplect.
+
 1.9.2-alpha
 - Вывод данных фильтров в content поля.
 - Постобработка данных строки сниппетом.
