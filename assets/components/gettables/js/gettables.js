@@ -1226,6 +1226,7 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.custom.response.success = function (response) {
+                if(response.data.modal_close) getTables.Modal.close(); 
                 getTables.Table.refresh();
             };
 

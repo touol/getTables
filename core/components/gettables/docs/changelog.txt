@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.9.4-alpha
+- Добавлено response.data.modal_close на custom.
+
 1.9.3-alpha
 - Правка form autocomplect.
 
