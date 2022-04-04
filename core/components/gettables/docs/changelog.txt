@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.9.5-alpha
+- Добавлено response.data.replace на custom.
+
 1.9.4-alpha
 - Добавлено response.data.modal_close на custom.
 
@@ -21,7 +24,7 @@ Changelog for getTables.
 1.8.2-alpha
 - Правка модал title.
 
-1.8.0-alpha
+1.8.0-        
 - Подготовка компонента для стилизации без Bootstrap.
 - Добавлена валидация полей на create. Инструкция edit->validate.
 - Добавлена подпись наименование таблицы.

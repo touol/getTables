@@ -1226,7 +1226,8 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.custom.response.success = function (response) {
-                if(response.data.modal_close) getTables.Modal.close(); 
+                if(response.data.modal_close) getTables.Modal.close();
+                if(response.data.replace) $(response.data.replace.selector).replaceWith(response.data.replace.html);
                 getTables.Table.refresh();
             };
 
