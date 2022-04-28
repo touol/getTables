@@ -91,4 +91,16 @@ return [
         'file' => 'getTable.Form',
         'description' => '',
     ],
+    'getTree.Main.tpl' => [
+        'file' => 'getTree.Main',
+        'description' => '',
+    ],
+    'getTree.LI.tpl' => [
+        'file' => 'getTree.LI',
+        'description' => '',
+    ],
+    'getTree.UL.tpl' => [
+        'file' => 'getTree.UL',
+        'description' => '',
+    ],
 ];

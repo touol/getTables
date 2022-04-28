@@ -684,3 +684,42 @@ div.select-box {
     width: 40px;
     border: none;
 }
+
+/* getTree*/
+.treeMain {
+
+    padding-left: 5px;
+}
+
+li {
+    list-style-type: none;
+}
+
+.caret1 {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none; 
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.caret1::before {
+  content: "\23F5";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.caret-down1::before {
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  }
+
+.collapsed {
+  display: none;
+}
+
+.expanded {
+  display: block;
+}

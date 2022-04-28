@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.10.0-alpha
+- Добавлено getTree.
+
 1.9.5-alpha
 - Добавлено response.data.replace на custom.
 

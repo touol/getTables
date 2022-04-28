@@ -195,6 +195,7 @@
         getTables.Modal.initialize();
         getTables.Table.initialize();
         getTables.Form.initialize();
+        getTables.Tree.initialize();
     };
     getTables.controller = function () {
         var self = this;
@@ -377,6 +378,31 @@
         },
     };
 
+    getTables.Tree = {
+        callbacks: {
+            //save: getTablesConfig.callbacksObjectTemplate(),
+        },
+        setup: function () {
+
+        },
+        initialize: function () {
+            getTables.Tree.setup();
+            
+            getTables.$doc
+                .on('click', '.treeMain .caret1', function (e) {
+                    e.preventDefault();
+                    if(!$(this).hasClass('caret-down1')){
+                        $(this).closest('li').find('.collapsed').removeClass('collapsed').addClass('expanded');
+                        $(this).addClass('caret-down1');
+                    }else{
+                        $(this).closest('li').find('.expanded').removeClass('expanded').addClass('collapsed');
+                        $(this).removeClass('caret-down1');
+                    }
+                    
+                });
+        },
+
+    };
     getTables.Form = {
         callbacks: {
             save: getTablesConfig.callbacksObjectTemplate(),

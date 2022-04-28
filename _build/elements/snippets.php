@@ -19,4 +19,10 @@ return [
         'properties' => [
         ],
     ],
+    'getTree' => [
+        'file' => 'gettree',
+        'description' => 'getTree snippet for working with tree',
+        'properties' => [
+        ],
+    ],
 ];

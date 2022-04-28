@@ -52,7 +52,8 @@ class getTables
         $this->models['getModal']['class'] = 'getmodal.class.php';
         $this->models['getSelect']['class'] = 'getselect.class.php';
         $this->models['getForm']['class'] = 'getform.class.php';
-        
+        $this->models['getTree']['class'] = 'gettree.class.php';
+
         //$this->modx->addPackage('gettables', $this->config['modelPath']);
         $this->modx->lexicon->load('gettables:default');
         
