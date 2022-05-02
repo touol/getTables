@@ -44,6 +44,9 @@
         Sortable: {
             sort: getTablesConfig.callbacksObjectTemplate(),
         },
+        Tree: {
+            load_panel: getTablesConfig.callbacksObjectTemplate(),
+        },
     };
 
     getTables.Callbacks.add = function (path, name, func) {
@@ -380,7 +383,7 @@
 
     getTables.Tree = {
         callbacks: {
-            //save: getTablesConfig.callbacksObjectTemplate(),
+            load_panel: getTablesConfig.callbacksObjectTemplate(),
         },
         setup: function () {
 
@@ -399,6 +402,31 @@
                         $(this).removeClass('caret-down1');
                     }
                     
+                });
+            getTables.$doc
+                .on('click', '.get-tree-li .get-tree-a', function (e) {
+                    e.preventDefault();
+                    $li = $(this).closest('.get-tree-li');
+                    $tree = $(this).closest('.get-tree');
+                    tree_data = $tree.data();
+
+                    getTables.sendData.$li = $li;
+                    getTables.sendData.$GtsApp = $tree;
+                    getTables.sendData.data = {
+                        gts_action: 'getTree/load_panel',
+                        hash: tree_data.hash,
+                        tree_name: tree_data.name,
+                        id: $li.data('id'),
+                    };
+
+                    var callbacks = getTables.Tree.callbacks;
+        
+                    callbacks.load_panel.response.success = function (response) {
+                        //console.log('callbacks.filter_checkbox_load.response.success',response);
+                        $('.get-tree-panel').html(response.data.html);
+                    };
+        
+                    return getTables.send(getTables.sendData.data, getTables.Tree.callbacks.load_panel, getTables.Callbacks.Tree.load_panel);
                 });
         },
 

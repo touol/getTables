@@ -598,7 +598,7 @@ class getTables
                 //unset($actions[0]); 
                 //$class_action = implode("/",$actions);
                 if(method_exists($service,$actions[1])){ 
-                    $response =  $service->{$actions[1]}($data);
+                    $response =  $service->{$actions[1]}($data,true);
                 }else{
                     $class = get_class($service);
                     $response = $this->error("Не найден $class/{$actions[0]}");
