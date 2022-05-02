@@ -41,7 +41,7 @@ class getTabs
         ];
     }
 
-    public function handleRequest($action, $data = array())
+    public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
         if(method_exists($this,$action)){
             return $this->$action($data);

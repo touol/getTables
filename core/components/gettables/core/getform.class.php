@@ -26,7 +26,7 @@ class getForm
         
     }
     
-    public function handleRequest($action, $data = array())
+    public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
         $class = get_class($this);
         
@@ -35,7 +35,7 @@ class getForm
 
         switch($action){
             case 'fetch':
-                if($this->config['isAjax']) $data = [];
+                if($this->config['isAjax'] and !$skype_check_ajax) $data = [];
                 //$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->fetch($data);
                 break;

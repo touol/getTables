@@ -48,7 +48,7 @@ class getTable
         }
     }
     
-    public function handleRequest($action, $data = array())
+    public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
         $class = get_class($this);
         
@@ -79,7 +79,7 @@ class getTable
         //$this->pdoTools->addTime('REQUEST2'.print_r($this->getTables->REQUEST,1));
 
         if($action == "fetch"){
-            if($this->config['isAjax']) $data = [];
+            if($this->config['isAjax'] and !$skype_check_ajax) $data = [];
             return $this->fetch($data);
         } // and !$this->config['isAjax'])
             

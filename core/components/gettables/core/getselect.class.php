@@ -26,7 +26,7 @@ class getSelect
         
     }
 
-    public function handleRequest($action, $data = array())
+    public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
         $class = get_class($this);
         if($action != 'autocomplect' and $this->config['isAjax'])
