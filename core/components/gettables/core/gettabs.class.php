@@ -50,27 +50,34 @@ class getTabs
         }
     }
 
-    public function fetch()
+    public function fetch($tabs = [])
     {
         //$this->pdoTools->addTime("getTable fetch table ".print_r($this->config,1));
-        if(!empty($this->config['tabs'])){
-            $html = $this->pdoTools->getChunk($this->config['getTabsTpl'], $this->generateData());
-            return $this->success('',array('html'=>$html));
-        }else{
-            return $this->error("Нет конфига tabs!");
+        if(empty($tabs)){
+            if(!empty($this->config['tabs'])){
+                if (is_string($this->config['tabs']) and strpos(ltrim($this->config['tabs']), '{') === 0) {
+                    $this->config['tabs'] = json_decode($this->config['tabs'], true);
+                }
+                $tabs = $this->config['tabs'];
+            }else{
+                return $this->error("Нет конфига tabs!");
+            }
         }
+        
+        $html = $this->pdoTools->getChunk($this->config['getTabsTpl'], $this->generateData($tabs));
+        return $this->success('',array('html'=>$html));
+        
     }
     
-    public function generateData()
+    public function generateData($tabs = [])
     {
         $name = $this->config['name'] ? $this->config['name'] : 'getTablesTabs';
         $cls = $this->config['cls'] ? $this->config['cls'] : '';
-        $tabs = [];
-        if (is_string($this->config['tabs']) and strpos(ltrim($this->config['tabs']), '{') === 0) {
-            $this->config['tabs'] = json_decode($this->config['tabs'], true);
-        }
+        $tas = [];
+       
         $idx = 1;
-        foreach($this->config['tabs'] as $n => $tab){
+        $this->pdoTools->addTime("getTabs generateData".print_r($tabs,1));
+        foreach($tabs as $n => $tab){
             if(!empty($tab['permission'])){
                 if (!$this->modx->hasPermission($tab['permission'])) continue;
             }
@@ -82,7 +89,7 @@ class getTabs
             $idx++;
             
             if(isset($tab['table'])){
-                $response = $this->getTables->handleRequest('getTable/fetch',$tab['table']);
+                $response = $this->getTables->handleRequestInt('getTable/fetch',$tab['table']);
 
                 if(!$response['success']){
                     $tab['content'] = $response['message'];
@@ -90,12 +97,22 @@ class getTabs
                     $tab['content'] = $response['data']['html'];
                 }
             }
+            if(isset($tab['form'])){
+                $response = $this->getTables->handleRequestInt('getForm/fetch',$tab['form']);
+
+                if(!$response['success']){
+                    $tab['content'] = $response['message'];
+                }else{
+                    $tab['content'] = $response['data']['html'];
+                }
+            }
+
             if(isset($tab['chunk'])) $tab['content'] = $this->pdoTools->getChunk($tab['chunk']);
             
-            $tabs[$n] = $tab;
+            $tas[$n] = $tab;
         }
         //echo "<pre>generateData ".print_r(['name'=>$name,'class'=>$class,'tabs'=>$tabs],1)."</pre>";
-        return ['name'=>$name,'cls'=>$cls,'tabs'=>$tabs];
+        return ['name'=>$name,'cls'=>$cls,'tabs'=>$tas];
     }
     
     public function error($message = '', $data = array())
