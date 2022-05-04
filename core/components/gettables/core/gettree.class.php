@@ -101,6 +101,14 @@ class getTree
                         $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
                         return $response;
                     break;
+                    case "tabs":
+                        $tabs = $tree['panels'][$case['name']];
+                        //$table['pdoTools']['parents'] = $id;
+                        array_walk_recursive($tabs,array(&$this, 'walkFunc'),$id);
+                        //$this->pdoTools->addTime("getTree fetch".print_r($form,1));
+                        $response = $this->getTables->handleRequestInt('getTabs/fetch',$tabs);
+                        return $response;
+                    break;
                 }
                 break;
             }
