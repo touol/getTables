@@ -525,22 +525,32 @@ class getTable
                         break;
                     default:
                         $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
-                        if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
-                            if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
-                                $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
-                            }
-                            if(strpos($filter['edit']['where_field'], ':IN') !== false){
-                                if(!is_array($filter['value'])){
-                                    $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                        $pattern = '/^\<\=|\>\=|\=\>|\=\<|\!\=|\=|\<|\>/';
+                        
+                        if(preg_match($pattern,$filter['value'],$matches)){
+                            $filter['value'] = str_replace($matches[0],"",$filter['value']);
+                            //$this->pdoTools->addTime("getTable filter  {$filter['edit']['where_field']}");
+                            $where_field = explode(":",$filter['edit']['where_field'])[0];
+                            $query[$where_field.":".$matches[0]] = $filter['value'];
+                            // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
+                        }else{
+                            if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
+                                if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
+                                    $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
+                                }
+                                if(strpos($filter['edit']['where_field'], ':IN') !== false){
+                                    if(!is_array($filter['value'])){
+                                        $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                                    }else{
+                                        $query[$filter['edit']['where_field']] = $filter['value'];
+                                    }
                                 }else{
                                     $query[$filter['edit']['where_field']] = $filter['value'];
                                 }
+                                
                             }else{
-                                $query[$filter['edit']['where_field']] = $filter['value'];
+                                $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
                             }
-                            
-                        }else{
-                            $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
                         }
                         //if(isset($filter['edit']['where_field'])) $query[$filter['edit']['where_field']] = $filter['value'];
                 }
@@ -574,7 +584,8 @@ class getTable
                     $value[$v] = $v;
                 }
                 $filter['value'] = $value;
-            }    
+            }
+              
             //checkbox filter
             if(isset($this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']])){
                 $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 

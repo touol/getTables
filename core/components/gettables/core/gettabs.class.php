@@ -43,8 +43,9 @@ class getTabs
 
     public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
-        if(method_exists($this,$action)){
-            return $this->$action($data);
+        if( $action == "fetch"){
+            if($this->config['isAjax'] and !$skype_check_ajax) $data = [];
+            return $this->fetch($data);
         }else{
             return $this->error("Метод $action в классе $class не найден!");
         }
@@ -73,10 +74,10 @@ class getTabs
     {
         $name = $this->config['name'] ? $this->config['name'] : 'getTablesTabs';
         $cls = $this->config['cls'] ? $this->config['cls'] : '';
-        $tas = [];
+        $tabs1 = [];
        
         $idx = 1;
-        $this->pdoTools->addTime("getTabs generateData".print_r($tabs,1));
+        // $this->pdoTools->addTime("getTabs generateData".print_r($tabs,1));
         foreach($tabs as $n => $tab){
             if(!empty($tab['permission'])){
                 if (!$this->modx->hasPermission($tab['permission'])) continue;
@@ -109,10 +110,10 @@ class getTabs
 
             if(isset($tab['chunk'])) $tab['content'] = $this->pdoTools->getChunk($tab['chunk']);
             
-            $tas[$n] = $tab;
+            $tabs1[$n] = $tab;
         }
         //echo "<pre>generateData ".print_r(['name'=>$name,'class'=>$class,'tabs'=>$tabs],1)."</pre>";
-        return ['name'=>$name,'cls'=>$cls,'tabs'=>$tas];
+        return ['name'=>$name,'cls'=>$cls,'tabs'=>$tabs1];
     }
     
     public function error($message = '', $data = array())
