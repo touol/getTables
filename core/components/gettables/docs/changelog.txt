@@ -2,6 +2,7 @@ Changelog for getTables.
 1.10.0-alpha
 - Добавлено getTree.
 - getTree. Загрузка таблиц и форм в панель.
+- Условия в фильтрах.
 
 1.9.5-alpha
 - Добавлено response.data.replace на custom.
