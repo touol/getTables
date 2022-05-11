@@ -528,10 +528,21 @@ class getTable
                         $pattern = '/^\<\=|\>\=|\=\>|\=\<|\!\=|\=|\<|\>/';
                         
                         if(preg_match($pattern,$filter['value'],$matches)){
-                            $filter['value'] = str_replace($matches[0],"",$filter['value']);
+                            $filter['value'] = (int)str_replace($matches[0],"",$filter['value']);
                             //$this->pdoTools->addTime("getTable filter  {$filter['edit']['where_field']}");
                             $where_field = explode(":",$filter['edit']['where_field'])[0];
-                            $query[$where_field.":".$matches[0]] = $filter['value'];
+                            switch($matches[0]){
+                                case '<=': case '=<':
+                                    if($filter['value'] >=0){
+                                        $query[] = "($where_field <= {$filter['value']} OR $where_field IS NULL)";
+                                    }else{
+                                        $query[$where_field.":".$matches[0]] = $filter['value'];
+                                    }
+                                    break;
+                                default:
+                                    $query[$where_field.":".$matches[0]] = $filter['value'];
+                            }
+                            
                             // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
                         }else{
                             if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
