@@ -532,11 +532,25 @@ class getTable
                             //$this->pdoTools->addTime("getTable filter  {$filter['edit']['where_field']}");
                             $where_field = explode(":",$filter['edit']['where_field'])[0];
                             switch($matches[0]){
-                                case '<=': case '=<':
+                                case '<=': case '=<': 
                                     if($filter['value'] >=0){
                                         $query[] = "($where_field <= {$filter['value']} OR $where_field IS NULL)";
                                     }else{
+                                        $query[$where_field.":<="] = $filter['value'];
+                                    }
+                                    break;
+                                case '=':
+                                    if($filter['value']==0){
+                                        $query[] = "($where_field = {$filter['value']} OR $where_field IS NULL)";
+                                    }else{
                                         $query[$where_field.":".$matches[0]] = $filter['value'];
+                                    }
+                                    break;
+                                case '>=': case '=>':
+                                    if($filter['value'] <=0){
+                                        $query[] = "($where_field >= {$filter['value']} OR $where_field IS NULL)";
+                                    }else{
+                                        $query[$where_field.":>="] = $filter['value'];
                                     }
                                     break;
                                 default:
