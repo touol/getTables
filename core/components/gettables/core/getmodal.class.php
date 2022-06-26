@@ -180,11 +180,14 @@ class getModal
         }
         $edits = $this->defaultFieldSet($edits);
         $method = 'update';
+        $edits2 = [];
         foreach($edits as &$edit){
             if($edit['field'] == 'id' and empty($edit['value'])){
                 $method = 'create';
             }
+            $edits2[$edit['field']] = $edit;
         }
+        $edits = $edits2; unset($edits2);
         $resp = $this->run_triggers($table, $method, $edits);
 
         //if(!empty($table['force'])) $edits = $this->defaultFieldSet($edits,$table['force']);
@@ -208,6 +211,24 @@ class getModal
             $tpl = $this->config[$modal['tpl']];
         }else{
             $tpl = $modal['tpl'];
+        }
+        $idx = 1;
+        if($modal['tabs']){
+            foreach($modal['tabs'] as $n => &$tab){
+                if(!empty($tab['permission'])){
+                    if (!$this->modx->hasPermission($tab['permission'])){
+                        unset($form['tabs'][$n]);
+                        continue;
+                    } 
+                }
+                
+                $tab['name'] = $tab['name'] ? $tab['name'] : $n;
+                $tab['label'] = $tab['label'] ? $tab['label'] : 'Панель '.$idx;
+                $tab['idx'] = $idx;
+                if($tab['fields']) $tab['fields'] = explode(",",$tab['fields']);
+                if($idx == 1) $tab['active'] = 'active';
+                $idx++;
+            }
         }
         $html = $this->pdoTools->getChunk($tpl, ['modal'=>$modal]);
         

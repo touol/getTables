@@ -1048,6 +1048,7 @@ class getTable
             $generateData = $this->generateData($table_compile);
             $this->pdoTools->addTime('generateData end');
             $generateData['top'] = $top;
+            //$this->pdoTools->addTime("getTable table_compile  {ignore}".print_r($table_compile,1)."{/ignore}");
 
             $html = $this->pdoTools->getChunk($this->config['getTableOuterTpl'], $generateData,true);
             $this->pdoTools->addTime('getChunk outer');

@@ -17,9 +17,26 @@
             <h4 class="modal-title" id="myModalLabel">{$modal.title}</h4>
           </div>
           <div class="modal-body">
-            {foreach $modal.edits as $edit}
-                {$edit.modal_content}
-            {/foreach}
+            {if $modal.tabs}
+              <ul class="nav nav-tabs">
+                {foreach $modal.tabs as $tab}
+                    <li class="{$tab.active}"><a data-toggle="tab" href="#{$tab.name}">{$tab.label}</a></li>
+                {/foreach}
+              </ul>
+              <div class="tab-content">
+                {foreach $modal.tabs as $k=>$tab}
+                    <div id="{$tab.name}" class="tab-pane fade in {$tab.active}">
+                      {foreach $tab.fields as $field}
+                        {$modal.edits[$field].modal_content}
+                      {/foreach}
+                    </div>
+                {/foreach}
+              </div>
+            {else}
+              {foreach $modal.edits as $edit}
+                  {$edit.modal_content}
+              {/foreach}
+            {/if}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">{'gettables_close' | lexicon}</button>
