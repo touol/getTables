@@ -723,3 +723,22 @@ li {
 .expanded {
   display: block;
 }
+.get-tree-actions{
+    position: absolute;
+    top: 0;
+    right: 6px;
+    bottom: 0;
+    line-height: 1.8;
+}
+.get-tree-li{
+    position: relative;
+}
+.get-tree-li.active>.get-tree-a{
+    font-weight: bold;
+}
+.get-tree-li.unpublished>.get-tree-a{
+    font-style: italic;
+}
+.get-tree-actions button{
+    width:100%;
+}

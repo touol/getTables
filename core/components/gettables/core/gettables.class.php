@@ -20,6 +20,10 @@ class getTables
     public $REQUEST = [];
 
     public $selects_compile = false;
+
+    public $timings = [];
+    protected $start = 0;
+
     /**
      * @param modX $modx
      * @param array $config
@@ -57,7 +61,8 @@ class getTables
         //$this->modx->addPackage('gettables', $this->config['modelPath']);
         $this->modx->lexicon->load('gettables:default');
         
-        
+        $this->timings = [];
+        $this->time = $this->start = microtime(true);
         //загрузка конфига
         if(is_dir(MODX_CORE_PATH . 'components/gettablespro/model/')){
             if($this->gtsPro = $this->modx->getService('getTablesPro', 'getTablesPro', MODX_CORE_PATH . 'components/gettablespro/model/')){
@@ -68,14 +73,14 @@ class getTables
                 }
             }
         }
-        //$this->pdoTools->addTime("getTables {$this->config['config']}".print_r($config,1));
+        //$this->addTime("getTables {$this->config['config']}".print_r($config,1));
         if(!empty($this->config['config'])){
             if(!is_array($config_set)){
                 $config_set = json_decode($this->modx->getOption($this->config['config']),1);
             } 
             
             if(is_array($config_set)){
-                //$this->pdoTools->addTime("getTables {$this->config['config']} ".print_r($config_set,1));
+                //$this->addTime("getTables {$this->config['config']} ".print_r($config_set,1));
                 unset($this->config['config']);
                 $this->config = array_merge($config_set, $this->config);
                 $config = array_merge($config_set, $config);
@@ -98,22 +103,69 @@ class getTables
             }
             $this->config['pdoClear'] = $this->pdoTools->config;
         }
-        $this->pdoTools->addTime('__construct pdoTools');
+        $this->addTime('__construct pdoTools');
         $this->getModels();
-        $this->pdoTools->addTime('__construct getModels');
+        $this->addTime('__construct getModels');
 
         $this->config['hash'] = sha1(json_encode($this->config));
         if(!empty($config['toJSON'])){
             unset($config['toJSON']);
-            $this->pdoTools->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
+            $this->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
         }
         if(!empty($config['toFenom'])){
             unset($config['toFenom']);
-            $this->pdoTools->addTime('toFenom '.$this->varexport($config,1));
+            $this->addTime('toFenom '.$this->varexport($config,1));
         }
-        $this->pdoTools->addTime('__construct');
+        $this->addTime('__construct');
     }
+    /**
+     * Add new record to time log
+     *
+     * @param $message
+     * @param null $delta
+     */
+    public function addTime($message, $delta = null)
+    {
+        $time = microtime(true);
+        if (!$delta) {
+            $delta = $time - $this->time;
+        }
 
+        $this->timings[] = array(
+            'time' => number_format(round(($delta), 7), 7),
+            'message' => $message,
+        );
+        $this->time = $time;
+    }
+    /**
+     * Return timings log
+     *
+     * @param bool $string Return array or formatted string
+     *
+     * @return array|string
+     */
+    public function getTime($string = true)
+    {
+        $this->timings[] = array(
+            'time' => number_format(round(microtime(true) - $this->start, 7), 7),
+            'message' => '<b>Total time</b>',
+        );
+        $this->timings[] = array(
+            'time' => number_format(round((memory_get_usage(true)), 2), 0, ',', ' '),
+            'message' => '<b>Memory usage</b>',
+        );
+
+        if (!$string) {
+            return $this->timings;
+        } else {
+            $res = '';
+            foreach ($this->timings as $v) {
+                $res .= $v['time'] . ': ' . $v['message'] . "\n";
+            }
+
+            return $res;
+        }
+    }
     public function varexport($expression, $return=FALSE) {
         $export = var_export($expression, TRUE);
         $export = preg_replace("/^([ ]*)(.*)/m", '$1$1$2', $export);
@@ -175,7 +227,7 @@ class getTables
                 
                 if(is_array($response) and $response['success']){
                     $service = $this->models[$name]['service'];
-                    $this->pdoTools->addTime("getModels triggers $name");
+                    $this->addTime("getModels triggers $name");
                     if(method_exists($service,'regTriggers')){ 
                         $triggers =  $service->regTriggers();
                         foreach($triggers as &$trigger){
@@ -191,7 +243,7 @@ class getTables
                         $this->config['modaltriggers'] = array_merge($this->config['triggers'],$triggers);
                     }
                 }else{
-                    $this->pdoTools->addTime("getModels triggers. Not load $name.");
+                    $this->addTime("getModels triggers. Not load $name.");
                 }
             }
         }
@@ -212,7 +264,7 @@ class getTables
             xPDO::OPT_CACHE_EXPIRES => $this->config['cacheExpires'],
         );
         //$this->addDebug($this->config,'cacheConfig');
-        $this->pdoTools->addTime('cacheConfig');
+        $this->addTime('cacheConfig');
     }
     public function getClassCache($gts_class,$gts_name)
     {
@@ -283,20 +335,20 @@ class getTables
             //$this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $hash;
             if($cashed = $this->modx->cacheManager->get($this->config['cacheElementKey'], $this->config['cacheOptions'])){
                 $this->config = $cashed;
-                $this->pdoTools->addTime('getTables init from cache.');
+                $this->addTime('getTables init from cache.');
             }
         }
     }
     public function initialize()
     {
-        //$this->pdoTools->addTime("initialize ".print_r($this->config,1));
+        //$this->addTime("initialize ".print_r($this->config,1));
         if(!$this->config['isAjax'] and !$this->config['registerCSS_JS']){
             $this->initFromCache();
             $this->getStyleChunks();
             
             $this->saveCache();
             $this->registerCSS_JS();
-            //$this->pdoTools->addTime("initialize getTabsTpl".print_r($this->config['getTabsTpl'],1));
+            //$this->addTime("initialize getTabsTpl".print_r($this->config['getTabsTpl'],1));
             //file_put_contents(__DIR__ ."/". $this->config['cacheElementKey']."_initialize.txt",json_encode($this->config,JSON_PRETTY_PRINT));
         }
     }
@@ -307,12 +359,12 @@ class getTables
             foreach($propSet->getProperties() as $name=>$prop){
                 if(!isset($this->config[$name])) $this->config[$name] = $prop;
             }
-            $this->pdoTools->addTime("load propertySet ".'getTables_'.$this->config['frontend_framework_style']);    
+            $this->addTime("load propertySet ".'getTables_'.$this->config['frontend_framework_style']);    
         }else if($propSet = $this->modx->getObject('modPropertySet',array('name'=>'getTables_bootstrap_v3'))){
             foreach($propSet->getProperties() as $name=>$prop){
                 if(!isset($this->config[$name])) $this->config[$name] = $prop;
             }
-            $this->pdoTools->addTime("load propertySet ".'getTables_getTables_bootstrap_v3');
+            $this->addTime("load propertySet ".'getTables_getTables_bootstrap_v3');
         }
     }
     
@@ -320,17 +372,17 @@ class getTables
     {
         $i = 1; $gts_name_temp = $gts_name;
         if(empty($this->registryAppName[$gts_class])){
-            //$this->pdoTools->addTime("getRegistryAppName1 gts_name=$gts_name gts_name_temp=$gts_name_temp");
+            //$this->addTime("getRegistryAppName1 gts_name=$gts_name gts_name_temp=$gts_name_temp");
             $this->registryAppName[$gts_class][] = $gts_name_temp;
             return $gts_name_temp;
         }
         do {
-            //$this->pdoTools->addTime("getRegistryAppName2 gts_name=$gts_name gts_name_temp=$gts_name_temp ".print_r($this->registryAppName[$gts_class],1));
+            //$this->addTime("getRegistryAppName2 gts_name=$gts_name gts_name_temp=$gts_name_temp ".print_r($this->registryAppName[$gts_class],1));
             if(in_array($gts_name_temp,$this->registryAppName[$gts_class])){
-                //$this->pdoTools->addTime("getRegistryAppName3 gts_name=$gts_name gts_name_temp=$gts_name_temp ".print_r($this->registryAppName[$gts_class],1));
+                //$this->addTime("getRegistryAppName3 gts_name=$gts_name gts_name_temp=$gts_name_temp ".print_r($this->registryAppName[$gts_class],1));
                 $gts_name_temp = $gts_name.'_'.$i;
             }else{
-                //$this->pdoTools->addTime("getRegistryAppName4 gts_name=$gts_name gts_name_temp=$gts_name_temp ".print_r($this->registryAppName[$gts_class],1));
+                //$this->addTime("getRegistryAppName4 gts_name=$gts_name gts_name_temp=$gts_name_temp ".print_r($this->registryAppName[$gts_class],1));
                 $this->registryAppName[$gts_class][] = $gts_name_temp;
                 return $gts_name_temp;
             }
@@ -423,7 +475,7 @@ class getTables
     }
     public function registerCSS_JS()
     {
-        $this->pdoTools->addTime('registerCSS_JS');
+        $this->addTime('registerCSS_JS');
         $CSS_JS = $this->prepareCSS_JS();
         
         foreach($CSS_JS['js'] as $js){
@@ -566,8 +618,8 @@ class getTables
      */
     public function handleRequestInt($action, $data = array())
     {
-        //$this->pdoTools->addTime("getTables handleRequest $action");
-        $this->pdoTools->addTime("handleRequestInt $action");
+        //$this->addTime("getTables handleRequest $action");
+        $this->addTime("handleRequestInt $action");
         
 
         $actions = explode("/",$action);
@@ -625,8 +677,8 @@ class getTables
      */
     public function handleRequest($action, $data = array())
     {
-        //$this->pdoTools->addTime("getTables handleRequest $action");
-        $this->pdoTools->addTime("handleRequest $action");
+        //$this->addTime("getTables handleRequest $action");
+        $this->addTime("handleRequest $action");
         
         if(isset($this->config['permission'][$action]))
             if(!$this->modx->hasPermission($this->config['permission'][$action])) return $this->error(['lexicon'=>'access_denied']);
@@ -682,7 +734,7 @@ class getTables
             $response = $this->error("Ошибка {$class} handleRequest!");
         }
         if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['showLog'])) {
-            $response['log'] = '<pre class="getTablesLog" style="width:900px;">' . print_r($this->pdoTools->getTime(), 1) . '</pre>';
+            $response['log'] = '<pre class="getTablesLog" style="width:900px;">' . print_r($this->getTime(), 1) . '</pre>';
         }
         if ($this->modx->user->hasSessionContext('mgr') && !empty($this->config['debug'])) {
             $response['debugs'] = $this->debugs;

@@ -46,6 +46,9 @@
         },
         Tree: {
             load_panel: getTablesConfig.callbacksObjectTemplate(),
+            action: getTablesConfig.callbacksObjectTemplate(),
+            remove: getTablesConfig.callbacksObjectTemplate(),
+            expand: getTablesConfig.callbacksObjectTemplate(),
         },
     };
 
@@ -194,7 +197,33 @@
                     getTables.controller();
                 }
             });
-
+        //noinspection JSUnresolvedFunction
+        getTables.$doc
+            .on('click', '.arr-btn__top', function (e) {
+                e.preventDefault();
+                let $currentInput = $(this).parent().children('.get-autocomplect-id');
+                $currentInput.val(+$currentInput.val() + 1).trigger('change');
+            });
+        getTables.$doc
+            .on('click', '.arr-btn__bottom', function (e) {
+                e.preventDefault();
+                let $currentInput = $(this).parent().children('.get-autocomplect-id');
+                $currentInput.val(+$currentInput.val() - 1).trigger('change');
+            });
+            // let $arrBtnTop = $('.arr-btn__top');
+            // let $arrBtnBottom = $('.arr-btn__bottom');
+        
+            // $arrBtnTop.on('click', function () {
+            //     let $currentInput = $(this).parent().children('.get-autocomplect-id');
+            //     $currentInput.val(+$currentInput.val() + 1);;
+            // });
+        
+            // $arrBtnBottom.on('click', function () {
+            //     let $currentInput = $(this).parent().children('.get-autocomplect-id');
+            //     if($currentInput.val() > 1) {
+            //         $currentInput.val(+$currentInput.val() - 1);
+            //     }
+            // });
         getTables.Modal.initialize();
         getTables.Table.initialize();
         getTables.Form.initialize();
@@ -212,6 +241,9 @@
                 break;
             case 'getTable/remove':
                 getTables.Table.remove2();
+                break;
+            case 'getTree/remove':
+                getTables.Tree.remove();
                 break;
             default:
                 getTables.Table.custom();
@@ -384,6 +416,9 @@
     getTables.Tree = {
         callbacks: {
             load_panel: getTablesConfig.callbacksObjectTemplate(),
+            action: getTablesConfig.callbacksObjectTemplate(),
+            remove: getTablesConfig.callbacksObjectTemplate(),
+            expand: getTablesConfig.callbacksObjectTemplate(),
         },
         setup: function () {
 
@@ -394,13 +429,42 @@
             getTables.$doc
                 .on('click', '.treeMain .caret1', function (e) {
                     e.preventDefault();
+                    let expand = false;
                     if(!$(this).hasClass('caret-down1')){
                         $(this).closest('li').find('.collapsed').removeClass('collapsed').addClass('expanded');
                         $(this).addClass('caret-down1');
+                        expand = true;
                     }else{
                         $(this).closest('li').find('.expanded').removeClass('expanded').addClass('collapsed');
                         $(this).removeClass('caret-down1');
                     }
+                    
+                    $li = $(this).closest('.get-tree-li');
+                    $tree = $(this).closest('.get-tree');
+                    tree_data = $tree.data();
+                    let expanded_ids = [];
+                    $tree.find('.get-tree-ul.expanded').each(function(){
+                        expanded_ids.push($(this).parent().data("id"));
+                    });
+                    getTables.sendData.$GtsApp = $tree;
+                    getTables.sendData.data = {
+                        gts_action: 'getTree/expand',
+                        hash: tree_data.hash,
+                        tree_name: tree_data.name,
+                        id: $li.data('id'),
+                        expand: expand,
+                        expanded_ids: expanded_ids,
+                    };
+
+                    var callbacks = getTables.Tree.callbacks;
+        
+                    callbacks.expand.response.success = function (response) {
+                        //console.log('callbacks.filter_checkbox_load.response.success',response);
+                        //if(response.data.modal) getTables.Modal.show(response.data.modal);
+                        //$('.get-tree-panel').html(response.data.html);
+                    };
+        
+                    return getTables.send(getTables.sendData.data, getTables.Tree.callbacks.expand, getTables.Callbacks.Tree.expand);
                     
                 });
             getTables.$doc
@@ -424,12 +488,53 @@
                     callbacks.load_panel.response.success = function (response) {
                         //console.log('callbacks.filter_checkbox_load.response.success',response);
                         $('.get-tree-panel').html(response.data.html);
+                        $tree.find('.get-tree-li').removeClass('active');
+                        $li.addClass('active');
+                        window.history.pushState({}, '', document.location.pathname+'?id='+$li.data('id'));
                     };
         
                     return getTables.send(getTables.sendData.data, getTables.Tree.callbacks.load_panel, getTables.Callbacks.Tree.load_panel);
                 });
-        },
+            getTables.$doc
+                .on('click', '.get-tree-li .get-tree-action', function (e) {
+                    e.preventDefault();
+                    $li = $(this).closest('.get-tree-li');
+                    $tree = $(this).closest('.get-tree');
+                    tree_data = $tree.data();
 
+                    getTables.sendData.$li = $li;
+                    getTables.sendData.$GtsApp = $tree;
+                    getTables.sendData.data = {
+                        gts_action: $(this).data('action'),
+                        action_key: $(this).data('action_key'),
+                        hash: tree_data.hash,
+                        tree_name: tree_data.name,
+                        id: $li.data('id'),
+                    };
+
+                    var callbacks = getTables.Tree.callbacks;
+        
+                    callbacks.action.response.success = function (response) {
+                        //console.log('callbacks.filter_checkbox_load.response.success',response);
+                        if(response.data.modal) getTables.Modal.show(response.data.modal);
+                        //$('.get-tree-panel').html(response.data.html);
+                    };
+        
+                    return getTables.send(getTables.sendData.data, getTables.Tree.callbacks.action, getTables.Callbacks.Tree.action);
+                });
+        },
+        remove: function () {
+            getTables.Message.close();
+            var callbacks = getTables.Table.callbacks;
+
+            callbacks.custom.response.success = function (response) {
+                if(response.data.modal_close) getTables.Modal.close();
+                if(response.data.replace) $(response.data.replace.selector).replaceWith(response.data.replace.html);
+                //getTables.Table.refresh();
+            };
+
+            return getTables.send(getTables.sendData.data, getTables.Table.callbacks.custom, getTables.Callbacks.Table.custom);
+        },
     };
     getTables.Form = {
         callbacks: {
@@ -467,6 +572,10 @@
             var callbacks = getTables.Form.callbacks;
 
             callbacks.save.response.success = function (response) {
+                if(response.data.reload_with_id && response.data.id){
+                    document.location.href = document.location.pathname+'?id='+response.data.id;
+                }
+                if(response.data.close_modal) getTables.Modal.close();
                 if(response.data.modal) getTables.Modal.show(response.data.modal);
                 if(response.data.replaceHtml){
                     $.each(response.data.replaceHtml, function( key, value ) {
@@ -1500,20 +1609,7 @@
 
 //обработка событий нажатия стрелок у input type="number"
 (function () {
-    let $arrBtnTop = $('.arr-btn__top');
-    let $arrBtnBottom = $('.arr-btn__bottom');
-
-    $arrBtnTop.on('click', function () {
-        let $currentInput = $(this).parent().children('.get-autocomplect-id');
-        $currentInput.val(+$currentInput.val() + 1);;
-    });
-
-    $arrBtnBottom.on('click', function () {
-        let $currentInput = $(this).parent().children('.get-autocomplect-id');
-        if($currentInput.val() > 1) {
-            $currentInput.val(+$currentInput.val() - 1);
-        }
-    });
+    
     
     //let $filtrBtn = $('.filtr-btn');
     //let $filrtWindow = $('.filrt-window');

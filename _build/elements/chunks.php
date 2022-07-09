@@ -91,6 +91,10 @@ return [
         'file' => 'getTable.Form',
         'description' => '',
     ],
+    'b4.getTable.Form.tpl' => [
+        'file' => 'b4.getTable.Form',
+        'description' => '',
+    ],
     'getTree.Main.tpl' => [
         'file' => 'getTree.Main',
         'description' => '',
@@ -101,6 +105,18 @@ return [
     ],
     'getTree.UL.tpl' => [
         'file' => 'getTree.UL',
+        'description' => '',
+    ],
+    'getTree.Modal.tpl' => [
+        'file' => 'getTree.Modal',
+        'description' => '',
+    ],
+    'getTree.Modal.Remove.tpl' => [
+        'file' => 'getTree.Modal.Remove',
+        'description' => '',
+    ],
+    'getTree.Panel.tpl' => [
+        'file' => 'getTree.Panel',
         'description' => '',
     ],
 ];

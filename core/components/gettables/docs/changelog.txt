@@ -1,4 +1,7 @@
 Changelog for getTables.
+1.11.0-alpha
+- Доработан getTree.
+
 1.10.1-alpha
 - Исправение верстки bootstrap 4.
 - Табы в модалке Создать Редактировать.

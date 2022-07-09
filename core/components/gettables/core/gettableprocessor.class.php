@@ -10,7 +10,6 @@ class getTableProcessor
     public $getTable;
     public $debug = [];
     public $old_rows = [];
-    public $old_row_ids;
 
     public $parent_old_row = [];
     public $parent_old_row_id;
@@ -19,10 +18,10 @@ class getTableProcessor
      * @param modX $modx
      * @param array $config
      */
-    function __construct(getTable & $getTable, array $config = [])
+    function __construct(getTables & $getTables, array $config = [])
     {
-        $this->getTable =& $getTable;
-        $this->getTables =& $this->getTable->getTables;
+       // $this->getTable =& $getTable;
+        $this->getTables =& $getTables;
         $this->modx =& $this->getTables->modx;
         $this->pdoTools =& $this->getTables->pdoTools;
         
@@ -476,7 +475,7 @@ class getTableProcessor
             $pdoConfig['where'][$table['class'].".id:IN"] = $ids;
             $pdoConfig['limit'] = 1;
             $pdoConfig['sortby'] = [$table['class'].'.id'=>'ASC'];
-            $this->old_row_ids = $ids;
+
             //$this->getTables->addDebug($pdoConfig,'run $pdoConfig ');
             $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
             $rows = $this->pdoTools->run();
@@ -590,14 +589,6 @@ class getTableProcessor
                 $resp = $this->run_triggers($table['class'], 'after', 'remove', [], $object_old);
                 if(!$resp['success']) return $resp;
                 
-                $this->new_values[] = [
-                    'action'=>$this->action,
-                    'operation'=>"remove",
-                    'class'=>$table['class'],
-                    'id'=>$id,
-                    //'field'=>$ks,
-                    //'value'=>$set_value,
-                    ];
                 $saved[] = $this->success($this->modx->lexicon('gettables_removed_successfully'),$saved);
             } 
         }
@@ -724,28 +715,31 @@ class getTableProcessor
                     }
                 }
             }
-            foreach($table['defaultFieldSet'] as $df=>$dfv){
-                if($dfv['class'] == $class)
-                    $set_data[$df] = $dfv['value'];
-            }
-            foreach($table['role']['where'] as $k=>$v){
-                $k = str_replace("`","",$k);
-                $arr = explode(".",$k);
-                if($arr[0] == $class){
-                    if($v == 'id'){
-                        $set_data[$arr[1]] = (int)$table['role']['id'];
-                    }else{
-                        $set_data[$arr[1]] = $v;
-                    }
+            if(isset($table['defaultFieldSet'])){
+                foreach($table['defaultFieldSet'] as $df=>$dfv){
+                    if($dfv['class'] == $class)
+                        $set_data[$df] = $dfv['value'];
                 }
-                
             }
-            
+            if(isset($table['role']['where'])){
+                foreach($table['role']['where'] as $k=>$v){
+                    $k = str_replace("`","",$k);
+                    $arr = explode(".",$k);
+                    if($arr[0] == $class){
+                        if($v == 'id'){
+                            $set_data[$arr[1]] = (int)$table['role']['id'];
+                        }else{
+                            $set_data[$arr[1]] = $v;
+                        }
+                    }
+                    
+                }
+            }
             $set_data_event = $set_data;
             if(isset($this->current_action['processors'][$class])){
                 if(empty($set_data['context_key'])) $set_data['context_key'] = 'web';
                 //добавить триггер before
-                //$saved[] = $this->error('runProcessor ',$set_data);
+                //$saved[] = $this->success('runProcessor ',$set_data);
                 $modx_response = $this->modx->runProcessor($this->current_action['processors'][$class], $set_data);
                 if ($modx_response->isError()) {
                     $saved[] = $this->error('runProcessor ',$this->modx->error->failure($modx_response->getMessage()));

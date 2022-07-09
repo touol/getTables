@@ -166,7 +166,7 @@ class getSelect
                     $select['data'] = $data;
                     $compile[$name] = $select;
                     
-                    //$this->pdoTools->addTime('select '.print_r($select,1));
+                    //$this->getTables->addTime('select '.print_r($select,1));
                     break;
                 case 'data':
                     $data = [];
@@ -180,7 +180,7 @@ class getSelect
                     $select['data'] = $data;
                     $compile[$name] = $select;
                     
-                    //$this->pdoTools->addTime('select '.print_r($select,1));
+                    //$this->getTables->addTime('select '.print_r($select,1));
                     break;
                 case 'autocomplect':
                     /*$select['pdoTools']['limit'] = 0;
@@ -210,7 +210,7 @@ class getSelect
         $class = 'modUser';
         $profile = 'modUserProfile';
         $member = 'modUserGroupMember';
-        //$this->pdoTools->addTime('select sp'.print_r($sp,1));
+        //$this->getTables->addTime('select sp'.print_r($sp,1));
         // Start building "Where" expression
         $where = array();
         if (empty($showInactive)) {
@@ -313,7 +313,7 @@ class getSelect
             }
             unset($sp[$v]);
         }
-        //$this->pdoTools->addTime('Conditions prepared');
+        //$this->getTables->addTime('Conditions prepared');
 
         $default = array(
             'class' => $class,
@@ -334,7 +334,7 @@ class getSelect
         }
 
         // Merge all properties and run!
-        //$this->pdoTools->addTime('Query parameters ready');
+        //$this->getTables->addTime('Query parameters ready');
         return array_merge($default, $sp);
     }
     

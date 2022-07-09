@@ -53,7 +53,7 @@ class getTabs
 
     public function fetch($tabs = [])
     {
-        //$this->pdoTools->addTime("getTable fetch table ".print_r($this->config,1));
+        //$this->getTables->addTime("getTable fetch table ".print_r($this->config,1));
         if(empty($tabs)){
             if(!empty($this->config['tabs'])){
                 if (is_string($this->config['tabs']) and strpos(ltrim($this->config['tabs']), '{') === 0) {
@@ -77,7 +77,7 @@ class getTabs
         $tabs1 = [];
        
         $idx = 1;
-        // $this->pdoTools->addTime("getTabs generateData".print_r($tabs,1));
+        //$this->getTables->addTime("getTabs generateData".print_r($tabs,1));
         foreach($tabs as $n => $tab){
             if(!empty($tab['permission'])){
                 if (!$this->modx->hasPermission($tab['permission'])) continue;
@@ -112,7 +112,7 @@ class getTabs
             
             $tabs1[$n] = $tab;
         }
-        //echo "<pre>generateData ".print_r(['name'=>$name,'class'=>$class,'tabs'=>$tabs],1)."</pre>";
+        //$this->getTables->addTime("getTabs generateData tabs1".print_r($tabs1,1));
         return ['name'=>$name,'cls'=>$cls,'tabs'=>$tabs1];
     }
     

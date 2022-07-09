@@ -74,9 +74,9 @@ class getTable
         }else if(is_array($data['parent_current'])){
             $data['parent_current'] = $data['parent_current'];
         }
-        //$this->pdoTools->addTime('REQUEST1'.print_r($this->getTables->REQUEST,1));
+        //$this->getTables->addTime('REQUEST1'.print_r($this->getTables->REQUEST,1));
         $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
-        //$this->pdoTools->addTime('REQUEST2'.print_r($this->getTables->REQUEST,1));
+        //$this->getTables->addTime('REQUEST2'.print_r($this->getTables->REQUEST,1));
 
         if($action == "fetch"){
             if($this->config['isAjax'] and !$skype_check_ajax) $data = [];
@@ -96,7 +96,7 @@ class getTable
         switch($action){
             case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy': case 'sort':
                 require_once('gettableprocessor.class.php');
-                $getTableProcessor = new getTableProcessor($this, $this->config);
+                $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
                 return $getTableProcessor->run($action, $table, $data);
                 break;
                 
@@ -492,7 +492,7 @@ class getTable
             
                 if($filter['force']['user_id'] ){
                     if(!$this->modx->user->isMember('Administrator')){
-                        //$this->pdoTools->addTime("getTable filter default ".print_r($filter['default'],1));
+                        //$this->getTables->addTime("getTable filter default ".print_r($filter['default'],1));
                         if(is_array($filter['force']['modx_user_id'])) $filter['force']['user_id'] = array_merge($filter['force']['user_id'],$filter['force']['modx_user_id']);
                         if(is_array($filter['force']['user_id']) and in_array($this->modx->user->id,$filter['force']['user_id'])){
                             $query[$filter['edit']['where_field'].':IN'] = $filter['force']['user_id'];
@@ -529,7 +529,7 @@ class getTable
                         
                         if(preg_match($pattern,$filter['value'],$matches)){
                             $filter['value'] = (int)str_replace($matches[0],"",$filter['value']);
-                            //$this->pdoTools->addTime("getTable filter  {$filter['edit']['where_field']}");
+                            //$this->getTables->addTime("getTable filter  {$filter['edit']['where_field']}");
                             $where_field = explode(":",$filter['edit']['where_field'])[0];
                             switch($matches[0]){
                                 case '<=': case '=<': 
@@ -668,9 +668,15 @@ class getTable
             }
         }
     }
+    public function walkFuncInsertMenuId(&$item, $key, $id){
+        $item = str_replace("insert_menu_id",$id,$item);
+    }
     public function generateData($table,$pdoConfig =[])
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
+        if($this->getTables->REQUEST['id']){
+            array_walk_recursive($table['pdoTools2'],array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['id']);
+        }
         $table = $this->addFilterTable($table);
         if(empty($table['paginator']) or ($table['paginator'] !== false and $pdoConfig['limit'] != 1)){
             $paginator = true;
@@ -684,7 +690,7 @@ class getTable
             unset($table['pdoTools2']['offset']);
         }
         //echo "getTable generateData table ".print_r($table,1);
-        //$this->pdoTools->addTime("getTable generateData table ".print_r($table,1));
+        //$this->getTables->addTime("getTable generateData table ".print_r($table,1));
         //$this->getTables->addDebug($table['pdoTools2'],'generateData $table[pdoTools]');
         //$this->getTables->addDebug($table['query'],'generateData $table[query]');
         $table['pdoTools2']['return'] = 'data';
@@ -710,7 +716,7 @@ class getTable
                 }
             }
             $table['pdoTools2']['sortby'] = $sort;
-            //$this->pdoTools->addTime("getTable generateData filter_sort ".print_r($filter_sort,1));
+            //$this->getTables->addTime("getTable generateData filter_sort ".print_r($filter_sort,1));
         }
         //tree
         if($table['tree']){
@@ -725,7 +731,7 @@ class getTable
 
         $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
         //file_put_contents(__DIR__ ."/". "222_initialize.txt",json_encode($this->pdoTools->config,JSON_PRETTY_PRINT));
-        //$this->pdoTools->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));
+        //$this->getTables->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));
         //$this->getTables->addDebug($this->pdoTools->config,'generateData this->pdoTools->config');
         $rows = $this->pdoTools->run();
         
@@ -746,14 +752,14 @@ class getTable
             $table['page']['total'] = $total;
             $table['page']['content'] = $this->pdoTools->getChunk($this->config['getTableNavTpl'],['page' => $table['page']]);
         }
-         //$this->pdoTools->addTime("getTable generateData table['page'] ".print_r($table['page'],1));
+         //$this->getTables->addTime("getTable generateData table['page'] ".print_r($table['page'],1));
         //echo "getTable generateData rows <pre>".print_r($rows,1)."</pre>";
         //$output = [];
         $trs = [];
         $tr = $table['tbody']['tr'];
         //$this->getTables->addDebug($rows,'gen1  rows');
         if($table['export'] == 1){
-            $this->pdoTools->addTime("getTable export ".$this->varexport($rows,1));   
+            $this->getTables->addTime("getTable export ".$this->varexport($rows,1));   
         }
         if(!empty($table['prepareRow'])){
             $this->prepareRow($table['prepareRow'],$rows,$table);
@@ -766,7 +772,7 @@ class getTable
             //echo "getTable generateData r <pre>".print_r($r,1)."</pre>";
             foreach($r['tds'] as $ktd=>&$td){
                 
-                //if(!empty($td['edit']['multiple'])) $this->pdoTools->addTime("getTable generateData td ".print_r($td,1));
+                //if(!empty($td['edit']['multiple'])) $this->getTables->addTime("getTable generateData td ".print_r($td,1));
                 if(!empty($td['edit']['multiple']) and isset($td['edit']['pdoTools']) and !empty($td['edit']['search_fields'])){
                     if(empty($td['edit']['pdoTools']['class'])) $td['edit']['pdoTools']['class'] = $td['edit']['class'];
                     $where = [];
@@ -784,12 +790,12 @@ class getTable
                     }
                     $td['value'] = $value;
                     $td['edit']['json'] = json_encode($value);
-                    //$this->pdoTools->addTime("getTable generateData td ".print_r($td,1));
+                    //$this->getTables->addTime("getTable generateData td ".print_r($td,1));
                 }else{
                     $td['value'] = $row[$td['edit']['as']];
                 }
-                //$this->pdoTools->addTime("getTable generateData row ".print_r($row,1));
-                //$this->pdoTools->addTime("getTable generateData td ".print_r($td,1));
+                //$this->getTables->addTime("getTable generateData row ".print_r($row,1));
+                //$this->getTables->addTime("getTable generateData td ".print_r($td,1));
                 if(isset($td['number'])){
                     if(!is_array($td['number'])) $td['number'] = [];
                     if(!isset($td['number'][0])){
@@ -889,8 +895,8 @@ class getTable
                 /*if(isset($td['buttons'])){
                     $td['content'] .= '<div style=""width:'.count($td['buttons'])*40 .'px;">'.$this->pdoTools->getChunk('@INLINE '.$td['buttons'], $row)."</div>";
                 }*/
-                //$this->pdoTools->addTime("getTable generateData td field ".print_r($td['edit']['field'],1));
-                //$this->pdoTools->addTime("getTable generateData tr field ".$tr['data'][$td['edit']['field']].print_r($tr['data'],1));
+                //$this->getTables->addTime("getTable generateData td field ".print_r($td['edit']['field'],1));
+                //$this->getTables->addTime("getTable generateData tr field ".$tr['data'][$td['edit']['field']].print_r($tr['data'],1));
                 foreach($tr['data'] as $dv){
                     if($dv == $td['edit']['field']){
                         $data[$dv] = $td['value'];
@@ -909,7 +915,7 @@ class getTable
                 $r['data']['gts_tree_parent'] = $row[$table['tree']['parentIdField']];
             }
             //$this->getTables->addDebug($r,'genData  $r');
-            //$this->pdoTools->addTime("getTable generateData r cls {ignore}{$r['cls']} {/ignore}");
+            //$this->getTables->addTime("getTable generateData r cls {ignore}{$r['cls']} {/ignore}");
             if($r['cls']) $r['cls'] = $this->pdoTools->getChunk('@INLINE '.$r['cls'], $row);
             
             $sub = ['cls'=>'hidden'];
@@ -924,7 +930,7 @@ class getTable
         
         
         $table['tbody']['trs'] = $trs;
-        $this->pdoTools->addTime('generateData end');
+        $this->getTables->addTime('generateData end');
         //$this->getTables->addDebug($table,'generateData $table');
         //echo "getTable generateData inner <pre>".print_r($table['tbody']['inner'],1)."</pre>";
         return $table;
@@ -958,7 +964,7 @@ class getTable
         
         //$this->getTables->addDebug($table,'fetch  $table');
         //$this->getTables->addDebug($this->config,'fetch  $this->config');
-        //$this->pdoTools->addTime("getTable fetch table ".print_r($this->config,1));
+        //$this->getTables->addTime("getTable fetch table ".print_r($this->config,1));
         //echo "<pre>{ignore}".print_r($this->config,1)."{/ignore}</pre>";
         if(empty($table)){
             if(!empty($this->config['table'])){
@@ -971,7 +977,7 @@ class getTable
         $top = '';
         if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
             $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
-            $this->pdoTools->addTime("document id = {$this->getTables->REQUEST['id']}");
+            $this->getTables->addTime("document id = {$this->getTables->REQUEST['id']}");
             $resp =$this->getTables->handleRequestInt('getForm/test',$table['top']['form']);
             if(!$resp['success']){
                 return $this->error("Документ не найден!");
@@ -988,9 +994,9 @@ class getTable
         }
         
         if(is_string($table) and strpos(ltrim($table), '{') === 0) $table = json_decode($table, true);
-        //$this->pdoTools->addTime("getTable fetch table ".print_r($table,1));
+        //$this->getTables->addTime("getTable fetch table ".print_r($table,1));
         if($table['row']){
-            //$this->pdoTools->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
+            //$this->getTables->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
             if(isset($this->config['selects'])){
                 if(!$selects = $this->getTables->getClassCache('getSelect','all')){
                     if(!$this->getTables->selects_compile){
@@ -1026,8 +1032,8 @@ class getTable
                     }
                     $this->getTables->setClassConfig('getTable',$table_compile['name'], $table_compile);
                     
-                    //$this->pdoTools->addTime("getTable fetch table  name $name !".$table['name']);
-                    //$this->pdoTools->addTime("getTable fetch subtable  {ignore}".print_r($table['subtable'],1)."{/ignore}");
+                    //$this->getTables->addTime("getTable fetch table  name $name !".$table['name']);
+                    //$this->getTables->addTime("getTable fetch subtable  {ignore}".print_r($table['subtable'],1)."{/ignore}");
                     if(!empty($table['subtables'])){
                         foreach($table['subtables'] as $sub_name=>$subtable){
                             if($subtable['class'] == 'TV') $subtable['class'] = 'modTemplateVarResource';
@@ -1044,16 +1050,16 @@ class getTable
             }
             //echo "getTable table_compile table ".print_r($table_compile,1);
             
-            $this->pdoTools->addTime('generateData start');
+            $this->getTables->addTime('generateData start');
             $generateData = $this->generateData($table_compile);
-            $this->pdoTools->addTime('generateData end');
+            $this->getTables->addTime('generateData end');
             $generateData['top'] = $top;
-            //$this->pdoTools->addTime("getTable table_compile  {ignore}".print_r($table_compile,1)."{/ignore}");
+            //$this->getTables->addTime("getTable table_compile  {ignore}".print_r($table_compile,1)."{/ignore}");
 
             $html = $this->pdoTools->getChunk($this->config['getTableOuterTpl'], $generateData,true);
-            $this->pdoTools->addTime('getChunk outer');
+            $this->getTables->addTime('getChunk outer');
 
-            //$this->pdoTools->addTime("getTable fetch table registryAppName  {ignore}".print_r($this->getTables->registryAppName,1)."{/ignore}");
+            //$this->getTables->addTime("getTable fetch table registryAppName  {ignore}".print_r($this->getTables->registryAppName,1)."{/ignore}");
             //if(!$this->config['isAjax']) $this->registerActionJS($table);
             
             return $this->success('',array('html'=>$html));
@@ -1196,9 +1202,9 @@ class getTable
                         }
                         $compile_actions[$k] = array_merge($default_actions[$k],$actions[$k]);
                     }else{
-                        $this->pdoTools->addTime("Не определено действие $k =>".print_r($actions[$k],1));
+                        $this->getTables->addTime("Не определено действие $k =>".print_r($actions[$k],1));
                     }
-                    //$this->pdoTools->addTime(" действия {$k}. Действие  $k ".print_r($compile_actions[$k],1));
+                    //$this->getTables->addTime(" действия {$k}. Действие  $k ".print_r($compile_actions[$k],1));
                 }else{
                     if(is_string($a['action'])){
                         //Прописываем дефолтовое действие, например для  $actions['create'=>['action'=>'getTable/create',]]. Чтобы можно было задать много getTable/create 
@@ -1209,9 +1215,9 @@ class getTable
                                     $actions[$k]['modal'] = array_merge($default_actions[$ta[1]]['modal'],$actions[$k]['modal']);
                                 }
                                 $compile_actions[$k] = array_merge($default_actions[$ta[1]],$actions[$k]);
-                                //$this->pdoTools->addTime(" действия {$ta[1]}. Действие  $k ".print_r($compile_actions[$k],1));
+                                //$this->getTables->addTime(" действия {$ta[1]}. Действие  $k ".print_r($compile_actions[$k],1));
                             }else{
-                                $this->pdoTools->addTime("В getTable нет действия {$ta[1]}. Действие  $k ".print_r($actions[$k],1));
+                                $this->getTables->addTime("В getTable нет действия {$ta[1]}. Действие  $k ".print_r($actions[$k],1));
                             }
                         }else{
                             $compile_actions[$k] = $actions[$k];
@@ -1223,7 +1229,7 @@ class getTable
             //$compile_actions = $actions;
         }
         
-        //$this->pdoTools->addTime("table compile_actions {ignore}".print_r($compile_actions,1)."{/ignore}");
+        //$this->getTables->addTime("table compile_actions {ignore}".print_r($compile_actions,1)."{/ignore}");
         foreach($compile_actions as $k=>&$a){
             if(!empty($a['permission'])){
                 if (!$this->modx->hasPermission($a['permission'])){ unset($actions[$k]); continue;}
@@ -1436,7 +1442,7 @@ class getTable
         $modal = [];
         $defaultFieldSet = [];
         
-        //$this->pdoTools->addTime("table compile {ignore}".print_r($table,1)."{/ignore}");
+        //$this->getTables->addTime("table compile {ignore}".print_r($table,1)."{/ignore}");
         if(is_array($table['defaultFieldSet'])){
             foreach($table['defaultFieldSet'] as $df=>$dfv){
                 if(is_array($dfv)){
@@ -1448,7 +1454,7 @@ class getTable
                 }
             }
         }
-        //$this->pdoTools->addTime("table compile table[actions] {ignore}111".print_r($table,1)."{/ignore}");
+        //$this->getTables->addTime("table compile table[actions] {ignore}111".print_r($table,1)."{/ignore}");
         $actions = $table['actions'] ? $table['actions'] : [];
         
         $actions = $this->compileActions($actions);
@@ -1519,7 +1525,7 @@ class getTable
         $data = ['id'];
         $edits = [];
         $filter_position = 0;
-        //$this->pdoTools->addTime("getTable compile temp_tds2 $name ".print_r($temp_tds2,1));
+        //$this->getTables->addTime("getTable compile temp_tds2 $name ".print_r($temp_tds2,1));
         foreach($temp_tds2 as $field => $value){
             if(!empty($value['permission'])){
                 if (!$this->modx->hasPermission($value['permission'])) continue;
@@ -1578,8 +1584,8 @@ class getTable
             if(!empty($value['force'])) $edit['force'] = $value['force'];
 
             if(!empty($value['edit'])) $edit = array_merge($edit,$value['edit']);
-            //$this->pdoTools->addTime("getTable fetch table_compile {$table['class']} value edit {$edit['class']}  {ignore}".print_r($value['edit'],1)."{/ignore}");
-            //$this->pdoTools->addTime("getTable fetch table_compile {$table['class']} edit {$edit['class']} {ignore}".print_r($edit,1)."{/ignore}");
+            //$this->getTables->addTime("getTable fetch table_compile {$table['class']} value edit {$edit['class']}  {ignore}".print_r($value['edit'],1)."{/ignore}");
+            //$this->getTables->addTime("getTable fetch table_compile {$table['class']} edit {$edit['class']} {ignore}".print_r($edit,1)."{/ignore}");
             if(empty($edit['where_field'])){
                 if($edit['type'] == "text"){
                     $edit['where_field'] = '`'.$value['class'].'`.`'.$value['field'].'`:LIKE';
@@ -1587,7 +1593,7 @@ class getTable
                     $edit['where_field'] = '`'.$value['class'].'`.`'.$value['field'].'`';
                 }
             }
-            //$this->pdoTools->addTime("getTable fetch edit {ignore}".print_r($edit,1)."{/ignore}");
+            //$this->getTables->addTime("getTable fetch edit {ignore}".print_r($edit,1)."{/ignore}");
             if(isset($edit['select']) and $this->config['selects'][$edit['select']]){
                 $edit['type'] = 'select';
                 $edit['select'] = $this->config['selects'][$edit['select']];
@@ -1611,7 +1617,7 @@ class getTable
                     $tf['where'] = $value['filter'];
                 }
                 if(is_array($value['filter'])){
-                    //$this->pdoTools->addTime("getTable filter  ".print_r($value['filter'],1));
+                    //$this->getTables->addTime("getTable filter  ".print_r($value['filter'],1));
                     if(is_array($value['filter']['edit'])){
                         $value['filter']['edit'] = array_merge($edit,$value['filter']['edit']);
                     }
@@ -1648,7 +1654,7 @@ class getTable
                         $buttons[$k] = $this->compileActionButtons($a);
                     }
                 }
-                //$this->pdoTools->addTime("getTable compileActions td actions ".print_r($td['actions'],1));
+                //$this->getTables->addTime("getTable compileActions td actions ".print_r($td['actions'],1));
                 //$buttons = $this->compileActionButtons($buttons);
                 $td['edit']['buttons'] = implode('&nbsp;',$buttons);
             }
@@ -1667,7 +1673,7 @@ class getTable
         if(is_string($table['data']))
             $table['data'] = explode(",",$table['data']);
         
-        //$this->pdoTools->addTime("getTable compile table data".print_r($table['data'],1));
+        //$this->getTables->addTime("getTable compile table data".print_r($table['data'],1));
         if(empty($table['data'])) $table['data'] = [];
         if(isset($table['sortable']) and is_array($table['sortable'])){
             if($table['sortable']['field']){
@@ -1676,7 +1682,7 @@ class getTable
         }
         $body_tr['data'] = array_merge($table['data'],$data);
         //if(empty($body_tr['data'])) $body_tr['data'] = ['id'];
-        //$this->pdoTools->addTime("getTable compile table actions_row".print_r($actions_row,1));
+        //$this->getTables->addTime("getTable compile table actions_row".print_r($actions_row,1));
         if(!empty($actions_row)){
             //собираем кнопки
             //$buttons = $this->compileActionButtons($actions_row);
@@ -1684,10 +1690,10 @@ class getTable
             $ths[] = ['cls'=>'text-right','name'=>'actions','content'=> $this->modx->lexicon('gettables_actions')];
             $tds[] = ['cls'=>'text-right','name'=>'actions','content'=> implode('&nbsp;',$actions_row),'style'=>'white-space: nowrap;'];
         }
-        //$this->pdoTools->addTime("getTable compile buttons {ignore}".print_r($actions_row,1)."{/ignore}");
+        //$this->getTables->addTime("getTable compile buttons {ignore}".print_r($actions_row,1)."{/ignore}");
         
         $topBar = $this->compileTopBar($actions);
-        //$this->pdoTools->addTime("getTable compileTopBar topBar {ignore}".print_r($topBar,1)."{/ignore}");
+        //$this->getTables->addTime("getTable compileTopBar topBar {ignore}".print_r($topBar,1)."{/ignore}");
         //пока убрал
         //if(!isset($table['checkbox'])) unset($topBar['topBar/topline/multiple']);
         $topBar['hash'] = $this->config['hash'];
@@ -1746,7 +1752,7 @@ class getTable
     
     public function compileActionButtons($a)
     {
-        //$this->pdoTools->addTime("getTable compileActionButtons $a ".print_r($a,1));
+        //$this->getTables->addTime("getTable compileActionButtons $a ".print_r($a,1));
         $buttons = []; 
             if($a['action'] == "getTable/subtable"){
                 $buttons_toggle = [];
@@ -1830,7 +1836,7 @@ class getTable
                 }
             }
         
-        //$this->pdoTools->addTime("getTable compileActionButtons buttons ".print_r($buttons,1));
+        //$this->getTables->addTime("getTable compileActionButtons buttons ".print_r($buttons,1));
         return implode('&nbsp;',$buttons);
     }
     public function addAndSortFilter($filters,$addFilter)
@@ -1865,7 +1871,7 @@ class getTable
 
             if(empty($f['edit']['type'])) $f['edit']['type'] = 'text';
         }
-        //$this->pdoTools->addTime("getTable addAndSortFilter ".print_r($filters,1));
+        //$this->getTables->addTime("getTable addAndSortFilter ".print_r($filters,1));
         return $filters;
     }
     

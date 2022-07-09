@@ -41,7 +41,19 @@ class getForm
                 break;
             case 'save':
                 //$data = $this->getTables->sanitize($data); //Санация $data
-                return $this->save($data);
+                //return $this->save($data);
+                if(!$form = $this->getTables->getClassCache('getForm',$data['form_name'])){
+                    return $this->error("Форма {$data['form_name']} не найдена!");
+                }
+                if(empty($data['id'])){
+                    $action = 'create';
+                }else{
+                    $action = 'update';
+                }
+                $form['actions'] = ['create'=>[]];
+                require_once('gettableprocessor.class.php');
+                $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
+                return $getTableProcessor->run($action, $form, $data);
                 break;
             case 'test':
                 //$data = $this->getTables->sanitize($data); //Санация $data
@@ -51,276 +63,7 @@ class getForm
                 return $this->error("Метод $action в классе $class не найден!");
         }
     }
-    public function save($data = []){
-        $saved = [];
-        if(!$form = $this->getTables->getClassCache('getForm',$data['form_name'])){
-            return $this->error("Форма {$data['form_name']} не найдена!");
-        }
-        $create = false;
-        if(empty($data['id'])) $create = true;
-        if($form['event']){
-            $getTablesBeforeUpdateCreate = $this->modx->invokeEvent('getTablesBeforeUpdateCreate', array(
-                'data'=>$data,
-                'create'=>$create,
-            ));
-            if (is_array($getTablesBeforeUpdateCreate)) {
-                $canSave = false;
-                foreach ($getTablesBeforeUpdateCreate as $msg) {
-                    if (!empty($msg)) {
-                        $canSave .= $msg."\n";
-                    }
-                }
-            } else {
-                $canSave = $getTablesBeforeUpdateCreate;
-            }
-            if(!empty($canSave)) return $this->error($canSave);
-        }
-        foreach($form['edits'] as $edit){
-            if(isset($data[$edit['field']])){
-                if($edit['type'] == "textarea"){
-                    if(!$edit['skip_sanitize']){
-                        $temp = json_decode($data[$edit['field']],1);
-                        if(json_last_error() == JSON_ERROR_NONE){
-                            $temp = $this->getTables->sanitize($temp); //Санация записей в базу
-                            $data[$edit['field']] = json_encode($temp, JSON_PRETTY_PRINT);
-                        }else{
-                            $data[$edit['field']] = $this->getTables->sanitize($data[$edit['field']]); //Санация записей в базу
-                        }
-                    }
-                }else{
-                    $data[$edit['field']] = $this->getTables->sanitize($data[$edit['field']]); //Санация записей в базу
-                }
-            }
-        }
-        $edit_tables = [];
-        ////$this->getTables->addDebug($table['edits'],'run $table[edits] ');
-        foreach($form['edits'] as $edit){
-            if($edit['type'] == 'view') continue;
-            $edit_tables[$edit['class']][] = $edit;
-        }
 
-        $class = $form['class'];
-        if($edit_tables[$class]){
-            $set_data = [];
-            foreach($edit_tables[$class] as $edit){
-                if($data[$edit['field']] !== null)
-                    $set_data[$edit['field']] = $data[$edit['field']];
-
-                if($edit['type'] == 'date'){
-                    if(isset($data[$edit['field']]) and $data[$edit['field']] === ''){
-                        $set_data[$edit['field']] = null;
-                    }else{
-                        $set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
-                    }
-                }
-                if($edit['type'] == 'datetime'){
-                    if(isset($data[$edit['field']]) and $data[$edit['field']] === ''){
-                        $set_data[$edit['field']] = null;
-                    }else{
-                        $set_data[$edit['field']] = date('Y-m-d H:i',strtotime($data[$edit['field']]));
-                    }
-                }
-            }
-
-            if($create){
-                $obj = $this->modx->newObject($class);
-                $data['id'] = false;
-                $type = 'create';
-            }else{
-                $obj = $this->modx->getObject($class,(int)$data['id']);
-                $type = 'update';
-            }
-            if($obj){
-                //$saved[] = $obj->toArray();
-                $object_old = $obj->toArray();
-                //$this->getTables->addDebug($set_data,'$set_data update ');
-                $obj->fromArray($set_data);
-                $object_new = $obj->toArray();
-                
-                $resp = $this->run_triggers($class, 'before', $type, $set_data, $object_old,$object_new);
-                if(!$resp['success']) return $resp;
-                
-                //$saved[] = $this->success('Сохранено успешно',$set_data);
-                if($obj->save()){
-                    
-                    $object_new = $obj->toArray();
-                    $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new);
-                    if(!$resp['success']) return $resp;
-                    
-                    $saveobj['success'] = true;
-                    $data['id'] = $obj->id;
-                }
-            }
-            $saved[] = $saveobj;
-        }
-        unset($edit_tables[$class]);
-        if($create and !$data['id']) return $this->error("Failed to create object $class",$saved);
-        foreach($edit_tables as $class=>$edits){
-            foreach($edits as $edit){
-                //$this->getTables->addDebug($edit,'$edit update '.$edit['field']);
-                
-                
-                if(!empty($edit['search_fields'])){
-                    $saveobj = ['success'=>false,'class'=>$class,'field'=>$edit['field']];
-                    $search_fields = [];
-                    foreach($edit['search_fields'] as $k=>$v){
-                        $search_fields[$k] = $v;
-                        
-                        if($v === 'id'){
-                            $search_fields[$k] = (int)$data['id'];
-                        }
-                        ////$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 3 k update $$search_fields');
-                    }
-                    //$this->getTables->addDebug($search_fields,'222 update $$search_fields');
-                    ////$this->getTables->addDebug($search_fields,'$search_fields');
-                    if($edit['multiple']){
-                        $cols = $this->modx->getIterator($class,$search_fields);
-                        foreach($cols as $obj1){
-                            $object_old = $obj1->toArray();
-                            $resp = $this->run_triggers($class, 'before', 'remove', [], $object_old);
-                            if(!$resp['success']) return $resp;
-                            
-                            $id = $obj1->id;
-                            if($obj1->remove()){
-                                $resp = $this->run_triggers($class, 'after', 'remove', [], $object_old);
-                                if(!$resp['success']) return $resp;
-                                
-                            }
-                            
-                        }
-                        if(isset($data[$edit['field']])){
-                            foreach($data[$edit['field']] as $v){
-                                $search_fields2 = $search_fields;
-                                $search_fields2[$edit['field']] = $v;
-                                ////$this->getTables->addDebug($search_fields2,'multiple update $search_fields2');
-                                if($obj2 = $this->modx->newObject($class,$search_fields2)){
-                                    if($obj2->save()){
-                                        $object_old = $obj2->toArray();
-                                        $resp = $this->run_triggers($class, 'after', 'create', [$edit['field']=>1], $object_old, $object_old);
-                                        if(!$resp['success']) return $resp;
-                                        
-                                        $saveobj['success'] = true;
-                                    }
-                                }
-                            }
-                        }else{
-                            /*if($obj2->save()){ //кажется не нужно
-                                        
-                                $saveobj['success'] = true;
-                            }*/
-                        }
-                    }else{
-                        //$this->getTables->addDebug($search_fields,"search object $class {$edit['field']} {$edit['value_field']} {$data[$edit['field']]} search_fields");
-                        if(!$obj2 = $this->modx->getObject($class,$search_fields)){
-                            $obj2 = $this->modx->newObject($class,$search_fields);
-                            $type = 'create';
-                        }else{
-                            $type = 'update';
-                        }
-                        if($obj2){
-                            
-                            if($edit['default'] and empty($data[$edit['field']]) and empty($obj2->{$edit['value_field']})){
-                                $edit['force'] = $edit['default'];
-                            }
-                            if($edit['force']){
-                                switch($edit['type']){
-                                    case 'date':
-                                        $edit['force'] = date('Y-m-d',strtotime($edit['force']));
-                                        break;
-                                    case 'datetime':
-                                        $edit['force'] = date('Y-m-d H:i',strtotime($edit['force']));
-                                        break;
-                                }
-                                switch($edit['force']){
-                                    case 'user_id':
-                                        $edit['force'] = $this->modx->user->id;
-                                        break;
-                                }
-                                $data[$edit['field']] = $edit['force'];
-                            }
-                            //$this->getTables->addDebug($edit,"$class  edit");
-                            //$this->getTables->addDebug($search_fields,"$class {$edit['field']} {$edit['value_field']} {$data[$edit['field']]} search_fields");
-                            //продумать для удаления пустых записей в БВ. Наверно тригером.
-                            if(!isset($data[$edit['field']])){
-                                $saveobj['success'] = true;
-                                continue;
-                            }
-                            
-                            /*if(isset($table['defaultFieldSet'][$edit['field']])){
-                                $data[$edit['field']] == $table['defaultFieldSet'][$edit['field']];
-                            }*/
-                            
-                            $object_old = $obj2->toArray();
-                            $obj2->{$edit['value_field']} = $data[$edit['field']];
-                            $object_new = $obj2->toArray();
-                            $resp = $this->run_triggers($class, 'before', $type, [$edit['field']=>1], $object_old,$object_new);
-                            if(!$resp['success']) return $resp;
-                            
-                            if($obj2->save()){
-                                $object_new = $obj2->toArray();
-                                $resp = $this->run_triggers($class, 'after', $type, [$edit['field']=>1], $object_old,$object_new);
-                                if(!$resp['success']) return $resp;
-                                
-                                $saveobj['success'] = true;
-                            }
-                        }
-                    }
-                    $saved[] = $saveobj;
-                }
-                
-            }
-        }
-        $error = '';
-        foreach($saved as $s){
-            if(!$s['success']) $error = "Object {$s['class']} {$s['field']} не сохранен update \r\n";
-        }
-        if(!$error){
-            if($table['event']){
-                $response = $this->modx->invokeEvent('getTablesAfterUpdateCreate', array(
-                    'data'=>$data,
-                    'set_data'=>[],
-                    'create'=>$create,
-                ));
-            }
-            return $this->success($this->modx->lexicon('gettables_saved_successfully'),['id'=>$data['id'],'saved'=>$saved]);
-        }else{
-            return $this->error($error,$saved);
-        }
-    }
-    public function run_triggers($class, $type, $method, $fields, $object_old, $object_new =[])
-    {
-        $getTablesRunTriggers = $this->modx->invokeEvent('getTablesRunTriggers', array(
-            'class'=>$class,
-            'type'=>$type,
-            'method'=>$method,
-            'fields'=>$fields,
-            'object_old'=>$object_old,
-            'object_new'=>$object_new,
-        ));
-        if (is_array($getTablesRunTriggers)) {
-            $canSave = false;
-            foreach ($getTablesRunTriggers as $msg) {
-                if (!empty($msg)) {
-                    $canSave .= $msg."\n";
-                }
-            }
-        } else {
-            $canSave = $getTablesRunTriggers;
-        }
-        if(!empty($canSave)) return $this->error($canSave);
-
-        $triggers = $this->config['triggers'];
-        if(isset($triggers[$class]['function']) and isset($triggers[$class]['model'])){
-            $response = $this->getTables->loadService($triggers[$class]['model']);
-            if(is_array($response) and $response['success']){
-                $service = $this->getTables->models[$triggers[$class]['model']]['service'];
-                if(method_exists($service,$triggers[$class]['function'])){ 
-                    return  $service->{$triggers[$class]['function']}($class, $type, $method, $fields, $object_old, $object_new);
-                }
-            }
-        }
-        return $this->success('Выполнено успешно');
-    }
     public function fetch($form = []){
         
         if(empty($form)){
@@ -357,21 +100,25 @@ class getForm
         
         $tpl = $form_compile['tpl'] ? $form_compile['tpl'] : $this->config['getTableFormTpl'];
 
-        $this->pdoTools->addTime("generateData start");
-        $this->generateData($form_compile);
+        
+        if(!$form_compile['only_create']){
+            $this->getTables->addTime("getForm generateData start id={$this->getTables->REQUEST['id']}");
+            $this->generateData($form_compile);
+            $this->getTables->addTime("getForm generateData end");
+        }
         $this->defaultFieldSet($form_compile);
-        $this->pdoTools->addTime("generateData end");
+        
 
         $EditFormtpl = $this->config['getTableEditFormTpl'];
         
-        $this->pdoTools->addTime("getChunk edit start");
+        $this->getTables->addTime("getChunk edit start");
         foreach($form_compile['edits'] as $k=>&$edit){
             if(!isset($edit['form_content'])) $edit['form_content'] = $this->pdoTools->getChunk($EditFormtpl, ['edit'=>$edit]);            
         }
-        $this->pdoTools->addTime("getChunk edit end");
+        $this->getTables->addTime("getChunk edit end");
 
         $html = $this->pdoTools->getChunk($tpl, ['form'=>$form_compile]);
-        $this->pdoTools->addTime("getChunk outer end");
+        $this->getTables->addTime("getChunk outer end");
 
         return $this->success('',array('html'=>$html));
     }
@@ -397,6 +144,14 @@ class getForm
                         break;
                 }
                 $edit['value'] = $edit['force'];
+                if($edit['type'] == "select" and isset($edit['force'])){
+                    $tmp = [
+                        'select_name'=>$edit['select']['name'],
+                        'id'=>$edit['force'],
+                    ];
+                    $resp = $this->getTables->handleRequestInt('getSelect/autocomplect',$tmp);
+                    if($resp['success']) $edit['content'] = $resp['data']['content'];
+                }
             }
         }
     }
@@ -410,7 +165,7 @@ class getForm
             $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['id'];
             //$form['pdoTools']['setTotal'] = 1;
             $this->pdoTools->config = array_merge($this->config['pdoClear'],$form['pdoTools']);
-            //$this->pdoTools->addTime("form generateData {ignore}".print_r($this->pdoTools->config,1)."{/ignore}");
+            //$this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->config,1)."{/ignore}");
             $rows = $this->pdoTools->run();
 
             if(is_array($rows) and count($rows) == 1){
@@ -430,9 +185,9 @@ class getForm
             $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['id'];
             //$form['pdoTools']['setTotal'] = 1;
             $this->pdoTools->config = array_merge($this->config['pdoClear'],$form['pdoTools']);
-            //$this->pdoTools->addTime("form generateData {ignore}".print_r($this->pdoTools->config,1)."{/ignore}");
+            //$this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->config,1)."{/ignore}");
             $rows = $this->pdoTools->run();
-
+            $this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->getTime(),1)."{/ignore}");
             if(is_array($rows) and count($rows) == 1){
                 foreach($rows as $row){
                     foreach($form['edits'] as &$edit){
@@ -465,10 +220,17 @@ class getForm
                         }
                         if(isset($edit['content'])){
                             $edit['form_content'] = $this->pdoTools->getChunk('@INLINE '.$edit['content'], $row);
-                            //$this->pdoTools->addTime("form generateData {ignore}".print_r($row,1)."{$edit['content']}{/ignore}");
+                            //$this->getTables->addTime("form generateData {ignore}".print_r($row,1)."{$edit['content']}{/ignore}");
                         }
                         if(isset($edit['field_content'])){
                             $edit['content'] = $row[$edit['field_content']];
+                        }else if($edit['type'] == "select" and isset($edit['default'])){
+                            $tmp = [
+                                'select_name'=>$edit['select']['name'],
+                                'id'=>$row[$edit['field']],
+                            ];
+                            $resp = $this->getTables->handleRequestInt('getSelect/autocomplect',$tmp);
+                            if($resp['success']) $edit['content'] = $resp['data']['content'];
                         }
                         
                         //$this->getTables->addDebug($edit,'$edit generateEditsData');
