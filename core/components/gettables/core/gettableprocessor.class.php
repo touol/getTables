@@ -188,7 +188,9 @@ class getTableProcessor
         $item = $this->pdoTools->getChunk("@INLINE ".$item, ['sub_default'=>$sub_default]);
     }
     
-    
+    public function walkFuncInsertMenuId(&$item, $key, $id){
+        $item = str_replace("insert_menu_id",$id,$item);
+    }
     public function run($action, $table, $data = array())
     {
         
@@ -196,7 +198,9 @@ class getTableProcessor
         or ($action == "sort" and !empty($table['sortable']))))){ 
             return $this->error("Action $action not found! ",$table);
         }
-
+        if($this->getTables->REQUEST['pageID']){
+            array_walk_recursive($table['pdoTools'],array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
+        }
         $this->current_action = $table['actions'][$action];
         $this->action = $action;
         $edit_tables = [];

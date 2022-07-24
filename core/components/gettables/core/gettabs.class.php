@@ -43,6 +43,9 @@ class getTabs
 
     public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
+        $this->getTables->REQUEST = $_REQUEST;
+        $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
+        
         if( $action == "fetch"){
             if($this->config['isAjax'] and !$skype_check_ajax) $data = [];
             return $this->fetch($data);

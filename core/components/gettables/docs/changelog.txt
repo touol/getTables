@@ -1,4 +1,9 @@
 Changelog for getTables.
+1.11.1-alpha
+- Исправление getTree.
+- Правка верстки.
+- Исправлен ckeditor.
+
 1.11.0-alpha
 - Доработан getTree.
 

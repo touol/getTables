@@ -7,7 +7,7 @@
      
     <div class="tab-content">
       {foreach $tabs as $tab}
-          <div id="{$tab.name}" class="container tab-pane {$tab.active}">
+          <div id="{$tab.name}" class="tab-pane {$tab.active}">
             {$tab.content}
           </div>
       {/foreach}

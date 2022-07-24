@@ -674,8 +674,10 @@ class getTable
     public function generateData($table,$pdoConfig =[])
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
-        if($this->getTables->REQUEST['id']){
-            array_walk_recursive($table['pdoTools2'],array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['id']);
+        
+        if($this->getTables->REQUEST['pageID']){
+            $this->getTables->addTime("getTable generateData id={$this->getTables->REQUEST['pageID']}");
+            array_walk_recursive($table['pdoTools2'],array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
         }
         $table = $this->addFilterTable($table);
         if(empty($table['paginator']) or ($table['paginator'] !== false and $pdoConfig['limit'] != 1)){
@@ -683,7 +685,6 @@ class getTable
             $table['pdoTools2']['setTotal'] = true;//offset
             if(!empty($this->getTables->REQUEST['limit'])) $table['pdoTools2']['limit'] = (int)$this->getTables->REQUEST['limit'];
             if(!empty($this->getTables->REQUEST['page'])) $table['pdoTools2']['offset'] = ((int)$this->getTables->REQUEST['page'] - 1)*$table['pdoTools2']['limit'];
-            
         }
         if($this->getTables->REQUEST['gts_action'] == 'getTable/export_excel'){
             $table['pdoTools2']['limit'] = 0;
@@ -1050,9 +1051,9 @@ class getTable
             }
             //echo "getTable table_compile table ".print_r($table_compile,1);
             
-            $this->getTables->addTime('generateData start');
+            $this->getTables->addTime('getTable generateData start');
             $generateData = $this->generateData($table_compile);
-            $this->getTables->addTime('generateData end');
+            $this->getTables->addTime('getTable generateData end');
             $generateData['top'] = $top;
             //$this->getTables->addTime("getTable table_compile  {ignore}".print_r($table_compile,1)."{/ignore}");
 

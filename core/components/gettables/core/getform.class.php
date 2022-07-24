@@ -50,7 +50,8 @@ class getForm
                 }else{
                     $action = 'update';
                 }
-                $form['actions'] = ['create'=>[]];
+                if(!isset($form['buttons']['save'])) $form['buttons']['save'] = [];
+                $form['actions'] = [$action=>$form['buttons']['save']];
                 require_once('gettableprocessor.class.php');
                 $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
                 return $getTableProcessor->run($action, $form, $data);

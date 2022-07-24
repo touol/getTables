@@ -111,6 +111,46 @@
         $('.get-select-multiple').each(function () {
             $(this).multiselect();
         });
+        if(getTablesConfig.load_ckeditor == 1){
+            $('textarea[data-editor=ckeditor]').each(function() {
+                //$(this).ckeditor();
+                if(!$(this).hasClass('ckeditor-attached')){
+                    CKEDITOR.replace(this);
+                    $(this).addClass('ckeditor-attached');
+                }
+                
+            });
+        }
+        if(getTablesConfig.load_ace == 1){
+            $('textarea[data-editor=ace]').each(function() {
+                var textarea = $(this);
+                var mode = textarea.data('editor-mode');
+                var theme = textarea.data('editor-theme');
+                var height = textarea.data('editor-height');
+                
+                var editDiv = $('<div>', {
+                  position: 'absolute',
+                  width: textarea.width(),
+                  height: height,
+                  'class': textarea.attr('class'),
+                  'readonly': textarea.attr('readonly')
+                }).insertBefore(textarea);
+                
+                
+                textarea.css('display', 'none');
+                var editor = ace.edit(editDiv[0]);
+                editor.renderer.setShowGutter(textarea.data('gutter'));
+                editor.getSession().setValue(textarea.val());
+                editor.getSession().setMode("ace/mode/" + mode);
+                editor.setTheme("ace/theme/"+theme);
+                //editor.setTheme("ace/theme/chrome");
+            
+                // copy back to textarea on form submit...
+                textarea.closest('form').submit(function() {
+                  textarea.val(editor.getSession().getValue());
+                })
+              });
+        }
     };
     getTables.initialize = function () {
         getTables.setup();
@@ -276,6 +316,22 @@
         } else if (typeof data == 'string') {
             data += '&ctx=' + getTablesConfig.ctx;
         }
+        // set pageID
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+          });
+        if(params.id){
+            if ($.isArray(data)) {
+                data.push({
+                    name: 'pageID',
+                    value: params.id
+                });
+            } else if ($.isPlainObject(data)) {
+                data.pageID = params.id;
+            } else if (typeof data == 'string') {
+                data += '&pageID=' + params.id;
+            }
+        }
 
         // set action url
         var formActionUrl = (getTables.sendData.$form) ?
@@ -327,7 +383,7 @@
                 if (response.log) {
                     $('.getTablesLog').remove();
                     if (getTables.sendData.$GtsApp) {
-                        getTables.sendData.$GtsApp.append(response.log);
+                        getTables.sendData.$GtsApp.after(response.log);
                     } else {
                         $('body').append(response.log);
                     }
@@ -491,6 +547,7 @@
                         $tree.find('.get-tree-li').removeClass('active');
                         $li.addClass('active');
                         window.history.pushState({}, '', document.location.pathname+'?id='+$li.data('id'));
+                        getTables.setPlugins();
                     };
         
                     return getTables.send(getTables.sendData.data, getTables.Tree.callbacks.load_panel, getTables.Callbacks.Tree.load_panel);
@@ -517,6 +574,7 @@
                     callbacks.action.response.success = function (response) {
                         //console.log('callbacks.filter_checkbox_load.response.success',response);
                         if(response.data.modal) getTables.Modal.show(response.data.modal);
+                        getTables.setPlugins();
                         //$('.get-tree-panel').html(response.data.html);
                     };
         
@@ -528,6 +586,8 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.custom.response.success = function (response) {
+                
+                if(response.data.reload_without_id) document.location.href=document.location.pathname;
                 if(response.data.modal_close) getTables.Modal.close();
                 if(response.data.replace) $(response.data.replace.selector).replaceWith(response.data.replace.html);
                 //getTables.Table.refresh();
@@ -562,7 +622,10 @@
             getTables.Message.close();
 
             getTables.sendData.$form = $form;
-
+            if(getTablesConfig.load_ckeditor == 1){
+                for(var instanceName in CKEDITOR.instances)
+                    CKEDITOR.instances[instanceName].updateElement();
+            }
             getTables.sendData.data = $form.serializeArray();
             getTables.sendData.data.push({
                 name: 'action',
@@ -1253,9 +1316,9 @@
                 $row.find('.get-sub-hide').show();
 
                 getTables.setPlugins();
-                $('.get-select-multiple').each(function () {
-                    $(this).multiselect();
-                });
+                // $('.get-select-multiple').each(function () {
+                //     $(this).multiselect();
+                // });
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.sub_show, getTables.Callbacks.Table.sub_show);

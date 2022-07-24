@@ -88,7 +88,7 @@ class getTree
         }else{
             return $this->error("Не найден!");
         }
-        return $this->success('Удалено!',['modal_close'=>1]);
+        return $this->success('Удалено!',['reload_without_id'=>1]);
     }
     public function get_modal_remove($tree,$data = []){
         $id = (int)$data['id'];
@@ -243,6 +243,7 @@ class getTree
     public function load_panel($tree,$data = []){
         $id = (int)$data['id'];
         if(!$tree['onclick']) return $this->error("onclick не задан!");
+        $this->getTables->REQUEST['pageID'] = $id;
         return $this->get_panel($tree,$id);
     }
     public function fetch($data = []){
@@ -284,7 +285,10 @@ class getTree
         $id = null;
         if($this->getTables->REQUEST['id']){
             $id = $this->getTables->REQUEST['id'];
+            $this->getTables->REQUEST['pageID'] = $id;
+            //$this->getTables->addTime("getTree compile_actions pageID={$this->getTables->REQUEST['pageID']}");
             $resp = $this->get_panel($data,$id);
+            //$this->getTables->addTime("getTree compile_actions pageID={$this->getTables->REQUEST['pageID']}");
             if($resp['success']) $panel = $resp['data']['html'];
             //$this->getTables->addTime("getTree compile_actions ".print_r($resp,1));
         }
