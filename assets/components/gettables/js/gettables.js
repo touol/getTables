@@ -37,6 +37,7 @@
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
             get_tree_child: getTablesConfig.callbacksObjectTemplate(),
             long_process: getTablesConfig.callbacksObjectTemplate(),
+            insert: getTablesConfig.callbacksObjectTemplate(),
         },
         Autocomplect: {
             load: getTablesConfig.callbacksObjectTemplate(),
@@ -667,9 +668,10 @@
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
             get_tree_child: getTablesConfig.callbacksObjectTemplate(),
             long_process: getTablesConfig.callbacksObjectTemplate(),
+            insert: getTablesConfig.callbacksObjectTemplate(),
         },
         setup: function () {
-
+            
         },
         initialize: function () {
             //checkbox all
@@ -770,6 +772,8 @@
                     getTables.sendData.$GtsApp = $table;
                     if (typeof (button_data.modal) != "undefined") {
                         getTables.Modal.load(button_data, table_data, tr_data);
+                    }else if(button_data.action == 'getTable/insert'){
+                        getTables.Table.insert($table,button_data);
                     }
                 });
             getTables.$doc
@@ -1092,6 +1096,26 @@
                     if($(this).hasClass('error')) $(this).removeClass('error');
                 });
             
+        },
+        insert: function ($table, button_data) {
+            getTables.Message.close();
+            table_data = $table.data();
+
+            getTables.sendData.data = {
+                gts_action: button_data.action,
+                hash: table_data.hash,
+                table_name: table_data.name,
+                table_data: table_data,
+                button_data: button_data,
+            };
+
+            var callbacks = getTables.Table.callbacks;
+
+            callbacks.insert.response.success = function (response) {
+                getTables.Table.refresh();
+            };
+
+            return getTables.send(getTables.sendData.data, getTables.Table.callbacks.insert, getTables.Callbacks.Table.insert);
         },
         childs_remove: function ($table,gts_tree_parent) {
             $childs = $table.find('tr[data-gts_tree_parent="'+gts_tree_parent+'"]');

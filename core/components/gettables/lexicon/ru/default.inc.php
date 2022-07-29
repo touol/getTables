@@ -4,6 +4,7 @@ include_once 'setting.inc.php';
 $_lang['gettables'] = 'getTables';
 
 $_lang['gettables_create'] = 'Создать';
+$_lang['gettables_insert'] = 'Вставить строку';
 $_lang['gettables_edit'] = 'Изменить';
 $_lang['gettables_delete'] = 'Удалить';
 $_lang['gettables_enable'] = 'Включить';
@@ -13,6 +14,8 @@ $_lang['gettables_close'] = 'Закрыть';
 $_lang['gettables_copy'] = 'Копировать';
 $_lang['gettables_export_to_excel'] = 'Экспорт в excel';
 $_lang['gettables_saved_successfully'] = 'Сохранено успешно'; //Saved successfully
+$_lang['gettables_insert_successfully'] = 'Вставлено успешно'; //Inserted successfully
+$_lang['gettables_insert_error'] = 'Ошибка вставки'; //Inserted error
 $_lang['gettables_removed_successfully'] = 'Удалено успешно';
 $_lang['gettables_removed_error'] = "Удаление запрещено или возникла ошибка \r\n";//Deletion prohibited or an error occurred
 $_lang['gettables_row_not_found'] = 'Строка таблицы не найдена!'; //The table row was not found!

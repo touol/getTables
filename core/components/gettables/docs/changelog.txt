@@ -1,4 +1,8 @@
 Changelog for getTables.
+1.11.2-alpha
+- Добавлен тип поля number.
+- Добавлен action insert.
+
 1.11.1-alpha
 - Исправление getTree.
 - Правка верстки.

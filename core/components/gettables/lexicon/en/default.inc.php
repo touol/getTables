@@ -4,6 +4,7 @@ include_once 'setting.inc.php';
 $_lang['gettables'] = 'getTables';
 
 $_lang['gettables_create'] = 'Greate';
+$_lang['gettables_insert'] = 'Insert row';
 $_lang['gettables_edit'] = 'Edit';
 $_lang['gettables_delete'] = 'Delete';
 $_lang['gettables_enable'] = 'Enable';
@@ -13,6 +14,8 @@ $_lang['gettables_close'] = 'Close';
 $_lang['gettables_copy'] = 'Copy';
 $_lang['gettables_export_to_excel'] = 'Export to excel';
 $_lang['gettables_saved_successfully'] = 'Saved successfully'; //Saved successfully
+$_lang['gettables_insert_successfully'] = 'Inserted successfully'; //Inserted successfully
+$_lang['gettables_insert_error'] = 'Inserted error'; //Inserted error
 $_lang['gettables_removed_successfully'] = 'Removed successfully';
 $_lang['gettables_removed_error'] = "Deletion prohibited or an error occurred \r\n";//Deletion prohibited or an error occurred
 $_lang['gettables_row_not_found'] = 'The table row was not found!'; //The table row was not found!

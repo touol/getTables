@@ -40,6 +40,15 @@
                 <span class="error_{$edit.field}"></span>
             </div>
         </div>
+    {case 'number'}
+        <div class="form-group">
+            <label class="control-label" for="{$edit.field}">{$edit.label}</label>
+            <div class="controls">
+                <input type="number" step="1"  id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control"
+                {if $edit.readonly}readonly{/if}/>
+                <span class="error_{$edit.field}"></span>
+            </div>
+        </div>
     {case 'textarea'}
         <div class="form-group">
             <label class="control-label" for="{$edit.field}">{$edit.label}</label>

@@ -94,7 +94,7 @@ class getTable
         }  
 
         switch($action){
-            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy': case 'sort':
+            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy': case 'sort':case 'insert':
                 require_once('gettableprocessor.class.php');
                 $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
                 return $getTableProcessor->run($action, $table, $data);
@@ -1090,6 +1090,17 @@ class getTable
                     'EditFormtpl'=>'getTableEditFormTpl',
                     'title'=>'Создать',
                 ],
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
+                //'processors'=>['modResource'=>'resource/create'],
+            ],
+            'insert' =>[
+                'action'=>'getTable/insert',
+                'title'=>$this->modx->lexicon('gettables_insert'),
+                'cls' => 'btn',
+                'icon' => "$icon_prefix-plus",
+                'topBar' => [],
                 'tag' =>'button',
                 'attr' => '',
                 'style' => '',
