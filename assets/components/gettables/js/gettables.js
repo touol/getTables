@@ -901,6 +901,7 @@
                     //console.info('button.get-table-row');
                     field = $(this).data('field');
                     value = $(this).val();
+                    fname = $(this).attr('name');
                     if (typeof (tr_data[field]) != "undefined") {
                         $row.data(field, value);
                     }
@@ -911,6 +912,7 @@
                         table_data: table_data,
                         td: {
                             field: field,
+                            name: fname,
                             value: value
                         },
                         tr_data: tr_data
@@ -1580,7 +1582,7 @@
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $autocomplect.find('.get-autocomplect-id').val($(this).data('id'));
                     $autocomplect.find('.get-autocomplect-hidden-id').val($(this).data('id')).trigger('change');
-                    $autocomplect.find('.get-autocomplect-content').val($(this).text());
+                    $autocomplect.find('.get-autocomplect-content').val($(this).text()).trigger('change');
                     $autocomplect.find('.get-autocomplect-menu').hide();
                 });
             getTables.$doc
@@ -1680,7 +1682,7 @@
                 });
             getTables.$doc
                 .on('change', '.get-autocomplect-content', function (e) {
-                    e.preventDefault();
+                    //e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
                     if($(this).val() == ""){
                         $autocomplect.find('.get-autocomplect-id').val(0);

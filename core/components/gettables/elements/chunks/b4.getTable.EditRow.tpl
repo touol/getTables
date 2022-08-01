@@ -98,8 +98,11 @@
                         </span>
                     </span>
                     {set $edit.title = $edit.content}
-                    <input type="text" class="form-control get-autocomplect-content" value="{$edit.content}" placeholder="{$edit.placeholder}"
-                    {if $edit.readonly}readonly{/if}
+                    <input type="text" 
+                        class="form-control get-autocomplect-content {if $edit.content_name}get-table-autosave{/if}" 
+                        {if $edit.content_name}name="{$edit.content_name}" data-field="{$edit.field}"{/if}
+                        value="{$edit.content}" placeholder="{$edit.placeholder}"
+                        {if $edit.readonly}readonly{/if}
                     />
                     {if !$edit.readonly}
                         <div class="input-group-append">

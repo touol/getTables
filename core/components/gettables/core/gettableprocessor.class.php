@@ -625,9 +625,19 @@ class getTableProcessor
         }
         $set_data['id'] = (int)$data['tr_data']['id'];
         $set_data[$data['td']['field']] = $data['td']['value'];
+        $set_data[$data['td']['field']] = $data['td']['value'];
 
-        foreach($edit_tables as $class_edits){
+        foreach($edit_tables as &$class_edits){
             foreach($class_edits as $edit){
+                if($edit['field'] == $data['td']['field'] and $edit['type'] == 'select'){
+                    if($data['td']['field'] != $data['td']['name']){
+                        $set_data[$data['td']['name']] = $data['td']['value'];
+                        unset($set_data[$data['td']['field']]);
+                        // $edit2 = $edit;
+                        // $edit2['field'] = $data['td']['name'];
+                        // $class_edits[] = $edit2;
+                    }
+                }
                 if($edit['force']){
                     switch($edit['type']){
                         case 'date':
@@ -800,6 +810,15 @@ class getTableProcessor
         if(!empty($validates_messages)) return $this->error(implode("<br>",$validates_messages),
             ['validates_error_fields'=>$validates_error_fields]);
 
+        foreach($edit_tables as &$class_edits){
+            foreach($class_edits as $edit){
+                if(isset($edit['content_name'])){
+                    $edit2 = $edit;
+                    $edit2['field'] = $edit['content_name'];
+                    $class_edits[] = $edit2;
+                }
+            }
+        }
         $class = $table['class'];
         if($edit_tables[$class]){
             $set_data = [];

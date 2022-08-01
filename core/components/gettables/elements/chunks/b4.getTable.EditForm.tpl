@@ -120,9 +120,11 @@
                             <button class="arr-btn arr-btn__bottom"></button>
                         </span>
                     </span>
-                    <input type="text" class="form-control get-autocomplect-content" value="{$edit.content}" 
-                    placeholder="{$edit.placeholder}" 
-                    {if $edit.readonly}readonly{/if}/>
+                    <input type="text" class="form-control get-autocomplect-content" value="{$edit.content}"
+                        {if $edit.content_name}name="{$edit.content_name}" data-field="{$edit.field}"{/if}  
+                        placeholder="{$edit.placeholder}" 
+                        {if $edit.readonly}readonly{/if}
+                    />
                     {if !$edit.readonly}
                         <div class="input-group-append">
                         <button class="btn get-autocomplect-all">

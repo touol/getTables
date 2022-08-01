@@ -1,6 +1,7 @@
 Changelog for getTables.
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
+- Select autocomplect - инструкция content_name.
 
 1.11.2-alpha
 - Добавлен тип поля number.
