@@ -86,9 +86,19 @@ class getTables
                 $config = array_merge($config_set, $config);
             }
         }
+        
+        if (isset($this->modx->event->returnedValues)) {
+            $this->modx->event->returnedValues = null;
+        }
+        $getTablesLoadGTSConfig = $this->modx->invokeEvent('getTablesLoadGTSConfig', [
+            'config'=>$this->config,
+        ]);
+        if (isset($this->modx->event->returnedValues) && is_array($this->modx->event->returnedValues)) {
+            if(isset($this->modx->event->returnedValues['config']))
+                $this->config = $this->modx->event->returnedValues['config'];
+        }
+        //$this->addTime("getTables ".print_r($this->config,1));
 
-        
-        
         if ($this->pdoTools = $this->modx->getService('pdoFetch')) {
             if(isset($this->config['pdoTools'])){
                 $this->pdoTools->setConfig($this->config['pdoTools']);
