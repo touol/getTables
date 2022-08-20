@@ -119,4 +119,12 @@ return [
         'file' => 'getTree.Panel',
         'description' => '',
     ],
+    'ACTree.LI.tpl' => [
+        'file' => 'ACTree.LI',
+        'description' => '',
+    ],
+    'ACTree.UL.tpl' => [
+        'file' => 'ACTree.UL',
+        'description' => '',
+    ],
 ];

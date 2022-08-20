@@ -291,6 +291,9 @@ class getModal
         }
         return $edits;
     }
+    public function walkFuncInsertMenuId(&$item, $key, $id){
+        $item = str_replace("insert_menu_id",$id,$item);
+    }
     public function generateEditsData($edits,$tr_data,$table)
     {
         $pdoConfig = $table['pdoTools'];
@@ -304,6 +307,10 @@ class getModal
                     $pdoConfig['where'][$edit['where_field']] = $v;
             }
         }
+        if($this->getTables->REQUEST['pageID']){
+            $this->getTables->addTime("generateEditsData generateData id={$this->getTables->REQUEST['pageID']}");
+            array_walk_recursive($pdoConfig,array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
+        }
 
         $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
 
@@ -311,6 +318,8 @@ class getModal
         
         
         //$this->getTables->addDebug($rows,'$rows ');
+        //$this->getTables->addTime('generateEditsData $rows '.print_r($this->pdoTools->config,1));
+        //$this->getTables->addTime('generateEditsData $rows '.print_r($rows,1));
         if(is_array($rows) and count($rows) == 1){
             foreach($rows as $row){
                 foreach($edits as &$edit){

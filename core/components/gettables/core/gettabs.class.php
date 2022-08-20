@@ -26,23 +26,24 @@ class getTabs
         
     }
     
-    public function getCSS_JS()
-    {
+    // public function getCSS_JS()
+    // {
         
-        return [
-            'js'=>[
-                'frontend_gettabs_js' => '',//$this->modx->getOption('gettables_frontend_gettabs_js',null,'[[+jsUrl]]gettables.gettabs.js'),
-            ],
-            'css'=>[
-                'frontend_gettabs_css' => '',//$this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.gettabs.css'),
-            ],
-            'load'=>[
-            ],
-        ];
-    }
+    //     return [
+    //         'js'=>[
+    //             'frontend_gettabs_js' => '',//$this->modx->getOption('gettables_frontend_gettabs_js',null,'[[+jsUrl]]gettables.gettabs.js'),
+    //         ],
+    //         'css'=>[
+    //             'frontend_gettabs_css' => '',//$this->modx->getOption('gettables_frontend_message_css',null,'[[+cssUrl]]gettables.gettabs.css'),
+    //         ],
+    //         'load'=>[
+    //         ],
+    //     ];
+    // }
 
     public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
+        $class = get_class($this);
         $this->getTables->REQUEST = $_REQUEST;
         $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
         

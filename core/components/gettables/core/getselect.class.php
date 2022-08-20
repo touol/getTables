@@ -29,7 +29,7 @@ class getSelect
     public function handleRequest($action, $data = array(),$skype_check_ajax = false)
     {
         $class = get_class($this);
-        if($action != 'autocomplect' and $this->config['isAjax'])
+        if($action != 'expand' and $action != 'autocomplect' and $this->config['isAjax'])
             return $this->error("Доступ запрешен $class $action");
         
         switch($action){
@@ -40,6 +40,10 @@ class getSelect
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->autocomplect($data);
                 break;
+            case 'expand':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->expand($data);
+                break;
             /*case 'fetch':
                 return $this->fetch($data);
                 break;
@@ -49,6 +53,75 @@ class getSelect
             default:
                 return $this->error("Метод $action в классе $class не найден!");
         }
+    }
+    public function expand($data)
+    {
+        $hash = $data['hash'];
+        $select_name = $data['select_name'];
+        if(!$select = $this->getTables->getClassCache('getSelect',$select_name)){
+            return $this->error("select $select_name не найден!");
+        }
+        $select['pdoTools']['limit'] = 0;
+        // if(empty($select['where'])){
+        //     $select['where'] = [];
+        // }
+        if(empty($select['parentIdField'])) $select['parentIdField'] = 'parent';
+        if(empty($select['idField'])) $select['idField'] = 'id';
+        if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
+
+        $pdoTools = $select['pdoTools'];
+        $pdoTools['parents'] = $data['id']; //depth
+        $pdoTools['depth'] = 0;
+        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+        $rows1 = $this->pdoTools->run();
+        
+        if(is_array($select['where_active'])){
+            $pdoTools1 = $pdoTools;
+            $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_active']);
+            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+            $rows_active = $this->pdoTools->run();
+            if(is_array($rows_active) and count($rows_active)>0){
+                foreach($rows_active as $row_active){
+                    foreach($rows1 as &$row1){
+                        if($row_active['id'] = $row1['id']) $row1['active'] = 1;
+                    }
+                }
+            }
+        }
+        if(is_array($select['where_parent'])){
+            $pdoTools1 = $pdoTools;
+            $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_parent']);
+            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+            $rows_parent = $this->pdoTools->run();
+            if(is_array($rows_parent) and count($rows_parent)>0){
+                foreach($rows_parent as $row_parent){
+                    foreach($rows1 as &$row1){
+                        if($row_parent['id'] = $row1['id']) $row1['tree_parent'] = 1;
+                    }
+                }
+            }
+        }
+
+        $pdoTools = $select['pdoTools'];
+        $pdoTools['resources'] = $data['id']; //depth
+        $pdoTools['depth'] = 0;
+        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+        $roots = $this->pdoTools->run();
+
+        foreach($roots as &$root){
+            $root['expanded'] = 1;
+        }
+        $rows = array_merge($rows1,$roots);
+        $this->getTables->addTime('autocomplect_tree '.print_r($rows,1));
+        if(count($rows)>1){
+            $tree = $this->pdoTools->buildTree($rows,$select['idField'],$select['parentIdField'],explode(",",$data['id']));
+        }else{
+            $tree = $rows;
+        }
+        $this->getTables->addTime('autocomplect_tree tree '.print_r($tree,1));
+        $menus = $this->show($tree);
+
+        return $this->success('',array('html'=>$menus));
     }
     public function autocomplect($data)
     {
@@ -77,6 +150,9 @@ class getSelect
             }
                 
         }else{
+            if($select['treeOn']){
+                return $this->autocomplect_tree($data,$select);
+            }
             $query = $data['query'];
             if($query){
                 foreach($select['where'] as $field=>$value){
@@ -109,6 +185,189 @@ class getSelect
             $output[] = '<li><a href="#" data-id="'.$row['id'].'">'.$content.'</a></li>';
         }
         return $this->success('',array('html'=>implode("\r\n",$output)));
+    }
+    public function autocomplect_tree($data,$select)
+    {
+        //$this->getTables->addTime('autocomplect_tree '.print_r($select,1));
+        $query = $data['query']; $where = [];
+        if(empty($select['parentIdField'])) $select['parentIdField'] = 'parent';
+        if(empty($select['idField'])) $select['idField'] = 'id';
+        if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
+
+        if(empty($query)){
+            $pdoTools = $select['pdoTools'];
+            $pdoTools['parents'] = $select['rootIds']; //depth
+            $pdoTools['depth'] = 0;
+            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $rows1 = $this->pdoTools->run();
+            
+            if(is_array($select['where_active'])){
+                $pdoTools1 = $pdoTools;
+                $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_active']);
+                $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+                $rows_active = $this->pdoTools->run();
+                if(is_array($rows_active) and count($rows_active)>0){
+                    foreach($rows_active as $row_active){
+                        foreach($rows1 as &$row1){
+                            if($row_active['id'] = $row1['id']) $row1['active'] = 1;
+                        }
+                    }
+                }
+            }
+            if(is_array($select['where_parent'])){
+                $pdoTools1 = $pdoTools;
+                $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_parent']);
+                $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+                $rows_parent = $this->pdoTools->run();
+                if(is_array($rows_parent) and count($rows_parent)>0){
+                    foreach($rows_parent as $row_parent){
+                        foreach($rows1 as &$row1){
+                            if($row_parent['id'] = $row1['id']) $row1['tree_parent'] = 1;
+                        }
+                    }
+                }
+            }
+
+            $pdoTools = $select['pdoTools'];
+            $pdoTools['resources'] = $select['rootIds']; //depth
+            $pdoTools['depth'] = 0;
+            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $roots = $this->pdoTools->run();
+
+            foreach($roots as &$root){
+                $root['expanded'] = 1;
+            }
+            $rows = array_merge($rows1,$roots);
+            //$this->getTables->addTime('autocomplect_tree '.print_r($rows,1));
+            $tree = $this->pdoTools->buildTree($rows,$select['idField'],$select['parentIdField'],explode(",",$select['rootIds']));
+            $this->getTables->addTime('autocomplect_tree tree'.print_r($tree,1));
+            $menus = $this->show($tree);
+
+            return $this->success('',array('html'=>$menus));
+        }else{
+            foreach($select['where'] as $field=>$value){
+                $value = str_replace('query',$query,$value);
+                $where[$field] = $value;
+            }
+            $pdoTools = $select['pdoTools'];
+            $pdoTools['parents'] = $select['rootIds']; //depth
+            $pdoTools['where'] = array_merge($pdoTools['where'],$where);
+            //$pdoTools['depth'] = 0;
+            if(is_array($select['where_active'])){
+                $pdoTools['where'] = array_merge($pdoTools['where'],$select['where_active']);
+            }
+            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $rows_search = $this->pdoTools->run();
+            if(is_array($rows_search) and count($rows_search)>0){
+                foreach($rows_search as &$row_active){
+                    $row_active['active'] = 1;
+                }
+            }
+            $rows = [];
+            //$this->getTables->addTime('autocomplect_tree rows_search'.print_r($rows_search,1));
+            if(is_array($select['where_parent'])){
+                $pdoTools1 = $select['pdoTools'];
+                $pdoTools1['parents'] = $select['rootIds'];
+                $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_parent']);
+                $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+                $rows_parent = $this->pdoTools->run();
+                if(is_array($rows_parent) and count($rows_parent)>0){
+                    //$this->getTables->addTime('autocomplect_tree rows_parent'.print_r($rows_parent,1));
+                    foreach($rows_parent as &$row){
+                        $row['expanded'] = 1;
+                    }
+                    $rows0 = array_merge($rows_parent,$rows_search);
+                }
+            }
+            $pdoTools = $select['pdoTools'];
+            $pdoTools['resources'] = $select['rootIds']; //depth
+            $pdoTools['depth'] = 0;
+            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $roots = $this->pdoTools->run();
+
+            foreach($roots as &$root){
+                $root['expanded'] = 1;
+            }
+            $rows0 = array_merge($rows0,$roots);
+            //$this->getTables->addTime('autocomplect_tree rows0'.print_r($rows0,1));
+            $rows2 = [];
+            foreach($rows0 as $row1){
+                //$this->getTables->addTime('autocomplect_tree row1 '.print_r($row1,1));
+                $rows2[$row1[$select['idField']]] = $row1;
+            }
+            //$this->getTables->addTime('autocomplect_tree rows2 '.print_r($rows2,1));
+            $Map = $this->buildMap($rows2,$select['parentIdField'],$select['idField']);
+            $parents = [];
+            foreach($rows_search as $row_search){
+                $parents = array_merge($this->getParentIds($Map,$row_search[$select['idField']]),$parents);
+            }
+            //$this->getTables->addTime('autocomplect_tree parents'.print_r($parents,1));
+            //$this->getTables->addTime('autocomplect_tree rows2 '.print_r($rows2,1));
+            foreach($parents as $p){
+                if($p) $rows[] = $rows2[$p];
+            }
+            //$this->getTables->addTime('autocomplect_tree rows '.print_r($rows,1));
+            $rows = array_merge($rows,$rows_search);
+            //$this->getTables->addTime('autocomplect_tree rows '.print_r($rows,1));
+            if(count($rows)>1){
+                $tree = $this->pdoTools->buildTree($rows,$select['idField'],$select['parentIdField'],explode(",",$select['rootIds']));
+            }else{
+                $tree = $rows;
+            }
+            //$this->getTables->addTime('autocomplect_tree tree'.print_r($tree,1));
+            $menus = $this->show($tree);
+
+            return $this->success('',array('html'=>$menus));
+        }
+    }
+    public function getParentIds($Map,$id= null) {
+        $parentId= 0;
+        $parents= array ();
+        if ($id) {
+            foreach ($Map as $parentId => $mapNode) {
+                if (array_search($id, $mapNode) !== false) {
+                    $parents[]= $parentId;
+                    break;
+                }
+            }
+            if ($parentId && !empty($parents)) {
+                $parents= array_merge($this->getParentIds($Map,$parentId),$parents);
+            }
+        }
+        return $parents;
+    }
+    public function buildMap(array $flatList,$parentId,$id)
+    {
+        $Map = [];
+        foreach ($flatList as $node){
+            //$grouped[$node['parentID']][] = $node;
+            if (!isset($Map[(integer) $node[$parentId]])) {
+                $Map[(integer) $node[$parentId]] = array();
+            }
+            $Map[(integer) $node[$parentId]][] = (integer) $node[$id];
+        }
+        return $Map;
+    }
+    
+    public function tplMenu($category = []){
+        if(isset($category['children'])){
+            // $category['wraper'] = show($category['children'],$pdo);
+            $category['wraper'] = $this->pdoTools->getChunk($this->config['ACTreeULTpl'], [
+                'wrap' => $this->show($category['children']),
+                'expanded'=>$category['expanded'],
+            ]);
+        }
+        $menu = $this->pdoTools->getChunk($this->config['ACTreeLITpl'], $category);
+        return $menu;
+    }
+
+    public function show($data){
+        $string = '';
+        foreach($data as $item){
+            $string .= $this->tplMenu($item);
+            // $string .= $pdo->getChunk('getTreeOuter', ["wrap" => tplMenu($item, $pdo), "isFolder" => $isFolder]);
+        }
+        return $string;
     }
     public function compile($selects)
     {

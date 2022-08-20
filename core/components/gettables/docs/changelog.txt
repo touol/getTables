@@ -2,6 +2,11 @@ Changelog for getTables.
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
 - Select autocomplect - инструкция content_name.
+- Добавлена инструкция edit['refresh_table'].
+- Доработки getTree.
+- Select autocomplect - инструкция treeOn включает для автокомплект дерево в dropdown nemu. Настройки rootIds, where_parent, where_active[, parentIdField, idField].
+- Инструкции prepareRow, prepareRows для table.
+- Исправлены предупреждения php.
 
 1.11.2-alpha
 - Добавлен тип поля number.

@@ -701,9 +701,18 @@ li {
   -moz-user-select: none; 
   -ms-user-select: none;
   user-select: none;
+  width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+	background-image: url(../img/expand.png);
+	
 }
-
-.caret1::before {
+.caret-down1{
+	background-image: url(../img/collapse.png);
+}
+/*.caret1::before {
   content: "\23F5";
   color: black;
   display: inline-block;
@@ -715,7 +724,7 @@ li {
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
   }
-
+*/
 .collapsed {
   display: none;
 }
@@ -741,4 +750,8 @@ li {
 }
 .get-tree-actions button{
     width:100%;
+}
+
+.get-table-tr .form-control[readonly] {
+    background-color: rgb(194, 194, 194);
 }

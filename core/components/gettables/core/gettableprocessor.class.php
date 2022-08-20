@@ -412,7 +412,7 @@ class getTableProcessor
                 $newRank = $target->get($field);
                 $source->set($field,$newRank);
                 $source->save();
-                return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
+                return $this->success($this->modx->lexicon('gettables_saved_successfully'));
             }
         }
 
@@ -444,7 +444,7 @@ class getTableProcessor
                     foreach($this->current_action['child']['many'] as $child_class=>$child_alias){
                         $resp1 = $this->copy_many($table['class'], $child_class, $child_alias, $old_row, $row);
                         $resp1['subtables'] = 1;
-                        $resp1['subtable_name'] = $field;
+                        //$resp1['subtable_name'] = $field;
                         $saved[] = $resp1;
                     }
                 }
@@ -627,8 +627,12 @@ class getTableProcessor
         $set_data[$data['td']['field']] = $data['td']['value'];
         $set_data[$data['td']['field']] = $data['td']['value'];
 
+        $refresh_table = false;
         foreach($edit_tables as &$class_edits){
             foreach($class_edits as $edit){
+                if($edit['field'] == $data['td']['field']){
+                    if($edit['refresh_table']) $refresh_table = true;
+                }
                 if($edit['field'] == $data['td']['field'] and $edit['type'] == 'select'){
                     if($data['td']['field'] != $data['td']['name']){
                         $set_data[$data['td']['name']] = $data['td']['value'];
@@ -657,7 +661,9 @@ class getTableProcessor
             }
         }
         $set_data['table_name'] = $data['table_name'];
-        return $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
+        $resp = $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
+        if($refresh_table) $resp['data']['refresh_table'] = 1;
+        return $resp;
     }
 
     public function sets($table, $edit_tables, $data = array())

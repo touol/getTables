@@ -652,20 +652,41 @@ class getTable
         
         return $table;
     }
-    public function prepareRow($action,&$rows,$table){
-        $action = explode("/",$action);
+    public function prepareRows($action,&$rows,$table){
+        $action1 = explode("/",$action);
+        $params = [
+            'rows'=>&$rows,
+            'getTables'=>$this->getTables,
+            'table'=>$table,
+            'getTable'=>$this,
+        ];
         if($action[0] == "snippet"){
-            if(!empty($action[1]) and $element = $this->modx->getObject('modSnippet', array('name' => $action[1]))){
-                $params = [
-                    'rows'=>$rows,
-                    'getTables'=>$this->getTables,
-                    'table'=>$table,
-                    'getTable'=>$this,
-                ];
+            if(!empty($action1[1]) and $element = $this->modx->getObject('modSnippet', array('name' => $action1[1]))){
                 if ($tmp = $element->process($params)) {
                     $rows = $tmp;
                 }
             }
+        }else{
+            $this->getTables->handleRequestInt($action, $params);
+        }
+    }
+    public function prepareRow($action,&$row,$table,&$tr){
+        $action1 = explode("/",$action);
+        $params = [
+            'row'=>&$row,
+            'tr'=>&$tr,
+            'getTables'=>$this->getTables,
+            'table'=>$table,
+            'getTable'=>$this,
+        ];
+        if($action[0] == "snippet"){
+            if(!empty($action1[1]) and $element = $this->modx->getObject('modSnippet', array('name' => $action1[1]))){
+                if ($tmp = $element->process($params)) {
+                    $row = $tmp;
+                }
+            }
+        }else{
+            $this->getTables->handleRequestInt($action, $params);
         }
     }
     public function walkFuncInsertMenuId(&$item, $key, $id){
@@ -762,13 +783,16 @@ class getTable
         if($table['export'] == 1){
             $this->getTables->addTime("getTable export ".$this->varexport($rows,1));   
         }
-        if(!empty($table['prepareRow'])){
-            $this->prepareRow($table['prepareRow'],$rows,$table);
+        if(!empty($table['prepareRows'])){
+            $this->prepareRows($table['prepareRows'],$rows,$table);
         }
         foreach($rows as $k => $row){
             //echo "getTable generateData row <pre>".print_r($row,1)."</pre>";
             
             $r = $tr;
+            if(!empty($table['prepareRow'])){
+                $this->prepareRow($table['prepareRow'],$row,$table,$r);
+            }
             $data = [];
             //echo "getTable generateData r <pre>".print_r($r,1)."</pre>";
             foreach($r['tds'] as $ktd=>&$td){
@@ -1875,11 +1899,12 @@ class getTable
         );
         
         foreach($filters as &$f){
-            if(isset($f['edit']['select']) and $this->config['selects'][$f['edit']['select']]){
-                $f['edit']['type'] = 'select';
-                $f['edit']['select'] = $this->config['selects'][$f['edit']['select']];
+            // $this->modx->log(1,"getTable addAndSortFilter ".print_r($f,1));
+            // if(isset($f['edit']['select']) and isset($this->config['selects'][$f['edit']['select']])){
+            //     $f['edit']['type'] = 'select';
+            //     $f['edit']['select'] = $this->config['selects'][$f['edit']['select']];
                 
-            }
+            // }
 
             if(empty($f['edit']['type'])) $f['edit']['type'] = 'text';
         }

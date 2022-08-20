@@ -491,7 +491,7 @@ class getTables
         foreach($CSS_JS['js'] as $js){
             if (!empty($js) && preg_match('/\.js/i', $js)) {
                 if (preg_match('/\.js$/i', $js)) {
-                    $js .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
+                    $js .= '?v=' . substr(md5($this->version.$this->config['frontend_framework_style']), 0, 10);
                 }
                 $this->modx->regClientScript(str_replace($CSS_JS['placeholders']['pl'], $CSS_JS['placeholders']['vl'], $js));
             }
@@ -500,7 +500,7 @@ class getTables
         foreach($CSS_JS['css'] as $css){
             if (!empty($css) && preg_match('/\.css/i', $css)) {
                 if (preg_match('/\.css$/i', $css)) {
-                    $css .= '?v=' . substr(md5($this->version.$config['frontend_framework_style']), 0, 10);
+                    $css .= '?v=' . substr(md5($this->version.$this->config['frontend_framework_style']), 0, 10);
                 }
                 $this->modx->regClientCSS(str_replace($CSS_JS['placeholders']['pl'], $CSS_JS['placeholders']['vl'], $css));
             }
@@ -523,14 +523,14 @@ class getTables
         if($this->modx->context->key == 'mgr'){
             $CSS_JS = $CSS_JS['mgr'];
         }
-        if(isset($config['tabs'])){
-            $getTabs = $this->getService('getTabs');
-            $tabCss = $getTabs->getCSS_JS();
-            foreach($CSS_JS as $k=>$v){
-                $CSS_JS[$k] = array_merge($CSS_JS[$k], $tabCss[$k]);
-            }
+        // if(isset($config['tabs'])){
+        //     $getTabs = $this->getService('getTabs');
+        //     $tabCss = $getTabs->getCSS_JS();
+        //     foreach($CSS_JS as $k=>$v){
+        //         $CSS_JS[$k] = array_merge($CSS_JS[$k], $tabCss[$k]);
+        //     }
             
-        }
+        // }
         foreach($CSS_JS as $k=>$v){
             foreach($v as $k1=>$v1){
                 if(isset($config[$k][$k1])) $CSS_JS[$k][$k1] = $config[$k][$k1];
@@ -626,7 +626,7 @@ class getTables
      *
      * @return array|bool|string
      */
-    public function handleRequestInt($action, $data = array())
+    public function handleRequestInt($action, &$data = array())
     {
         //$this->addTime("getTables handleRequest $action");
         $this->addTime("handleRequestInt $action");
@@ -767,7 +767,11 @@ class getTables
                 require_once($this->models[$class]['class']);
                 $this->models[$class]['service'] = new $class($this, $this->config);
             }else{
-                if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path'],[])) {
+                if(file_exists($this->models[$class]['path'].strtolower($class).".class.php")){
+                    if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path'],[])) {
+                        return $this->error("Компонент $class не найден!");
+                    }
+                }else{
                     if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path']."$class/",[])) {
                         return $this->error("Компонент $class не найден!");
                     }

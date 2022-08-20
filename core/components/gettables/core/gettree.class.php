@@ -325,7 +325,7 @@ class getTree
         if(!is_array($rows1)) return $this->error("Нет данных rows!");
         if(!is_array($roots)) return $this->error("Нет данных roots!");
         $rows = array_merge($rows1,$roots);
-        //$this->getTables->addTime("getTree fetch".print_r($data,1));
+        $this->getTables->addTime("getTree generateTree".print_r($rows,1));
         if(!empty($tree['compile_actions'])){
             foreach($rows as &$row){
                 $this->generateActions($row,$tree['compile_actions']);

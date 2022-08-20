@@ -41,6 +41,7 @@
         },
         Autocomplect: {
             load: getTablesConfig.callbacksObjectTemplate(),
+            expand: getTablesConfig.callbacksObjectTemplate(),
         },
         Sortable: {
             sort: getTablesConfig.callbacksObjectTemplate(),
@@ -1146,7 +1147,7 @@
             callbacks.autosave.response.success = function (response) {
                 
                 //console.log('callbacks.update.response.success',getTables.sendData);
-                //getTables.Table.refresh();
+                if(response.data.refresh_table == 1) getTables.Table.refresh();
 
             };
 
@@ -1501,20 +1502,62 @@
 
 //autocomplect
 (function (window, document, $, getTables, getTablesConfig) {
+
     getTables.Autocomplect = {
         callbacks: {
             load: getTablesConfig.callbacksObjectTemplate(),
+            expand: getTablesConfig.callbacksObjectTemplate(),
         },
         
         initialize: function () {
+            this.timeoutId = 0;
             getTables.$doc
                 .on('click', 'body', function (e) {
                     $(this).find('.get-autocomplect-menu').hide();
+                });
+            getTables.$doc
+                .on('click', '.get-autocomplect-menu .caret1', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $li = $(this).closest('.ac-tree-li');
+                    $autocomplect = $(this).closest('.get-autocomplect');
+                    if(!$(this).hasClass('caret-down1')){
+                        
+                        $table = $(this).closest('.get-table,.gts-getform');
+                        hash = $table.data('hash');
+                        getTables.sendData.$GtsApp = $li;
+                        getTables.sendData.$autocomplect = $autocomplect;
+
+                        getTables.sendData.data = {
+                            gts_action: 'getSelect/expand',
+                            hash: hash,
+                            select_name: $autocomplect.data('name'),
+                            id: $li.data('id'),
+                        };
+
+                        var callbacks = getTables.Autocomplect.callbacks;
+            
+                        callbacks.expand.response.success = function (response) {
+                            $li = getTables.sendData.$GtsApp;
+                            $(response.data.html).replaceAll($li);
+                            $li.find('.collapsed').removeClass('collapsed').addClass('expanded');
+                            $li.find('.caret1').addClass('caret-down1');
+                            getTables.sendData.$autocomplect.find('.get-autocomplect-menu').show();
+                        };
+            
+                        return getTables.send(getTables.sendData.data, getTables.Autocomplect.callbacks.expand, getTables.Callbacks.Autocomplect.expand);
+                    }else{
+                        $(this).closest('li').find('.expanded').removeClass('expanded').addClass('collapsed');
+                        $(this).removeClass('caret-down1');
+                        $li.find('.ac-tree-ul').remove();
+                    }
+                    
                 });
             //get-autocomplect-all
             getTables.$doc
                 .on('click', '.get-autocomplect-all', function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $table = $(this).closest('.get-table,.gts-getform');
                     

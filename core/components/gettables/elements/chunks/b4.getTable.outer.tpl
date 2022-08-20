@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        {if count($topBar['topBar/topline/filters']['filters']) > 0}
+        {if $topBar['topBar/topline/filters']['filters'] and count($topBar['topBar/topline/filters']['filters']) > 0}
             <div class="row">
                 {foreach $topBar['topBar/topline/filters']['filters'] as $f}
                     <div class="col-md-{$f.cols} ">    
