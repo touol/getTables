@@ -163,7 +163,7 @@ class getTable
         $table['pdoTools2']['sortby'] = [
             $data['field']=>'DESC',
         ];
-        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
+        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
         $rows = $this->pdoTools->run();
         $checkboxs = [];
         switch($checkbox_edit['type']){
@@ -750,16 +750,14 @@ class getTable
             }
             
         }
+        $pdoTools2 = array_merge($this->config['pdoClear'],$table['pdoTools2']);
+        $this->pdoTools->setConfig($pdoTools2);
 
-        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
-        //file_put_contents(__DIR__ ."/". "222_initialize.txt",json_encode($this->pdoTools->config,JSON_PRETTY_PRINT));
-        //$this->getTables->addTime("getTable generateData this->pdoTools->config ".print_r($this->config['pdoTools'],1));
-        //$this->getTables->addDebug($this->pdoTools->config,'generateData this->pdoTools->config');
         $rows = $this->pdoTools->run();
         
         if($paginator){
-            $limit = $this->pdoTools->config['limit'];
-            $total = $this->modx->getPlaceholder($this->pdoTools->config['totalVar']);
+            $limit = $pdoTools2['limit'];
+            $total = $this->modx->getPlaceholder('total');
             if($limit){
                 $table['page']['max'] = ceil($total/$limit);
                 $table['page']['limit'] = $limit;
@@ -807,7 +805,7 @@ class getTable
                     $td['edit']['pdoTools']['where'] = $where;
                     $td['edit']['pdoTools']['limit'] = 0;
                     
-                    $this->pdoTools->config = array_merge($this->config['pdoClear'],$td['edit']['pdoTools']);
+                    $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$td['edit']['pdoTools']));
                     $td['value'] = $this->pdoTools->run();
                     $value = [];
                     foreach($td['value'] as $v){
@@ -883,7 +881,7 @@ class getTable
                         $table['pdoTools2']['where'] = $tree_where;
                         $table['pdoTools2']['select'] = $table['class'].".".'id';
 
-                        $this->pdoTools->config=array_merge($this->config['pdoClear'],$table['pdoTools2']);
+                        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
                         $treerows = $this->pdoTools->run();
                         $child_count = count($treerows);
                         if($child_count){

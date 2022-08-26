@@ -92,6 +92,7 @@ class getTables
         }
         $getTablesLoadGTSConfig = $this->modx->invokeEvent('getTablesLoadGTSConfig', [
             'config'=>$this->config,
+            'getTables'=>$this->getTables,
         ]);
         if (isset($this->modx->event->returnedValues) && is_array($this->modx->event->returnedValues)) {
             if(isset($this->modx->event->returnedValues['config']))
@@ -111,7 +112,7 @@ class getTables
                 $this->pdoTools->setConfig($pdoConfig);
                 
             }
-            $this->config['pdoClear'] = $this->pdoTools->config;
+            $this->config['pdoClear'] = $pdoConfig;
         }
         $this->addTime('__construct pdoTools');
         $this->getModels();
@@ -127,6 +128,22 @@ class getTables
             $this->addTime('toFenom '.$this->varexport($config,1));
         }
         $this->addTime('__construct');
+    }
+    
+    public function calc_excel_formula($formula){
+        
+        $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
+        require_once $PHPExcelPath . 'PHPExcel.php';
+        
+        $xls = new PHPExcel();
+        $xls->setActiveSheetIndex(0);
+        $sheet = $xls->getActiveSheet();
+        $sheet->setTitle('Лист1');
+
+        $sum = PHPExcel_Calculation::getInstance(
+            $sheet->getParent()
+        )->calculateFormula($formula, 'A1', $sheet->getCell('A1'));
+        return $sum;
     }
     /**
      * Add new record to time log
@@ -695,7 +712,7 @@ class getTables
         
         $this->config['isAjax'] = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
         if(($this->config['isAjax'] or $action == 'getTable/export_excel' or $_GET["load_model"] == 1) and $this->config['loadModels']){
-            $this->pdoTools->config['loadModels'] = $this->config['loadModels'];
+            $this->pdoTools->setConfig(['loadModels' => $this->config['loadModels']]);
             $this->pdoTools->loadModels();
             $this->getModels();
         }

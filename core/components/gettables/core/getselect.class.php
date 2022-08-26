@@ -72,13 +72,13 @@ class getSelect
         $pdoTools = $select['pdoTools'];
         $pdoTools['parents'] = $data['id']; //depth
         $pdoTools['depth'] = 0;
-        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
         $rows1 = $this->pdoTools->run();
         
         if(is_array($select['where_active'])){
             $pdoTools1 = $pdoTools;
             $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_active']);
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools1));
             $rows_active = $this->pdoTools->run();
             if(is_array($rows_active) and count($rows_active)>0){
                 foreach($rows_active as $row_active){
@@ -91,7 +91,7 @@ class getSelect
         if(is_array($select['where_parent'])){
             $pdoTools1 = $pdoTools;
             $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_parent']);
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools1));
             $rows_parent = $this->pdoTools->run();
             if(is_array($rows_parent) and count($rows_parent)>0){
                 foreach($rows_parent as $row_parent){
@@ -105,7 +105,7 @@ class getSelect
         $pdoTools = $select['pdoTools'];
         $pdoTools['resources'] = $data['id']; //depth
         $pdoTools['depth'] = 0;
-        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
         $roots = $this->pdoTools->run();
 
         foreach($roots as &$root){
@@ -140,7 +140,7 @@ class getSelect
             $select['pdoTools']['limit'] = 1;
             if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
             $select['pdoTools']['where'] = array_merge($select['pdoTools']['where'],$where);
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$select['pdoTools']));
             $rows = $this->pdoTools->run();
             if(isset($rows[0])){
                 $content = $this->pdoTools->getChunk('@INLINE '.$select['content'],$rows[0]);
@@ -164,8 +164,11 @@ class getSelect
             if(!empty($search)){
                 foreach($select['where'] as $field=>$value){
                     foreach($search as $s){
-                        if($s['field'] == $value){
+                        if($s['field'] == $value and $s['type'] == 'parent'){
                             $where[$field] = $s['value'];
+                        }
+                        if($s['type'] == 'query'){
+                            $where[$field] = str_replace('query',$query,$s['value']);
                         }
                     }
                 }
@@ -177,7 +180,7 @@ class getSelect
             }
         }
         
-        $this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$select['pdoTools']));
         $rows = $this->pdoTools->run();
         $output = [];
         foreach($rows as $row){
@@ -198,13 +201,13 @@ class getSelect
             $pdoTools = $select['pdoTools'];
             $pdoTools['parents'] = $select['rootIds']; //depth
             $pdoTools['depth'] = 0;
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
             $rows1 = $this->pdoTools->run();
             
             if(is_array($select['where_active'])){
                 $pdoTools1 = $pdoTools;
                 $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_active']);
-                $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+                $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools1));
                 $rows_active = $this->pdoTools->run();
                 if(is_array($rows_active) and count($rows_active)>0){
                     foreach($rows_active as $row_active){
@@ -217,7 +220,7 @@ class getSelect
             if(is_array($select['where_parent'])){
                 $pdoTools1 = $pdoTools;
                 $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_parent']);
-                $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+                $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools1));
                 $rows_parent = $this->pdoTools->run();
                 if(is_array($rows_parent) and count($rows_parent)>0){
                     foreach($rows_parent as $row_parent){
@@ -231,7 +234,7 @@ class getSelect
             $pdoTools = $select['pdoTools'];
             $pdoTools['resources'] = $select['rootIds']; //depth
             $pdoTools['depth'] = 0;
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
             $roots = $this->pdoTools->run();
 
             foreach($roots as &$root){
@@ -256,7 +259,7 @@ class getSelect
             if(is_array($select['where_active'])){
                 $pdoTools['where'] = array_merge($pdoTools['where'],$select['where_active']);
             }
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
             $rows_search = $this->pdoTools->run();
             if(is_array($rows_search) and count($rows_search)>0){
                 foreach($rows_search as &$row_active){
@@ -269,7 +272,7 @@ class getSelect
                 $pdoTools1 = $select['pdoTools'];
                 $pdoTools1['parents'] = $select['rootIds'];
                 $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_parent']);
-                $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools1);
+                $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools1));
                 $rows_parent = $this->pdoTools->run();
                 if(is_array($rows_parent) and count($rows_parent)>0){
                     //$this->getTables->addTime('autocomplect_tree rows_parent'.print_r($rows_parent,1));
@@ -282,7 +285,7 @@ class getSelect
             $pdoTools = $select['pdoTools'];
             $pdoTools['resources'] = $select['rootIds']; //depth
             $pdoTools['depth'] = 0;
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoTools);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
             $roots = $this->pdoTools->run();
 
             foreach($roots as &$root){
@@ -412,7 +415,7 @@ class getSelect
                 case 'select':
                     $select['pdoTools']['limit'] = 0;
                     
-                    $this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+                    $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$select['pdoTools']));
                     $rows = $this->pdoTools->run();
                     $data = [];
                     foreach($rows as $row){
@@ -444,7 +447,7 @@ class getSelect
                 case 'autocomplect':
                     /*$select['pdoTools']['limit'] = 0;
                     
-                    $this->pdoTools->config = array_merge($this->config['pdoClear'],$select['pdoTools']);
+                    $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$select['pdoTools']));
                     $rows = $this->pdoTools->run();
                     $data = [];
                     foreach($rows as $row){

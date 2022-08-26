@@ -39,6 +39,7 @@ class getTableProcessor
             'fields'=>$fields,
             'object_old'=>$object_old,
             'object_new'=>$object_new,
+            'getTables'=>$this->getTables,
         ));
         if (is_array($getTablesRunTriggers)) {
             $canSave = false;
@@ -51,133 +52,26 @@ class getTableProcessor
             $canSave = $getTablesRunTriggers;
         }
         if(!empty($canSave)) return $this->error($canSave);
-
+        
         $triggers = $this->config['triggers'];
+        //$this->getTables->addTime("run_triggers ".print_r($triggers,1));
         if(isset($triggers[$class]['function']) and isset($triggers[$class]['model'])){
             $response = $this->getTables->loadService($triggers[$class]['model']);
             if(is_array($response) and $response['success']){
                 $service = $this->getTables->models[$triggers[$class]['model']]['service'];
                 if(method_exists($service,$triggers[$class]['function'])){ 
+                    //$this->getTables->addTime("run_triggers function");
                     return  $service->{$triggers[$class]['function']}($class, $type, $method, $fields, $object_old, $object_new);
                 }
             }
         }
-        
-        if(!isset($triggers[$class][$type])) return $this->success('Не назначено');
-        $run_methods = false;
-        foreach($triggers[$class][$type] as $methods=>$v){
-            if(strpos($methods, $method) !== false){
-                $run_methods = $methods;
-            }
-        }
-        if(!$run_methods) return $this->success('Не назначено');
-        
-        foreach($triggers[$class][$type][$run_methods] as $name=>$trigger){
-            
-            $sens = false;
-            if($trigger['sensitive']){
-                foreach($trigger['sensitive'] as $field=>$value){
-                    if(isset($fields[$field])) $sens = true;
-                }
-            }else{
-                $sens = true;
-            }
-            if($sens){
-                $gets = [];
-                foreach($trigger['gets'] as $get_name=>$get){
-                    if(isset($get['switch'])){
-                        $get1 = false;
-                        foreach($get['switch'] as $case){
-                            $switch = true;
-                            foreach($case['fields'] as $cf=>$cv){
-                                if($object_old[$cf] != $cv) $switch = false;
-                            }
-                            if($switch) $get1 = $case['get'];
-                        }
-                        if($get1){
-                            $get = $get1;
-                        }else{
-                            continue;
-                        }
-                    }
-                    if($get['class']){
-                        //$this->getTables->addDebug($get['where'],"run_triggers get['where']");
-                        foreach($get['where'] as $wf=>&$wv){
-                            if($fields[$wv]){
-                                $wv = $fields[$wv];
-                            }else{
-                                $wv = $object_old[$wv];
-                            }
-                        }
-                        //$this->getTables->addDebug($fields,"run_triggers fields");
-                        //$this->getTables->addDebug($get['where'],"run_triggers get['where']");
-                        switch($get['query']){
-                            case 'object':
-                                if($$get_name = $this->modx->getObject($get['class'], $get['where'])){
-                                    $gets[$get_name] = $$get_name->toArray();
-                                }else{
-                                    $gets[$get_name] = false;
-                                }
-                                break;
-                            case 'count':
-                                if($get_count = $this->modx->getCount($get['class'], $get['where'])){
-                                    $gets[$get_name] = $$get_name;
-                                }
-                                break;
-                            case 'sum':
-                                $c = $this->modx->newQuery($get['class']);
-                                $c->select('sum('.$get['field'].') as cnt');
-                                $c->where($get['where']);
-                                if($object = $this->modx->getObject($get['class'], $c)){
-                                    $gets[$get_name] = $object->get('cnt');
-                                }
-                                break;
-                        }
-                    }
-                }
-                //gets получили теперь тест.
-                $gets['object_old'] = $object_old;
-                $gets['object_new'] = $object_new;
-                $gets['method'] = $method;
-                $gets['fields'] = $fields;
-                $gets['user_id'] = $this->modx->user->id;
-                if($trigger['test_data']){
-                    $test_data = $this->pdoTools->getChunk('@INLINE '.$trigger['test_data'],$gets);
-                    $test_data = trim($test_data);
-                    ////$this->getTables->addDebug($test_data,"$class $type $method run_triggers $test_data");
-                    ////$this->getTables->addDebug($fields,"run_triggers fields");
-                    
-                    //$class, $type, $method, $fields,
-                    if(strpos($test_data, 'return error') !== false){
-                        return $this->error(trim(str_replace('return error','',$test_data)));
-                    }
-                }
-                //sets
-                if($trigger['sets']){
-                    $sets = [];
-                    foreach($trigger['sets'] as $set_name=>$set){
-                        if(isset($set['switch'])){
-                            $switch = false;
-                            foreach($set['switch'] as $case){
-                                foreach($case['fields'] as $cf=>$cv){
-                                    if($object_old[$cf] == $cv) $switch = true;
-                                }
-                            }
-                            if($switch) $sets[$set_name] = $case['sets'];
-                        }else{
-                            $sets[$set_name] = $set;
-                        }
-                    }
-                    foreach($sets as $set_name=>$set){
-                        if($$set_name){
-                            foreach($set as $field=>$set_value){
-                                $set_value = $this->pdoTools->getChunk('@INLINE '.$set_value,$gets);
-                                $set_value = trim($set_value);
-                                $$set_name->{$field} = $set_value;
-                            }
-                            $$set_name->save();
-                        }
-                    }
+        if(isset($triggers[$class]['gtsfunction']) and isset($triggers[$class]['model'])){
+            $response = $this->getTables->loadService($triggers[$class]['model']);
+            if(is_array($response) and $response['success']){
+                $service = $this->getTables->models[$triggers[$class]['model']]['service'];
+                if(method_exists($service,$triggers[$class]['gtsfunction'])){ 
+                    //$this->getTables->addTime("run_triggers gtsfunction");
+                    return  $service->{$triggers[$class]['gtsfunction']}($this->getTables,$class, $type, $method, $fields, $object_old, $object_new);
                 }
             }
         }
@@ -199,7 +93,7 @@ class getTableProcessor
             return $this->error("Action $action not found! ",$table);
         }
         if($this->getTables->REQUEST['pageID']){
-            array_walk_recursive($table['pdoTools'],array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
+            array_walk_recursive($table,array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
         }
         $this->current_action = $table['actions'][$action];
         $this->action = $action;
@@ -523,7 +417,7 @@ class getTableProcessor
         }
         $pdoConfig['limit'] = 0;
 
-        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
+        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoConfig));
         $rows = $this->pdoTools->run();
         if(!is_array($rows) or count($rows) == 0){
             return $this->success($this->modx->lexicon('gettables_row_not_found'));
@@ -605,7 +499,7 @@ class getTableProcessor
             $pdoConfig['sortby'] = [$table['class'].'.id'=>'ASC'];
 
             //$this->getTables->addDebug($pdoConfig,'run $pdoConfig ');
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoConfig));
             $rows = $this->pdoTools->run();
             if(!is_array($rows) or count($rows) == 0){
                 return $this->error('gettables_row_not_found');
@@ -703,6 +597,7 @@ class getTableProcessor
         if($table['event']){
             $getTablesBeforeRemove = $this->modx->invokeEvent('getTablesBeforeRemove', array(
                 'data'=>$data,
+                'getTables'=>$this->getTables,
             ));
             if (is_array($getTablesBeforeRemove)) {
                 $canSave = false;
@@ -745,6 +640,7 @@ class getTableProcessor
             if($table['event']){
                 $response = $this->modx->invokeEvent('getTablesAfterRemove', array(
                     'data'=>$data,
+                    'getTables'=>$this->getTables,
                 ));
             }
             return $this->success($this->modx->lexicon('gettables_removed_successfully'),$saved);
@@ -765,11 +661,14 @@ class getTableProcessor
     }
     public function update($table, $edit_tables, $data = array(), $create = false, $tr_data = [])
     {
+        //$this->getTables->addTime("update data".print_r($data,1));
+        //$this->getTables->addTime("update edit_tables".print_r($edit_tables,1));
         $saved = [];
         if($table['event']){
             $getTablesBeforeUpdateCreate = $this->modx->invokeEvent('getTablesBeforeUpdateCreate', array(
                 'data'=>$data,
                 'create'=>$create,
+                'getTables'=>$this->getTables,
             ));
             if (is_array($getTablesBeforeUpdateCreate)) {
                 $canSave = false;
@@ -889,6 +788,7 @@ class getTableProcessor
                 }
             }
             $set_data_event = $set_data;
+            //$this->getTables->addTime("update set_data".print_r($set_data,1));
             if(isset($this->current_action['processors'][$class])){
                 if(empty($set_data['context_key'])) $set_data['context_key'] = 'web';
                 //добавить триггер before
@@ -941,7 +841,7 @@ class getTableProcessor
                 if($obj){
                     //$saved[] = $obj->toArray();
                     $object_old = $obj->toArray();
-                    
+                    //$this->getTables->addTime("update set_data".print_r($set_data,1));
                     $obj->fromArray($set_data);
                     $object_new = $obj->toArray();
                     
@@ -1131,6 +1031,7 @@ class getTableProcessor
                     'data'=>$data,
                     'set_data'=>$set_data_event,
                     'create'=>$create,
+                    'getTables'=>$this->getTables,
                 ));
             }
             return $this->success($this->modx->lexicon('gettables_saved_successfully'),['id'=>$data['id'],'saved'=>$saved]);

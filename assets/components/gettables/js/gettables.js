@@ -1590,10 +1590,17 @@
                             if(search2[0] == "parent"){
                                 if(parent_current.tr_data[search2[1]] != undefined){
                                     search.push({
+                                        type:"parent",
                                         field:search2[1],
                                         value:parent_current.tr_data[search2[1]]
                                     });
                                 }
+                            }else if(search2[0] == "query"){
+                                search.push({
+                                    type:"query",
+                                    field:search2[1],
+                                    value:search2[2]
+                                });
                             }
                         });
                     }
@@ -1700,10 +1707,17 @@
                             if(search2[0] == "parent"){
                                 if(parent_current.tr_data[search2[1]] != undefined){
                                     search.push({
+                                        type:"parent",
                                         field:search2[1],
                                         value:parent_current.tr_data[search2[1]]
                                     });
                                 }
+                            }else if(search2[0] == "query"){
+                                search.push({
+                                    type:"query",
+                                    field:search2[1],
+                                    value:search2[2]
+                                });
                             }
                         });
                     } 

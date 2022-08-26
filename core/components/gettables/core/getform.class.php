@@ -165,8 +165,7 @@ class getForm
             if(!isset($form['pdoTools']['where'])) $form['pdoTools']['where'] = [];
             $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['id'];
             //$form['pdoTools']['setTotal'] = 1;
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$form['pdoTools']);
-            //$this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->config,1)."{/ignore}");
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$form['pdoTools']));
             $rows = $this->pdoTools->run();
 
             if(is_array($rows) and count($rows) == 1){
@@ -185,10 +184,9 @@ class getForm
             if(!isset($form['pdoTools']['where'])) $form['pdoTools']['where'] = [];
             $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['id'];
             //$form['pdoTools']['setTotal'] = 1;
-            $this->pdoTools->config = array_merge($this->config['pdoClear'],$form['pdoTools']);
-            //$this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->config,1)."{/ignore}");
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$form['pdoTools']));
             $rows = $this->pdoTools->run();
-            $this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->getTime(),1)."{/ignore}");
+            //$this->getTables->addTime("form generateData {ignore}".print_r($this->pdoTools->getTime(),1)."{/ignore}");
             if(is_array($rows) and count($rows) == 1){
                 foreach($rows as $row){
                     foreach($form['edits'] as &$edit){
@@ -201,7 +199,7 @@ class getForm
                             $edit['pdoTools']['where'] = $where;
                             $edit['pdoTools']['limit'] = 0;
                             
-                            $this->pdoTools->config = array_merge($this->config['pdoClear'],$edit['pdoTools']);
+                            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$edit['pdoTools']));
                             $edit['value'] = $this->pdoTools->run();
                             $value = [];
                             foreach($edit['value'] as $v){

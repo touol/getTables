@@ -268,6 +268,10 @@ class getModal
     }
     public function defaultFieldSet($edits)
     {
+        if($this->getTables->REQUEST['pageID']){
+            //$this->getTables->addTime("generateEditsData generateData id={$this->getTables->REQUEST['pageID']}");
+            array_walk_recursive($edits,array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
+        }
         foreach($edits as &$edit){
             if($edit['default'] and empty($edit['value'])){
                 $edit['force'] = $edit['default'];
@@ -312,13 +316,12 @@ class getModal
             array_walk_recursive($pdoConfig,array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
         }
 
-        $this->pdoTools->config = array_merge($this->config['pdoClear'],$pdoConfig);
+        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoConfig));
 
         $rows = $this->pdoTools->run();
         
         
         //$this->getTables->addDebug($rows,'$rows ');
-        //$this->getTables->addTime('generateEditsData $rows '.print_r($this->pdoTools->config,1));
         //$this->getTables->addTime('generateEditsData $rows '.print_r($rows,1));
         if(is_array($rows) and count($rows) == 1){
             foreach($rows as $row){
@@ -332,7 +335,7 @@ class getModal
                         $edit['pdoTools']['where'] = $where;
                         $edit['pdoTools']['limit'] = 0;
                         
-                        $this->pdoTools->config = array_merge($this->config['pdoClear'],$edit['pdoTools']);
+                        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$edit['pdoTools']));
                         $edit['value'] = $this->pdoTools->run();
                         $value = [];
                         foreach($edit['value'] as $v){
