@@ -1851,9 +1851,9 @@
                 .on('click enter', '.get-autocomplect-menu li a', function (e) {
                     e.preventDefault();
                     $autocomplect = $(this).closest('.get-autocomplect');
+                    $autocomplect.find('.get-autocomplect-menu').hide();
                     $autocomplect.find('.get-autocomplect-id').val($(this).data('id'));
                     $autocomplect.find('.get-autocomplect-hidden-id').val($(this).data('id')).trigger('change');
-                    $autocomplect.find('.get-autocomplect-menu').hide();
                     $autocomplect.find('.get-autocomplect-content').val($(this).text()).trigger('change').trigger('focus');
                     
                 });

@@ -784,18 +784,43 @@ class getTable
         if(!empty($table['prepareRows'])){
             $this->prepareRows($table['prepareRows'],$rows,$table);
         }
-        foreach($rows as $k => $row){
-            //echo "getTable generateData row <pre>".print_r($row,1)."</pre>";
+        
+        //Автозаполнение content на select autocomplect
+        foreach($tr['tds'] as $ktd=>&$td){
             
+            if(isset($td['edit']['select']) and $td['edit']['select']['type'] == 'autocomplect' and !isset($td['edit']['field_content'])){
+                $ids = [];
+                foreach($rows as $k => $row){
+                    if($row[$td['edit']['field']]) $ids[] = $row[$td['edit']['field']];
+                }
+                if(!empty($ids)){
+                    $pdoTools = $td['edit']['select']['pdoTools'];
+                    $pdoTools['where'][$pdoTools['class'].'.id:IN'] = $ids;
+                    $pdoTools = array_merge($this->config['pdoClear'],$pdoTools);
+                    $this->pdoTools->setConfig($pdoTools);
+                    $rows_select = $this->pdoTools->run();
+
+                    foreach($rows_select as $s){
+                        $content = $this->pdoTools->getChunk('@INLINE '.$td['edit']['select']['content'],$s);
+                        $td['edit']['field_content'] = $td['edit']['field'].'field_content';
+                        foreach($rows as $k => &$row){
+                            if($row[$td['edit']['field']] == $s['id']) $row[$td['edit']['field'].'field_content'] = $content;
+                        }
+                    }
+                    
+                }
+                
+            }
+        }
+        
+        foreach($rows as $k => $row){
             $r = $tr;
             if(!empty($table['prepareRow'])){
                 $this->prepareRow($table['prepareRow'],$row,$table,$r);
             }
+
             $data = [];
-            //echo "getTable generateData r <pre>".print_r($r,1)."</pre>";
             foreach($r['tds'] as $ktd=>&$td){
-                
-                //if(!empty($td['edit']['multiple'])) $this->getTables->addTime("getTable generateData td ".print_r($td,1));
                 if(!empty($td['edit']['multiple']) and isset($td['edit']['pdoTools']) and !empty($td['edit']['search_fields'])){
                     if(empty($td['edit']['pdoTools']['class'])) $td['edit']['pdoTools']['class'] = $td['edit']['class'];
                     $where = [];
@@ -895,15 +920,12 @@ class getTable
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
 
                 if(!empty($table['autosave']) and !empty($td['edit']) and $autosave){
-                    
                     //autocomplect
                     if(isset($td['edit']['field_content'])){
                         $td['edit']['content'] = $row[$td['edit']['field_content']];
                     }
                     $td['edit']['value'] = $td['value'];
-                    //$this->getTables->addDebug($td,'gen1  td');
                     $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit']]);
-                    //$this->getTables->addDebug($td,'gen2  td');
                 }else{
                     if($td['edit']['type'] == "checkbox"){
                         if($td['value']){
