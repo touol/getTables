@@ -7,7 +7,6 @@ class getTableProcessor
     public $pdoTools;
     
     public $getTables;
-    public $getTable;
     public $debug = [];
     public $old_rows = [];
 
@@ -557,6 +556,21 @@ class getTableProcessor
         $set_data['table_name'] = $data['table_name'];
         $resp = $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
         if($refresh_table) $resp['data']['refresh_table'] = 1;
+        if(is_array($table['autosave'])){
+            if(isset($table['autosave']['refresh']['row'])){
+                $table['pdoTools']['where'][$table['pdoTools']['class'].'.id'] = (int)$data['tr_data']['id'];
+                $getTable = $this->getTables->models['getTable']['service'];
+                $table2 = $getTable->generateData($table);
+                if(isset($table2['tbody']['trs'][0])) $resp['data']['update_row'] = $table2['tbody']['trs'][0]['html'];
+            }
+            if(isset($table['autosave']['refresh']['form'])){
+                if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
+                    $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
+                    $resp2 = $this->getTables->handleRequestInt('getForm/fetch',$table['top']['form']);
+                    if($resp2['success']) $resp['data']['update_form'] = $resp2['data']['html'];
+                }
+            }
+        }
         return $resp;
     }
 

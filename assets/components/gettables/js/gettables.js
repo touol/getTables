@@ -207,6 +207,75 @@
                 $(this).addClass('air_datepicker');
             }
         });
+        getTables.$doc.on('focus','.get-date,.get-autocomplect-content',function (e) {
+            e.target.autocomplete = "whatever";
+        });
+        getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
+            if(!e.ctrlKey) return;
+            e.preventDefault();
+            let $td = $(this).closest('td');
+            let $focus;
+            if(e.code == 'ArrowLeft'){
+                for(i=1;i<10;i++){
+                    if($td.prev().prop("tagName") == 'TD'){
+                        $td = $td.prev();
+                        if($td.find('.get-autocomplect-content').length){
+                            $focus = $td.find('.get-autocomplect-content');
+                            
+                        }else if($td.find('.get-table-autosave').length){
+                            $focus = $td.find('.get-table-autosave');
+                        }
+                    }
+                    if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
+                }
+                if(typeof($focus) !== "undefined") $focus.trigger("focus");
+            }
+            if(e.code == 'ArrowRight'){
+                for(i=1;i<10;i++){
+                    if($td.next().prop("tagName") == 'TD'){
+                        $td = $td.next();
+                        if($td.find('.get-autocomplect-content').length){
+                            $focus = $td.find('.get-autocomplect-content');
+                            
+                        }else if($td.find('.get-table-autosave').length){
+                            $focus = $td.find('.get-table-autosave');
+                        }
+                    }
+                    if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
+                }
+                if(typeof($focus) !== "undefined") $focus.trigger("focus");
+            }
+            $tr = $(this).closest('tr');
+            if(e.code == 'ArrowDown'){
+                for(i=1;i<10;i++){
+                    if($tr.next().prop("tagName") == 'TR'){
+                        $tr = $tr.next();
+                        if($tr.find('[data-field="'+$td.data('field')+'"]').find('.get-autocomplect-content').length){
+                            $focus = $tr.find('[data-field="'+$td.data('field')+'"]').find('.get-autocomplect-content');
+                        }else if($tr.find('[data-field="'+$td.data('field')+'"]').find('.get-table-autosave').length){
+                            $focus = $tr.find('[data-field="'+$td.data('field')+'"]').find('.get-table-autosave');
+                        }
+                    }
+                    if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
+                }
+                if(typeof($focus) !== "undefined") $focus.trigger("focus");
+            }
+            if(e.code == 'ArrowUp'){
+                for(i=1;i<10;i++){
+                    if($tr.prev().prop("tagName") == 'TR'){
+                        $tr = $tr.prev();
+                        if($tr.find('[data-field="'+$td.data('field')+'"]').find('.get-autocomplect-content').length){
+                            $focus = $tr.find('[data-field="'+$td.data('field')+'"]').find('.get-autocomplect-content');
+                        }else if($tr.find('[data-field="'+$td.data('field')+'"]').find('.get-table-autosave').length){
+                            $focus = $tr.find('[data-field="'+$td.data('field')+'"]').find('.get-table-autosave');
+                        }
+                    }
+                    if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
+                }
+                if(typeof($focus) !== "undefined") $focus.trigger("focus");
+            }
+        });
+       
         //noinspection JSUnresolvedFunction
         getTables.$doc
             .ajaxStart(function () {
@@ -889,6 +958,13 @@
             getTables.$doc
                 .on('change', '.get-table-autosave', function (e) {
                     e.preventDefault();
+                    $autocomplect = $(this).closest('.get-autocomplect');
+                    if($autocomplect.length){
+                        $menu = $autocomplect.find('.get-autocomplect-menu');
+                        if($menu.is(':visible')){
+                            return;
+                        }
+                    }
                     $table = $(this).closest('.get-table');
 
                     button_data = $(this).data();
@@ -898,7 +974,7 @@
 
                     getTables.sendData.$GtsApp = $table;
                     getTables.sendData.$row = $row;
-
+                    getTables.sendData.$input = $(this);
                     //console.info('button.get-table-row');
                     field = $(this).data('field');
                     value = $(this).val();
@@ -1146,8 +1222,25 @@
 
             callbacks.autosave.response.success = function (response) {
                 
-                //console.log('callbacks.update.response.success',getTables.sendData);
                 if(response.data.refresh_table == 1) getTables.Table.refresh();
+                if(response.data.update_row){
+                    field = getTables.sendData.$input.closest('td').data('field');
+                    $new_row =$(response.data.update_row);
+                    getTables.sendData.$row.replaceWith($new_row);
+                    $td = $new_row.find('td[data-field="'+field+'"]');
+
+                    let $focus;
+                    if($td.find('.get-autocomplect-content').length){
+                        $focus = $td.find('.get-autocomplect-content');
+                    }else if($td.find('.get-table-autosave').length){
+                        $focus = $td.find('.get-table-autosave');
+                    }
+
+                    if(typeof($focus) !== "undefined") $focus.trigger("focus");
+                }
+                if(response.data.update_form){
+                    $('.get-table-top form').replaceWith(response.data.update_form);
+                }
 
             };
 
@@ -1516,18 +1609,26 @@
                     $(this).find('.get-autocomplect-menu').hide();
                 });
             getTables.$doc
-                .on('click', '.get-autocomplect-menu .caret1', function (e) {
+                .on('click', '.get-autocomplect-menu .caret1,.get-autocomplect-menu .ac-tree-span', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     $li = $(this).closest('.ac-tree-li');
                     $autocomplect = $(this).closest('.get-autocomplect');
-                    if(!$(this).hasClass('caret-down1')){
+                    if($(this).hasClass('ac-tree-span')){
+                        if(!$(this).prev().hasClass('caret1')) return;
+                        $this = $(this).prev();
+                    }else{
+                        $this = $(this);
+                    }
+                    if(!$this.hasClass('caret-down1')){
                         
-                        $table = $(this).closest('.get-table,.gts-getform');
+                        $table = $this.closest('.get-table,.gts-getform');
                         hash = $table.data('hash');
                         getTables.sendData.$GtsApp = $li;
                         getTables.sendData.$autocomplect = $autocomplect;
-
+                        if(typeof(hash) == "undefined" && $autocomplect.data('modal') == 1){
+                            hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
+                        }
                         getTables.sendData.data = {
                             gts_action: 'getSelect/expand',
                             hash: hash,
@@ -1547,8 +1648,8 @@
             
                         return getTables.send(getTables.sendData.data, getTables.Autocomplect.callbacks.expand, getTables.Callbacks.Autocomplect.expand);
                     }else{
-                        $(this).closest('li').find('.expanded').removeClass('expanded').addClass('collapsed');
-                        $(this).removeClass('caret-down1');
+                        $this.closest('li').find('.expanded').removeClass('expanded').addClass('collapsed');
+                        $this.removeClass('caret-down1');
                         $li.find('.ac-tree-ul').remove();
                     }
                     
@@ -1617,6 +1718,7 @@
                         select_name: $autocomplect.data('name'),
                         query: '',
                         search: search,
+                        treeon: 1,
                     };
                     var callbacks = getTables.Autocomplect.callbacks;
             
@@ -1626,15 +1728,7 @@
                     };
                     getTables.send(getTables.sendData.data, getTables.Autocomplect.callbacks.load, getTables.Callbacks.Autocomplect.load);
                 });
-            getTables.$doc
-                .on('click', '.get-autocomplect-menu li a', function (e) {
-                    e.preventDefault();
-                    $autocomplect = $(this).closest('.get-autocomplect');
-                    $autocomplect.find('.get-autocomplect-id').val($(this).data('id'));
-                    $autocomplect.find('.get-autocomplect-hidden-id').val($(this).data('id')).trigger('change');
-                    $autocomplect.find('.get-autocomplect-content').val($(this).text()).trigger('change');
-                    $autocomplect.find('.get-autocomplect-menu').hide();
-                });
+            
             getTables.$doc
                 .on('change keypress', '.get-autocomplect-id', function (e) {
                     
@@ -1673,6 +1767,8 @@
             getTables.$doc
                 .on('keyup', '.get-autocomplect-content', function (e) {
                     e.preventDefault();
+                    if(e.code == "ControlLeft" || e.code == "ControlRight") return;
+
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $table = $(this).closest('.get-table,.gts-getform');
                     //table_data = $table.data();
@@ -1687,7 +1783,6 @@
                         
                     }
                     
-                    hash = $table.data('hash');
                     if(typeof(hash) == "undefined" && $autocomplect.data('modal') == 1){
                         hash = $(this).closest('.gts-form').find('input[name="hash"]').val();
                         //console.info("hash",hash);
@@ -1722,12 +1817,18 @@
                         });
                     } 
                     getTables.sendData.$autocomplect = $autocomplect;
+                    if(e.ctrlKey){
+                        treeon = 1;
+                    }else{
+                        treeon = 0;
+                    }
                     getTables.sendData.data = {
                         gts_action: $autocomplect.data('action'),
                         hash: hash,
                         select_name: $autocomplect.data('name'),
                         query: $(this).val(),
                         search: search,
+                        treeon: treeon,
                     };
                     var callbacks = getTables.Autocomplect.callbacks;
             
@@ -1746,6 +1847,26 @@
                         $autocomplect.find('.get-autocomplect-hidden-id').val(0).trigger('change');
                     }
                 });
+            getTables.$doc
+                .on('click enter', '.get-autocomplect-menu li a', function (e) {
+                    e.preventDefault();
+                    $autocomplect = $(this).closest('.get-autocomplect');
+                    $autocomplect.find('.get-autocomplect-id').val($(this).data('id'));
+                    $autocomplect.find('.get-autocomplect-hidden-id').val($(this).data('id')).trigger('change');
+                    $autocomplect.find('.get-autocomplect-menu').hide();
+                    $autocomplect.find('.get-autocomplect-content').val($(this).text()).trigger('change').trigger('focus');
+                    
+                });
+            getTables.$doc.on('keydown','.get-autocomplect-content',function (e) {
+                if(e.code == 'ArrowDown'){
+                    $autocomplect = $(this).closest('.get-autocomplect');
+                    $menu = $autocomplect.find('.get-autocomplect-menu');
+                    if($menu.is(':visible')){
+                        $menu.find('a').first().trigger('focus');
+                    }
+                }
+                return;
+            });
         },
     };
     $(document).ready(function ($) {

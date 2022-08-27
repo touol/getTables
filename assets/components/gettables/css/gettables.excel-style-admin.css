@@ -755,3 +755,9 @@ li {
 .get-table-tr .form-control[readonly] {
     background-color: rgb(194, 194, 194);
 }
+.get-table-autosave:focus {
+    background-color: rgb(223, 207, 245);
+}
+.get-autocomplect-menu a:focus{
+    background-color: rgb(223, 207, 245);
+}

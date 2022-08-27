@@ -151,7 +151,11 @@ class getSelect
                 
         }else{
             if($select['treeOn']){
-                return $this->autocomplect_tree($data,$select);
+                if($data['treeon']){
+                    return $this->autocomplect_tree($data,$select);
+                }else{
+                    return $this->autocomplect_tree_false($data,$select);
+                }
             }
             $query = $data['query'];
             if($query){
@@ -188,6 +192,56 @@ class getSelect
             $output[] = '<li><a href="#" data-id="'.$row['id'].'">'.$content.'</a></li>';
         }
         return $this->success('',array('html'=>implode("\r\n",$output)));
+    }
+    public function autocomplect_tree_false($data,$select)
+    {
+        //$this->getTables->addTime('autocomplect_tree '.print_r($select,1));
+        $query = $data['query']; $where = [];
+        if(empty($select['parentIdField'])) $select['parentIdField'] = 'parent';
+        if(empty($select['idField'])) $select['idField'] = 'id';
+        if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
+
+        if(empty($query)){
+            $pdoTools = $select['pdoTools'];
+            $pdoTools['parents'] = $select['rootIds']; //depth
+            $pdoTools['depth'] = 0;
+            //$this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
+            //$rows1 = $this->pdoTools->run();
+            
+            if(is_array($select['where_active'])){
+                $pdoTools1 = $pdoTools;
+                $pdoTools1['where'] = array_merge($pdoTools1['where'],$select['where_active']);
+            }
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools1));
+            $rows = $this->pdoTools->run();
+            $output = [];
+            foreach($rows as $row){
+                $content = $this->pdoTools->getChunk('@INLINE '.$select['content'],$row);
+                $output[] = '<li><a href="#" data-id="'.$row['id'].'">'.$content.'</a></li>';
+            }
+            return $this->success('',array('html'=>implode("\r\n",$output)));
+        }else{
+            foreach($select['where'] as $field=>$value){
+                $value = str_replace('query',$query,$value);
+                $where[$field] = $value;
+            }
+            $pdoTools = $select['pdoTools'];
+            $pdoTools['parents'] = $select['rootIds']; //depth
+            $pdoTools['where'] = array_merge($pdoTools['where'],$where);
+            //$pdoTools['depth'] = 0;
+            if(is_array($select['where_active'])){
+                $pdoTools['where'] = array_merge($pdoTools['where'],$select['where_active']);
+            }
+            $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$pdoTools));
+            $rows = $this->pdoTools->run();
+            $output = [];
+            foreach($rows as $row){
+                $content = $this->pdoTools->getChunk('@INLINE '.$select['content'],$row);
+                $output[] = '<li><a href="#" data-id="'.$row['id'].'">'.$content.'</a></li>';
+            }
+            return $this->success('',array('html'=>implode("\r\n",$output)));
+            
+        }
     }
     public function autocomplect_tree($data,$select)
     {
