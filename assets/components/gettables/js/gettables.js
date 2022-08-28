@@ -30,7 +30,7 @@
             refresh: getTablesConfig.callbacksObjectTemplate(),
             sets: getTablesConfig.callbacksObjectTemplate(),
             sub_show: getTablesConfig.callbacksObjectTemplate(),
-            sub_hide: getTablesConfig.callbacksObjectTemplate(),
+            //sub_hide: getTablesConfig.callbacksObjectTemplate(),
             remove: getTablesConfig.callbacksObjectTemplate(),
             autosave: getTablesConfig.callbacksObjectTemplate(),
             custom: getTablesConfig.callbacksObjectTemplate(),
@@ -732,7 +732,7 @@
             custom: getTablesConfig.callbacksObjectTemplate(),
             sets: getTablesConfig.callbacksObjectTemplate(),
             sub_show: getTablesConfig.callbacksObjectTemplate(),
-            sub_hide: getTablesConfig.callbacksObjectTemplate(),
+            //sub_hide: getTablesConfig.callbacksObjectTemplate(),
             remove: getTablesConfig.callbacksObjectTemplate(),
             autosave: getTablesConfig.callbacksObjectTemplate(),
             filter_checkbox_load: getTablesConfig.callbacksObjectTemplate(),
@@ -785,6 +785,8 @@
                     }else if (button_data.name == 'subtable') {
                         if (button_data.js_action != "undefined")
                             getTables.Table[button_data.js_action](button_data, table_data, tr_data);
+                    }else if (button_data.action == 'getTable/sub') {
+                            getTables.Table.sub(button_data, table_data, tr_data);
                     }else if (button_data.name == 'remove') {
                         trs_data = [tr_data];
                         getTables.Table.remove(button_data, table_data, trs_data);
@@ -1407,6 +1409,42 @@
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.sets, getTables.Callbacks.Table.sets);
         },
+        sub: function (button_data, table_data, tr_data) {
+            getTables.Message.close();
+            if(getTables.sendData.$row.next().hasClass('get-sub-row')){
+                getTables.sendData.$row.next().remove();
+                return;
+            }
+            getTables.sendData.data = {
+                gts_action: button_data.action,
+                hash: table_data.hash,
+                table_name: table_data.name,
+                table_data: table_data,
+                button_data: button_data,
+                tr_data: tr_data
+            };
+            var callbacks = getTables.Table.callbacks;
+
+            callbacks.sub_show.response.success = function (response) {
+                $row = getTables.sendData.$row;
+
+                colspan = $row.find('td').length - 1;
+                $sub_row = $('<tr class="get-sub-row" style="display:none;">' +
+                '<td class=""></td>' +
+                '<td class="get-sub-content" colspan="'+colspan+'"></td>' +
+                '</tr>');
+                $row.after($sub_row);
+                $sub_row.find('.get-sub-content').html(response.data.sub_content);
+                $sub_row.show();
+              
+                // $row.find('.get-sub-show').hide();
+                // $row.find('.get-sub-hide').show();
+
+                getTables.setPlugins();
+            };
+
+            return getTables.send(getTables.sendData.data, getTables.Table.callbacks.sub_show, getTables.Callbacks.Table.sub_show);
+        },
         sub_show: function (button_data, table_data, tr_data) {
             getTables.Message.close();
 
@@ -1864,6 +1902,28 @@
                     if($menu.is(':visible')){
                         $menu.find('a').first().trigger('focus');
                     }
+                }
+                return;
+            });
+            getTables.$doc.on('keydown','.get-autocomplect-menu a',function (e) {
+                $a = $(this);
+                $menu = $a.closest('.get-autocomplect-menu');
+                index = $menu.find('a').index($a);
+                if(e.code == 'ArrowDown'){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $anext = $menu.find('a').eq(index + 1);
+                    if($anext.length) $anext.trigger('focus');
+                }
+                if(e.code == 'ArrowUp'){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if(index == 0){
+                        $(this).closest('.get-autocomplect').find('.get-autocomplect-content').trigger('focus');
+                        return;
+                    }
+                    $aprev = $menu.find('a').eq(index - 1);
+                    if($aprev.length) $aprev.trigger('focus');
                 }
                 return;
             });

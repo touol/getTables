@@ -4,6 +4,7 @@ Changelog for getTables.
 - Навигация по таблице с CTRL и стрелочками.
 - Инструкции autosave.refresh.row и autosave.refresh.form.
 - select autocomplect не требует field_content.
+- Инструкция table subs. В подтаблицы можно табы.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.

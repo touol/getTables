@@ -194,7 +194,7 @@ class getTree
             $resp = $this->getTables->handleRequestInt($tree['onclick']['action'],$rows[0]);
             if(isset($resp['data']['table'])) $response = $this->getTables->handleRequestInt('getTable/fetch',$resp['data']['table']);
             if(isset($resp['data']['form'])) $response = $this->getTables->handleRequestInt('getForm/fetch',$resp['data']['form']);
-            if(isset($resp['data']['tabs'])) $response = $this->getTables->handleRequestInt('getTabs/fetch',$resp['data']['tabs']);
+            if(isset($resp['data']['tabs'])) $response = $this->getTables->handleRequestInt('getTabs/fetch',$resp['data']);
             if($response){
                 $resp = $response;
             }else{

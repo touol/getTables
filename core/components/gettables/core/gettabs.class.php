@@ -57,13 +57,10 @@ class getTabs
 
     public function fetch($tabs = [])
     {
-        //$this->getTables->addTime("getTable fetch table ".print_r($this->config,1));
+        //$this->getTables->addTime("getTable fetch table ".print_r($tabs,1));
         if(empty($tabs)){
             if(!empty($this->config['tabs'])){
-                if (is_string($this->config['tabs']) and strpos(ltrim($this->config['tabs']), '{') === 0) {
-                    $this->config['tabs'] = json_decode($this->config['tabs'], true);
-                }
-                $tabs = $this->config['tabs'];
+                $tabs = $this->config;
             }else{
                 return $this->error("Нет конфига tabs!");
             }
@@ -76,13 +73,13 @@ class getTabs
     
     public function generateData($tabs = [])
     {
-        $name = $this->config['name'] ? $this->config['name'] : 'getTablesTabs';
-        $cls = $this->config['cls'] ? $this->config['cls'] : '';
+        $name = $tabs['name'] ? $tabs['name'] : 'getTablesTabs';
+        $cls = $tabs['cls'] ? $tabs['cls'] : '';
         $tabs1 = [];
-       
+        $tabs2 = $tabs['tabs'];
         $idx = 1;
         //$this->getTables->addTime("getTabs generateData".print_r($tabs,1));
-        foreach($tabs as $n => $tab){
+        foreach($tabs2 as $n => $tab){
             if(!empty($tab['permission'])){
                 if (!$this->modx->hasPermission($tab['permission'])) continue;
             }

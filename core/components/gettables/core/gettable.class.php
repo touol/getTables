@@ -112,6 +112,10 @@ class getTable
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->subtable($action, $table, $data);
                 break;
+            case 'sub':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->sub($action, $table, $data);
+                break;
             case 'export_excel':
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->export_excel($action, $table, $data);
@@ -314,9 +318,33 @@ class getTable
         $objWriter->save('php://output'); 
         exit();
     }
+    public function sub($action, $table, $data)
+    {
+        //$current_action = $table['actions'][$action];
+        if(empty($data['button_data']['sub_name'])) return $this->error('sub_name не найдено',['button_data'=>$data['button_data']]);
+        if(!isset($table['subs'][$data['button_data']['sub_name']])) return $this->error('sub не найдено',['button_data'=>$data['button_data']]);
+        if(isset($table['subs'][$data['button_data']['sub_name']]['tabs'])){
+            //$this->getTables->addTime('sub '.print_r($table['subs'][$data['button_data']['sub_name']],1));
+            $response = $this->getTables->handleRequestInt('getTabs/fetch',$table['subs'][$data['button_data']['sub_name']]);
+            if(!$response['success']){
+                return $response;
+            }else{
+                return $this->success('',['sub_content'=>$response['data']['html']]);
+            }
+        }
+        if(isset($table['subs'][$data['button_data']['sub_name']]['table'])){
+            $response = $this->getTables->handleRequestInt('getTable/fetch',$table['subs'][$data['button_data']['sub_name']]['table']);
+            if(!$response['success']){
+                return $response;
+            }else{
+                return $this->success('',['sub_content'=>$response['data']['html']]);
+            }
+        }
+        return $this->error('Ошибка sub',['button_data'=>$data['button_data']]);
+    }
     public function subtable($action, $table, $data)
     {
-        $current_action = $table['actions'][$action];
+        //$current_action = $table['actions'][$action];
         //$this->getTables->addDebug($table,'subtable  $table');
         if(empty($data['button_data']['subtable_name'])) return $this->error('subtable_name не найдено',array('button_data'=>$data['button_data']));
         
@@ -803,8 +831,10 @@ class getTable
                     foreach($rows_select as $s){
                         $content = $this->pdoTools->getChunk('@INLINE '.$td['edit']['select']['content'],$s);
                         $td['edit']['field_content'] = $td['edit']['field'].'field_content';
-                        foreach($rows as $k => &$row){
-                            if($row[$td['edit']['field']] == $s['id']) $row[$td['edit']['field'].'field_content'] = $content;
+                        foreach($rows as $k => $row){
+                            if($row[$td['edit']['field']] and $row[$td['edit']['field']] == $s['id']){
+                                $rows[$k][$td['edit']['field'].'field_content'] = $content;
+                            }
                         }
                     }
                     
@@ -1041,6 +1071,24 @@ class getTable
         if(is_string($table) and strpos(ltrim($table), '{') === 0) $table = json_decode($table, true);
         //$this->getTables->addTime("getTable fetch table ".print_r($table,1));
         if($table['row']){
+            if(isset($this->getTables->REQUEST['button_data']['sub_name'])){
+                $table_main = $this->getTables->getClassCache('getTable',$this->getTables->REQUEST['table_name']);
+                if(!isset($table['name'])){
+                    if($table['class'] == 'TV') $table['class'] = 'modTemplateVarResource';
+                    $table['class'] = $table['class'] ? $table['class'] : 'modResource';
+                    $table['name'] = $table['class'];
+                    //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
+                    $table['pdoTools']['class'] = $table['class'];
+                    
+                    $table_compile = $this->compile($table);
+                    if($table_main['subtable_in_all_page']) $table_compile['in_all_page'] = true;
+                    $this->getTables->setClassConfig('getTable',$table['name'], $table_compile);
+                }
+                $this->getTables->REQUEST['button_data']['subtable_name'] = $table['name'];
+                $resp = $this->subtable('subtable',$table_main,$this->getTables->REQUEST);
+                $resp['data']['html'] = $resp['data']['sub_content'];
+                return $resp;
+            }
             //$this->getTables->addTime("getTable fetch selects  {ignore}".print_r($this->config['selects'],1)."{/ignore}");
             if(isset($this->config['selects'])){
                 if(!$selects = $this->getTables->getClassCache('getSelect','all')){
@@ -1058,7 +1106,7 @@ class getTable
                 if(empty($this->config['compile']) and $table_compile = $this->getTables->getClassCache('getTable',$table['name'])){
                     
                 }else{
-                     
+                    
                     if($table['class'] == 'TV') $table['class'] = 'modTemplateVarResource';
                     $table['class'] = $table['class'] ? $table['class'] : 'modResource';
                     $name = $table['name'] ? $table['name'] : $table['class'];
@@ -1197,6 +1245,16 @@ class getTable
                 'cls' => ['btn get-sub-show ','btn get-sub-hide'],
                 'icon' => [$icon_prefix == 'fa fa' ? "$icon_prefix-eye" : 'glyphicon glyphicon-eye-open'
                     ,$icon_prefix == 'fa fa' ? "$icon_prefix-eye-slash" : 'glyphicon glyphicon-eye-close'],
+                'row' => [],
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
+            ],
+            'sub' =>[
+                'action'=>"getTable/sub",
+                'title'=>$this->modx->lexicon('gettables_open'),
+                'cls' => 'btn get-sub ',
+                'icon' => $icon_prefix == 'fa fa' ? "$icon_prefix-eye" : 'glyphicon glyphicon-eye-open',
                 'row' => [],
                 'tag' =>'button',
                 'attr' => '',
@@ -1403,6 +1461,9 @@ class getTable
                     $data = $a['data'] ? $a['data'] : [];
                     $data['name'] = $k;
                     $data['action'] = $a['action'];
+                    if($a['action'] == "getTable/sub"){
+                        $data['sub_name'] = $a['sub_name'];
+                    }
                     if($a['long_process']) $data['long_process'] = 1;
 
                     $a['buttons'] = [
@@ -1768,6 +1829,7 @@ class getTable
             'name'=>$name,
             'label'=>$table['label']?:'',
             'pdoTools'=>$table['pdoTools'],
+            'subs'=>$table['subs'],
             'hash'=> $this->config['hash'],
             'class'=>$class,
             'cls'=>$cls,
