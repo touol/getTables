@@ -117,7 +117,15 @@ class getTree
         $form['actions'] = ['create'=>$action];
         unset($data['action_key']);
         unset($data['tree_name']);
-
+        //ошибка пропадает edits parent
+        if(!isset($form['edits']['parent'])){
+            $form['edits']['parent'] = [
+                'field' => 'parent',
+                'as' => 'parent',
+                'type' => 'hidden',
+                'class' => $form['class'],
+            ];
+        }
         require_once('gettableprocessor.class.php');
         $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
         //$this->getTables->addTime("getTree create".print_r($form,1));
