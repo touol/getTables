@@ -177,7 +177,7 @@ class getSelect
                     }
                 }
             }
-            //$this->getTables->addDebug($where,'autocomplect  $where');
+            //$this->getTables->addTime('autocomplect  where'.print_r($where,1));
             if(!empty($where)){
                 if(empty($select['pdoTools']['where'])) $select['pdoTools']['where'] = [];
                 $select['pdoTools']['where'] = array_merge($select['pdoTools']['where'],$where);
@@ -186,6 +186,7 @@ class getSelect
         
         $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$select['pdoTools']));
         $rows = $this->pdoTools->run();
+        //$this->getTables->addTime('autocomplect  getTime'.print_r($this->pdoTools->getTime(),1));
         $output = [];
         foreach($rows as $row){
             $content = $this->pdoTools->getChunk('@INLINE '.$select['content'],$row);

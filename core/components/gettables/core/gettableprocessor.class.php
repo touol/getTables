@@ -815,6 +815,7 @@ class getTableProcessor
                     $saved[] = $this->success('runProcessor ',$modx_response->response);
                     $data['id'] = $modx_response->response['object']['id'];
                     $object_new = $modx_response->response['object'];
+                    $this->modx->cacheManager->refresh();
                     $type = 'update';
                     $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_new,$object_new);
                     if(!$resp['success']) return $resp;

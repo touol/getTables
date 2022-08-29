@@ -99,6 +99,17 @@ class getTabs
                     $tab['content'] = $response['data']['html'];
                 }
             }
+            if(isset($tab['tables']) and is_array($tab['tables'])){
+                $tab['content'] = '';
+                foreach($tab['tables'] as $table){
+                    $response = $this->getTables->handleRequestInt('getTable/fetch',$table);
+                    if(!$response['success']){
+                        $tab['content'] .= $response['message'];
+                    }else{
+                        $tab['content'] .= $response['data']['html'];
+                    }
+                }
+            }
             if(isset($tab['form'])){
                 $response = $this->getTables->handleRequestInt('getForm/fetch',$tab['form']);
 

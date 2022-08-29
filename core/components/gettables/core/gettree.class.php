@@ -120,9 +120,16 @@ class getTree
 
         require_once('gettableprocessor.class.php');
         $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
+        //$this->getTables->addTime("getTree create".print_r($form,1));
         $resp = $getTableProcessor->run('create', $form, $data);
         if($resp['success']){
             //$resp['data']['close_modal'] = 1;
+            if($res = $this->modx->getObject('modResource',$resp['data']['id'])){
+                if($res->parent == 0){
+                    $this->modx->log(1,'getTree create form'.print_r($form['edits'],1));
+                    $this->modx->log(1,'getTree create data'.print_r($data,1));
+                }
+            }
             $resp['data']['reload_with_id'] = 1;
         }
         return $resp;
@@ -272,7 +279,8 @@ class getTree
             if(empty($data['parentIdField'])) $data['parentIdField'] = 'parent';
             if(empty($data['treeShowField'])) $data['treeShowField'] = 'pagetitle';
             if(empty($data['class'])) $data['class'] = 'modResource';
-
+            if(empty($data['showUnpublished'])) $data['showUnpublished'] = 0;
+            
             if(empty($data['rootIds'])) $data['rootIds'] = '0';
             if(empty($data['name'])) $data['name'] = $data['class'];
             $data['name'] = $this->getTables->getRegistryAppName('getTree',$data['name']);
@@ -313,6 +321,7 @@ class getTree
             'limit'=> 0,
           ]);
         $rows1 = $this->pdoTools->run();
+        $this->getTables->addTime("getTree generateTree time".print_r($this->pdoTools->getTime(),1));
         $this->pdoTools->setConfig([
             'class' => $tree['class'],
             'resources' => $tree['rootIds'],
@@ -325,7 +334,7 @@ class getTree
         if(!is_array($rows1)) return $this->error("Нет данных rows!");
         if(!is_array($roots)) return $this->error("Нет данных roots!");
         $rows = array_merge($rows1,$roots);
-        $this->getTables->addTime("getTree generateTree".print_r($rows,1));
+        //$this->getTables->addTime("getTree generateTree".print_r($rows,1));
         if(!empty($tree['compile_actions'])){
             foreach($rows as &$row){
                 $this->generateActions($row,$tree['compile_actions']);
@@ -426,6 +435,9 @@ class getTree
                         //$this->getTables->addTime("getTree fetch".print_r($form,1)); 
                         $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
                         $data['form'] = $response['data']['html'];
+                        if(!isset($form['row']['parent'])){
+                            $this->modx->log(1," compile_actions".print_r($form['row'],1));
+                        }
                         $data['action'] = "getTree/get_form_create";
                         $compile_actions[$key."_".$class] = $data;  
                     }
