@@ -97,13 +97,13 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <input type="text" name="{$filter.edit.field}[from]" value="{$filter.value.from}" 
+                    <input type="text" name="{$filter.edit.field}[from]" value="{if $filter.value.from is set}{$filter.value.from}{/if}" 
                     placeholder="{'gettables_from' | lexicon} {$filter.edit.placeholder}" class="form-control get-date get-table-filter" autocomplect="off"/>
                 </div>
             </div>
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <input type="text" name="{$filter.edit.field}[to]" value="{$filter.value.to}" 
+                    <input type="text" name="{$filter.edit.field}[to]" value="{if $filter.value.to is set}{$filter.value.to}{/if}" 
                     placeholder="{'gettables_to' | lexicon} {$filter.edit.placeholder}" class="form-control get-date get-table-filter" autocomplect="off"/>
                 </div>
             </div>
@@ -112,13 +112,13 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <input type="text" name="{$filter.edit.field}[from]" value="{$filter.value.from}" 
+                    <input type="text" name="{$filter.edit.field}[from]" value="{if $filter.value.from is set}{$filter.value.from}{/if}" 
                     placeholder="{'gettables_from' | lexicon} {$filter.edit.placeholder}" class="form-control get-datetime get-table-filter" autocomplect="off"/>
                 </div>
             </div>
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <input type="text" name="{$filter.edit.field}[to]" value="{$filter.value.to}" 
+                    <input type="text" name="{$filter.edit.field}[to]" value="{if $filter.value.to is set}{$filter.value.to}{/if}" 
                     placeholder="{'gettables_to' | lexicon} {$filter.edit.placeholder}" class="form-control get-datetime get-table-filter" autocomplect="off"/>
                 </div>
             </div>
