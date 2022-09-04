@@ -14,23 +14,15 @@
             {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>
         <span class="error_{$edit.field}"></span>
     {case 'decimal'}
-        {if $edit.readonly}
-            {$edit.value | number : 2 : ',' : '&nbsp;'}
-        {else}
         <input type="number" step="0.01" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
             placeholder="{$edit.placeholder}" class="form-control get-table-autosave"
             {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>
         <span class="error_{$edit.field}"></span>
-        {/if}
     {case 'number'}
-        {if $edit.readonly}
-            {$edit.value | number : 0 : ',' : '&nbsp;'}
-        {else}
         <input type="number" step="1" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
             placeholder="{$edit.placeholder}" class="form-control get-table-autosave"
             {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>
         <span class="error_{$edit.field}"></span>
-        {/if}
     {case 'readonly'}
         <input type="text" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control get-table-autosave"
             {if $edit.style} style="{$edit.style}"{/if} readonly/>

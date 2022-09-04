@@ -8,6 +8,7 @@ Changelog for getTables.
 - Инструкция tabs[tab].tables. В таб можно поместить несколько талиц.
 - Исправление ошибок grtTree.
 - Чистка предупреждений php.
+- Исправлено readonly для number и decimal.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
