@@ -23,7 +23,7 @@ class getTables
 
     public $timings = [];
     protected $start = 0;
-
+    public $PHPExcelSheet = null;
     /**
      * @param modX $modx
      * @param array $config
@@ -130,18 +130,22 @@ class getTables
         $this->addTime('__construct');
     }
     
+    public function get_PHPExcelSheet(){
+        if(!$this->PHPExcelSheet){
+            $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
+            require_once $PHPExcelPath . 'PHPExcel.php';
+            
+            $xls = new PHPExcel();
+            $xls->setActiveSheetIndex(0);
+            $this->PHPExcelSheet = $xls->getActiveSheet();
+            $this->PHPExcelSheet->setTitle('Лист1');
+        }
+    }
+    
     public function calc_excel_formula($formula){
-        
-        $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
-        require_once $PHPExcelPath . 'PHPExcel.php';
-        
-        $xls = new PHPExcel();
-        $xls->setActiveSheetIndex(0);
-        $sheet = $xls->getActiveSheet();
-        $sheet->setTitle('Лист1');
-
+        if(!$this->PHPExcelSheet) $this->get_PHPExcelSheet();
         $sum = PHPExcel_Calculation::getInstance(
-            $sheet->getParent()
+            $this->PHPExcelSheet->getParent()
         )->calculateFormula($formula, 'A1', $sheet->getCell('A1'));
         return $sum;
     }
