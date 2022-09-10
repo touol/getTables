@@ -207,7 +207,7 @@
                 $(this).addClass('air_datepicker');
             }
         });
-        getTables.$doc.on('focus','.get-date,.get-autocomplect-content',function (e) {
+        getTables.$doc.on('focus','.get-date,.get-autocomplect-content,.get-table-autosave',function (e) {
             e.target.autocomplete = "whatever";
         });
         getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
@@ -274,6 +274,11 @@
                 }
                 if(typeof($focus) !== "undefined") $focus.trigger("focus");
             }
+            if(typeof($focus) !== "undefined" ){
+                $focus.select();
+                $focus.find(':text').select();
+            }
+            
         });
        
         //noinspection JSUnresolvedFunction
@@ -321,20 +326,7 @@
                 let $currentInput = $(this).parent().children('.get-autocomplect-id');
                 $currentInput.val(+$currentInput.val() - 1).trigger('change');
             });
-            // let $arrBtnTop = $('.arr-btn__top');
-            // let $arrBtnBottom = $('.arr-btn__bottom');
-        
-            // $arrBtnTop.on('click', function () {
-            //     let $currentInput = $(this).parent().children('.get-autocomplect-id');
-            //     $currentInput.val(+$currentInput.val() + 1);;
-            // });
-        
-            // $arrBtnBottom.on('click', function () {
-            //     let $currentInput = $(this).parent().children('.get-autocomplect-id');
-            //     if($currentInput.val() > 1) {
-            //         $currentInput.val(+$currentInput.val() - 1);
-            //     }
-            // });
+
         getTables.Modal.initialize();
         getTables.Table.initialize();
         getTables.Form.initialize();
@@ -1223,27 +1215,32 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.autosave.response.success = function (response) {
-                
                 if(response.data.refresh_table == 1) getTables.Table.refresh();
                 if(response.data.update_row){
-                    field = getTables.sendData.$input.closest('td').data('field');
                     $new_row =$(response.data.update_row);
-                    getTables.sendData.$row.replaceWith($new_row);
-                    $td = $new_row.find('td[data-field="'+field+'"]');
-
-                    let $focus;
-                    if($td.find('.get-autocomplect-content').length){
-                        $focus = $td.find('.get-autocomplect-content');
-                    }else if($td.find('.get-table-autosave').length){
-                        $focus = $td.find('.get-table-autosave');
-                    }
-
-                    if(typeof($focus) !== "undefined") $focus.trigger("focus");
+                    getTables.sendData.$row.find('td').each(function(){
+                        let $focus;
+                        if($(this).find('.get-autocomplect-content').length){
+                            $focus = $(this).find('.get-autocomplect-content');
+                            
+                        }else if($(this).find('.get-table-autosave').length){
+                            $focus = $(this).find('.get-table-autosave');
+                        }
+                        if(typeof($focus) !== "undefined"){
+                            if(!$focus.is(':focus')){
+                                $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
+                                $(this).replaceWith($td);
+                            }
+                        }else{
+                            $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
+                            $(this).replaceWith($td);
+                        }
+                        
+                    });
                 }
                 if(response.data.update_form){
                     $('.get-table-top form').replaceWith(response.data.update_form);
                 }
-
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.autosave, getTables.Callbacks.Table.autosave);
@@ -1806,6 +1803,7 @@
                 .on('keyup', '.get-autocomplect-content', function (e) {
                     e.preventDefault();
                     if(e.code == "ControlLeft" || e.code == "ControlRight") return;
+                    if(e.ctrlKey) return;
 
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $table = $(this).closest('.get-table,.gts-getform');
@@ -1855,7 +1853,7 @@
                         });
                     } 
                     getTables.sendData.$autocomplect = $autocomplect;
-                    if(e.ctrlKey){
+                    if(e.shiftKey){
                         treeon = 1;
                     }else{
                         treeon = 0;

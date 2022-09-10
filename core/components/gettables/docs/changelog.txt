@@ -10,6 +10,7 @@ Changelog for getTables.
 - Чистка предупреждений php.
 - Исправлено readonly для number и decimal.
 - Доработана функция getTables->calc_excel_formula.
+- Отключен автокомплект браузера.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.

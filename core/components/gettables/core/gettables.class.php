@@ -141,12 +141,12 @@ class getTables
             $this->PHPExcelSheet->setTitle('Лист1');
         }
     }
-    
+
     public function calc_excel_formula($formula){
         if(!$this->PHPExcelSheet) $this->get_PHPExcelSheet();
         $sum = PHPExcel_Calculation::getInstance(
             $this->PHPExcelSheet->getParent()
-        )->calculateFormula($formula, 'A1', $sheet->getCell('A1'));
+        )->calculateFormula($formula, 'A1', $this->PHPExcelSheet->getCell('A1'));
         return $sum;
     }
     /**
