@@ -761,3 +761,25 @@ li {
 .get-autocomplect-menu a:focus{
     background-color: rgb(223, 207, 245);
 }
+.input-group-append{
+    z-index: 0;
+}
+
+.get-table-autosave:not(.get-autocomplect-content):focus{
+    position: absolute;
+    z-index: 1;
+    width: auto;
+    background-color: #dfcff5;
+}
+
+.get-autocomplect-content:focus{
+    position: absolute;
+    z-index: 1;
+    width: auto;
+    left:30px;
+    background-color: #dfcff5;
+}
+
+.get-table .table > tbody > .get-table-tr > td{
+    vertical-align: top;
+}

@@ -11,6 +11,7 @@ Changelog for getTables.
 - Исправлено readonly для number и decimal.
 - Доработана функция getTables->calc_excel_formula.
 - Отключен автокомплект браузера.
+- Поле в таблице поверх при фокусе.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
