@@ -765,14 +765,14 @@ li {
     z-index: 0;
 }
 
-.get-table-autosave:not(.get-autocomplect-content):focus{
+.get-table-tr .get-table-autosave:not(.get-autocomplect-content):focus{
     position: absolute;
     z-index: 1;
     width: auto;
     background-color: #dfcff5;
 }
 
-.get-autocomplect-content:focus{
+.get-table-tr .get-autocomplect-content:focus{
     position: absolute;
     z-index: 1;
     width: auto;

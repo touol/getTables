@@ -35,7 +35,7 @@
         <div class="form-group">
             <label class="control-label" for="{$edit.field}">{$edit.label}</label>
             <div class="controls">
-                <input type="number" step="0.01"  id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control"
+                <input type="number" step="{if $edit.step}{$edit.step}{else}0.01{/if}"  id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" class="form-control"
                 {if $edit.readonly}readonly{/if}/>
                 <span class="error_{$edit.field}"></span>
             </div>

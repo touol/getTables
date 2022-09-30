@@ -212,7 +212,7 @@
         });
         getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
             if(!e.ctrlKey) return;
-            e.preventDefault();
+            //e.preventDefault();
             let $td = $(this).closest('td');
             let $focus;
             if(e.code == 'ArrowLeft'){

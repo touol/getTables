@@ -14,7 +14,7 @@
             {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>
         <span class="error_{$edit.field}"></span>
     {case 'decimal'}
-        <input type="number" step="0.01" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
+        <input type="number" step="{if $edit.step}{$edit.step}{else}0.01{/if}" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
             placeholder="{$edit.placeholder}" class="form-control get-table-autosave"
             {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>
         <span class="error_{$edit.field}"></span>

@@ -814,26 +814,26 @@ class getTable
         }
         
         //Автозаполнение content на select autocomplect
-        foreach($tr['tds'] as $ktd=>&$td){
+        foreach($tr['tds'] as $ktd0=>$td0){
             
-            if(isset($td['edit']['select']) and $td['edit']['select']['type'] == 'autocomplect' and !isset($td['edit']['field_content'])){
+            if(isset($td0['edit']['select']) and $td0['edit']['select']['type'] == 'autocomplect' and !isset($td0['edit']['field_content'])){
                 $ids = [];
                 foreach($rows as $k => $row){
-                    if($row[$td['edit']['field']]) $ids[] = $row[$td['edit']['field']];
+                    if($row[$td0['edit']['field']]) $ids[] = $row[$td0['edit']['field']];
                 }
                 if(!empty($ids)){
-                    $pdoTools = $td['edit']['select']['pdoTools'];
+                    $pdoTools = $td0['edit']['select']['pdoTools'];
                     $pdoTools['where'][$pdoTools['class'].'.id:IN'] = $ids;
                     $pdoTools = array_merge($this->config['pdoClear'],$pdoTools);
                     $this->pdoTools->setConfig($pdoTools);
                     $rows_select = $this->pdoTools->run();
 
                     foreach($rows_select as $s){
-                        $content = $this->pdoTools->getChunk('@INLINE '.$td['edit']['select']['content'],$s);
-                        $td['edit']['field_content'] = $td['edit']['field'].'field_content';
+                        $content = $this->pdoTools->getChunk('@INLINE '.$td0['edit']['select']['content'],$s);
+                        $tr['tds'][$ktd0]['edit']['field_content'] = $td0['edit']['field'].'field_content';
                         foreach($rows as $k => $row){
-                            if($row[$td['edit']['field']] and $row[$td['edit']['field']] == $s['id']){
-                                $rows[$k][$td['edit']['field'].'field_content'] = $content;
+                            if($row[$td0['edit']['field']] and $row[$td0['edit']['field']] == $s['id']){
+                                $rows[$k][$td0['edit']['field'].'field_content'] = $content;
                             }
                         }
                     }
@@ -915,7 +915,9 @@ class getTable
                         $filters[$f['edit']['field']] = $f;
                     }
                     $row['filters'] = $filters;
+                    //$this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);
+                    //$this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
                     $autosave = false;
                 }else{
                     $td['content'] = $td['value'];
@@ -977,6 +979,7 @@ class getTable
                         $data[$dv] = $td['value'];
                     }
                 }
+                //$r['tds'][$ktd] = $td;
             }
             foreach($tr['data'] as $dv){
                 if($row[$dv]){
@@ -993,11 +996,9 @@ class getTable
             //$this->getTables->addTime("getTable generateData r cls {ignore}{$r['cls']} {/ignore}");
             if($r['cls']) $r['cls'] = $this->pdoTools->getChunk('@INLINE '.$r['cls'], $row);
             
-            $sub = ['cls'=>'hidden'];
-            $html = $this->pdoTools->getChunk($this->config['getTableRowTpl'],['tr'=>$r,'sub'=>$sub],true);
+            $html = $this->pdoTools->getChunk($this->config['getTableRowTpl'],['tr'=>$r],true);
             $trs[] = [
                 'tr'=>$r,
-                'sub'=>$sub,
                 'html'=> $html,
                 ];
             //$output[] = $html;
