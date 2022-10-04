@@ -847,6 +847,7 @@ class getTable
             $r = $tr;
             if(!empty($table['prepareRow'])){
                 $this->prepareRow($table['prepareRow'],$row,$table,$r);
+                //$this->getTables->addTime("getTable generateData prepareRow ".print_r($row,1));
             }
 
             $data = [];

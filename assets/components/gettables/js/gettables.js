@@ -275,8 +275,7 @@
                 if(typeof($focus) !== "undefined") $focus.trigger("focus");
             }
             if(typeof($focus) !== "undefined" ){
-                $focus.select();
-                $focus.find(':text').select();
+                setTimeout(function() {$focus.select();}, 0);
             }
             
         });
@@ -708,6 +707,10 @@
                         //console.log( 'Свойство: ' +key + '; Значение: ' + value );
                         $(key).html(value);
                     });
+                }
+                if(response.data.refresh_table == 1) getTables.Table.refresh();
+                if(response.data.update_form){
+                    $('.get-table-top form').replaceWith(response.data.update_form);
                 }
             };
 
@@ -1216,6 +1219,9 @@
 
             callbacks.autosave.response.success = function (response) {
                 if(response.data.refresh_table == 1) getTables.Table.refresh();
+                if(response.data.update_form){
+                    $('.get-table-top form').replaceWith(response.data.update_form);
+                }
                 if(response.data.update_row){
                     $new_row =$(response.data.update_row);
                     getTables.sendData.$row.find('td').each(function(){
@@ -1238,9 +1244,7 @@
                         
                     });
                 }
-                if(response.data.update_form){
-                    $('.get-table-top form').replaceWith(response.data.update_form);
-                }
+                
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.autosave, getTables.Callbacks.Table.autosave);
