@@ -66,6 +66,7 @@ class getTable
         }else if(is_array($data['sub_where_current'])){
             $table['sub_where_current'] = json_encode($data['sub_where_current']);
             $this->getTables->REQUEST['sub_where_current'] = $data['sub_where_current'] = $data['sub_where_current'];
+            //$this->getTables->addTime('REQUEST1'.print_r($this->getTables->REQUEST,1));
         }  
         if($data['parent_current'] and is_string($data['parent_current'])){
             $data['parent_current'] = json_decode($data['parent_current'],1);
@@ -428,7 +429,12 @@ class getTable
             $sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
             foreach($sub_where_current as $field =>$v){
                 if($table['sub_where'][$field]){
-                    $query[$field] = (int)$v;
+                    if(is_array($v)){
+                        foreach($v as &$v1){$v1 = (int)$v1;}
+                    }else{
+                        $v = (int)$v;
+                    }
+                    $query[$field] = $v;
                 }
             }
             if(isset($table['sub_default'])){
@@ -688,7 +694,7 @@ class getTable
             'table'=>$table,
             'getTable'=>$this,
         ];
-        if($action[0] == "snippet"){
+        if($action1[0] == "snippet"){
             if(!empty($action1[1]) and $element = $this->modx->getObject('modSnippet', array('name' => $action1[1]))){
                 if ($tmp = $element->process($params)) {
                     $rows = $tmp;
@@ -809,7 +815,9 @@ class getTable
         if($table['export'] == 1){
             $this->getTables->addTime("getTable export ".$this->varexport($rows,1));   
         }
+        //$this->getTables->addTime("prepareRows ".print_r($table,1)); 
         if(!empty($table['prepareRows'])){
+            $this->getTables->addTime("prepareRows ".$table['prepareRows']); 
             $this->prepareRows($table['prepareRows'],$rows,$table);
         }
         
@@ -1865,6 +1873,7 @@ class getTable
             $table_compile['top'] = $table['top'];
         }
         if(!empty($table['prepareRow'])) $table_compile['prepareRow'] = $table['prepareRow'];
+        if(!empty($table['prepareRows'])) $table_compile['prepareRows'] = $table['prepareRows'];
         //$table['role']['type'] == 'document' and $table['top']['type'] == 'form'
         //if(!empty($table['commands'])) $table_compile['commands'] = $table['commands'];
         return $table_compile;
