@@ -650,7 +650,9 @@ class getTable
                 $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 
                 $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
             }
+            
             $filter['content'] = $this->pdoTools->getChunk($this->config['getTableFilterTpl'],['filter'=>$filter]);
+            //$this->getTables->addTime('getTableFilterTpl'.print_r($filter,1));
         }
         
         if(!isset($table['pdoTools2']['where'])) $table['pdoTools2']['where'] = [];
@@ -1993,11 +1995,11 @@ class getTable
         
         foreach($filters as &$f){
             // $this->modx->log(1,"getTable addAndSortFilter ".print_r($f,1));
-            // if(isset($f['edit']['select']) and isset($this->config['selects'][$f['edit']['select']])){
-            //     $f['edit']['type'] = 'select';
-            //     $f['edit']['select'] = $this->config['selects'][$f['edit']['select']];
+            if(isset($f['edit']['select']) and isset($this->config['selects'][$f['edit']['select']])){
+                $f['edit']['type'] = 'select';
+                $f['edit']['select'] = $this->config['selects'][$f['edit']['select']];
                 
-            // }
+            }
 
             if(empty($f['edit']['type'])) $f['edit']['type'] = 'text';
         }

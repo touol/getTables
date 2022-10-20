@@ -14,6 +14,7 @@ Changelog for getTables.
 - Поле в таблице поверх при фокусе.
 - decimal инструкция step.
 - Исправлена инструкция prepareRows.
+- Исправлен фильтр autocomplect.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
