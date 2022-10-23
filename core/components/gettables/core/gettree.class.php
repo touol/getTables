@@ -61,7 +61,14 @@ class getTree
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->remove($tree,$data);
                 break;
-            
+            case 'get_form_copy':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->get_modal_copy($tree,$data);
+                break;
+            case 'copy':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->copy($tree,$data);
+                break;
             case 'expand':
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->expand($tree,$data);
@@ -69,6 +76,78 @@ class getTree
             default:
                 return $this->error("Метод $action в классе $class не найден!");
         }
+    }
+    public function copy($tree,$data = []){
+        $id = (int)$data['id'];
+        $action_key = $data['action_key'];
+        if(!$form = $this->getTables->getClassCache('getForm',$data['form_name'])){
+            return $this->error("Форма {$data['form_name']} не найдена!");
+        }
+        if(!isset($tree['compile_actions'][$action_key])) return $this->error("Не найдено действие $action_key!");
+        $action = $tree['compile_actions'][$action_key];
+        $data['class_key'] = $action['class'];
+        $form['edits']['class_key'] = [
+            'field'=>'class_key',
+            'type' => 'text',
+            'class'=>$form['class'],
+        ];
+         
+        $form['actions'] = ['copy'=>$action];
+        unset($data['action_key']);
+        unset($data['tree_name']);
+        //ошибка пропадает edits parent
+        $fields = ['parent','content','longtitle'];
+        foreach($fields as $field){   
+            $form['edits'][$field] = [
+                    'field' => $field,
+                    'as' => $field,
+                    'type' => $field,
+                    'class' => $form['class'],
+                ];
+        }
+        $data['trs_data'][] = ['id'=>$id];
+        require_once('gettableprocessor.class.php');
+        $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
+        //$this->getTables->addTime("getTree create".print_r($form,1));
+        $resp = $getTableProcessor->run('copy', $form, $data);
+        if($resp['success']){
+            //$resp['data']['close_modal'] = 1;
+            if($res = $this->modx->getObject('modResource',$resp['data']['id'])){
+                if($res->parent == 0){
+                    $this->modx->log(1,'getTree copy form'.print_r($form['edits'],1));
+                    $this->modx->log(1,'getTree copy data'.print_r($data,1));
+                }
+                if($res_sourse = $this->modx->getObject('modResource',$id)){
+                    $res->fromArray($res_sourse->toArray());
+                }
+                if(isset($data['alias'])){
+                    $alias = $data['alias'];
+                }else{
+                    $alias = $res->cleanAlias($data['pagetitle']);
+                }
+                $res->set('published',0);
+                $res->set('alias',$alias);
+                $res->set('pagetitle',$data['pagetitle']);
+                $res->save();
+                $this->modx->cacheManager->clearCache();
+            }
+            $resp['data']['reload_with_id'] = 1;
+        }
+        return $resp;
+    }
+    public function get_modal_copy($tree,$data = []){
+        $id = (int)$data['id'];
+        $action_key = $data['action_key'];
+        
+        if(!isset($tree['compile_actions'][$action_key])) return $this->error("Не найдено действие $action_key!");
+        $action = $tree['compile_actions'][$action_key];
+        $action['form'] = str_replace("tree_parent",$id,$action['form']);
+        $modal = [
+            'title'=>$action['label'],
+            'form'=>$action['form'],
+        ];
+        $html = $this->pdoTools->getChunk($this->config['getTreeModalTpl'], ['modal'=>$modal]);
+        return $this->success('',['modal'=>$html]);
     }
     public function expand($tree,$data = []){
         //$id = (int)$data['id'];
@@ -402,10 +481,6 @@ class getTree
                             ],
                             'row'=>[
                                 'id'=>[],
-                                'parent'=>[
-                                    'edit'=>['type'=>'hidden'],
-                                    'default'=>'tree_parent',
-                                ],
                                 'action_key'=>[
                                     'edit'=>['type'=>'hidden'],
                                     'default'=>$key."_".$class,
@@ -452,15 +527,78 @@ class getTree
                 }
             }else{
                 switch($key){
+                    case 'copy':
+                        if(isset($action['classes'])){
+                            foreach($action['classes'] as $class=>$data){
+                                if(!empty($data['class'])) $class = $data['class'];
+                                $form = [
+                                    'class'=>$class,
+                                    'pdoTools'=>[
+                                        'class'=>$class,
+                                    ],
+                                    'buttons'=>[
+                                        'create'=>[
+                                            'action'=>"getTree/copy",
+                                            'lexicon'=>'gettables_copy'
+                                        ],
+                                    ],
+                                    'row'=>[
+                                        'id'=>['default'=>'tree_parent',],
+                                        'action_key'=>[
+                                            'edit'=>['type'=>'hidden'],
+                                            'default'=>$key."_".$class,
+                                        ],
+                                        'tree_name'=>[
+                                            'edit'=>['type'=>'hidden'],
+                                            'default'=>$tree_name,
+                                        ],
+                                        'pagetitle'=>[
+                                            'label'=>'Наименование',
+                                        ],
+                                        'alias'=>[
+                                            'label'=>'Алиас',
+                                        ],
+                                    ],
+                                ];
+                                if(isset($this->config['selects']['template'])){
+                                    $form['row']['template'] = [
+                                        'label'=>'Шаблон',
+                                        'edit'=>['type'=>'select','select'=>'template']
+                                    ];
+                                    if(isset($data['default_template'])){
+                                        if($tempate = $this->modx->getObject('modTemplate',['templatename'=>$data['default_template']])){
+                                            $form['row']['template']['default'] = $tempate->id; 
+                                        }
+                                    }
+                                }
+                                if(!empty($data['form'])){
+                                    if(!empty($data['form']['row'])){
+                                        $data['form']['row'] = array_merge($form['row'],$data['form']['row']); 
+                                    }
+                                    $form = array_merge($form,$data['form']);
+                                }
+                                $form['only_create'] = 1;
+                                //$this->getTables->addTime("getTree fetch".print_r($form,1)); 
+                                $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
+                                $data['form'] = $response['data']['html'];
+                                if(!isset($form['row']['parent'])){
+                                    $this->modx->log(1," compile_actions".print_r($form['row'],1));
+                                }
+                                $data['action'] = "getTree/get_form_copy";
+                                $compile_actions[$key."_".$class] = $data;
+                            }
+                        }
+                    break;
                     case 'remove':
                         $remove = [
                             'label'=>'Удалить',
                             'action'=>"getTree/get_modal_remove"
                         ];
                         $action = array_merge($remove,$action);
+                        $compile_actions[$key] = $action; 
                     break;
                 }
-                $compile_actions[$key] = $action; 
+                
             }
         }
         return $compile_actions;

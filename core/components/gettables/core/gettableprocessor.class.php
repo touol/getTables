@@ -341,6 +341,14 @@ class getTableProcessor
                         $saved[] = $resp1;
                     }
                 }
+                if(!empty($this->current_action['child']['one'])){
+                    foreach($this->current_action['child']['one'] as $child_class=>$child_alias){
+                        $resp1 = $this->copy_one($table['class'], $child_class, $child_alias, $old_row, $row);
+                        $resp1['subtables'] = 1;
+                        //$resp1['subtable_name'] = $field;
+                        $saved[] = $resp1;
+                    }
+                }
                 $resp = $this->run_triggers($table['class'], 'after', 'copy', [], $old_row,$row);
             }
             
@@ -358,12 +366,27 @@ class getTableProcessor
         }
         if(!$error){
             
-            return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
+            return $this->success($this->modx->lexicon('gettables_saved_successfully'),['id'=>$row['id'],'saved'=>$saved]);
         }else{
             return $this->error($error,$saved);
         }
     }
+    public function copy_one($class, $child_class, $child_alias, $old_row, $new_row)
+    {
+        $saved = [];
+        if(!$source = $this->modx->getObject($class,(int)$old_row['id']) or !$dest = $this->modx->getObject($class,(int)$new_row['id'])){
+            return $this->error('class not found',array('class'=>$class));
+        }
+        if(!$ch = $source->getOne($child_alias)){
+            return $this->success('child_alias not found',array('child_alias'=>$child_alias));
+        }
 
+            if($newchild = $this->modx->newObject($child_class,$ch->toArray())){
+                $newchild->addOne($dest);
+                $newchild->save();
+            }
+        return $this->success($this->modx->lexicon('gettables_saved_successfully'),$saved);
+    }
     public function copy_many($class, $child_class, $child_alias, $old_row, $new_row)
     {
         $saved = [];
@@ -371,7 +394,7 @@ class getTableProcessor
             return $this->error('class not found',array('class'=>$class));
         }
         if(!$childs = $source->getMany($child_alias)){
-            return $this->error('child_alias not found',array('child_alias'=>$child_alias));
+            return $this->success('child_alias not found',array('child_alias'=>$child_alias));
         }
         foreach($childs as $ch){
             if($newchild = $this->modx->newObject($child_class,$ch->toArray())){
