@@ -16,6 +16,7 @@ Changelog for getTables.
 - Исправлена инструкция prepareRows.
 - Исправлен фильтр autocomplect.
 - Копирование в getTree.
+- правка cells-selection.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.

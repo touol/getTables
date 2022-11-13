@@ -20,10 +20,12 @@
             document.addEventListener('keydown', function(event){
                 if (event.repeat == false && event.shiftKey && event.ctrlKey && event.code == "KeyS" ) {
                     if(isSelectEnable){
+                        $(document).find('.get-table').removeClass('cells-selection');
                         deselectAll2();
                         removeEventListeners();
                         isSelectEnable = false;
                     }else{
+                        $(document).find('.get-table').addClass('cells-selection');
                         addEventListeners();
                         isSelectEnable = true;
                     }

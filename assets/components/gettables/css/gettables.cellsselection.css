@@ -1,28 +1,28 @@
 .gts::selection{
     background-color: transparent;
 }
-.get-table td:not(.gts-selection-enabled) > *,
-.get-table th:not(.gts-selection-enabled) > *,
-.get-table td:not(.gts-selection-enabled),
-.get-table th:not(.gts-selection-enabled){
+.cells-selection td:not(.gts-selection-enabled) > *,
+.cells-selection th:not(.gts-selection-enabled) > *,
+.cells-selection td:not(.gts-selection-enabled),
+.cells-selection th:not(.gts-selection-enabled){
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
     user-select: none !important;
 }
-.get-table tr::selection,
-.get-table td:not(.gts-selection-enabled) > *::selection,
-.get-table th:not(.gts-selection-enabled) > *::selection,
-.get-table td:not(.gts-selection-enabled)::selection,
-.get-table th:not(.gts-selection-enabled)::selection,
-.get-table br::selection{
+.cells-selection tr::selection,
+.cells-selection td:not(.gts-selection-enabled) > *::selection,
+.cells-selection th:not(.gts-selection-enabled) > *::selection,
+.cells-selection td:not(.gts-selection-enabled)::selection,
+.cells-selection th:not(.gts-selection-enabled)::selection,
+.cells-selection br::selection{
     /*background-color: transparent;*/
 }
-.get-table tr::-moz-selection, .get-table td:not(.gts-selection-enabled)::-moz-selection, .get-table th:not(.gts-selection-enabled)::-moz-selection{
+.cells-selection tr::-moz-selection, .cells-selection td:not(.gts-selection-enabled)::-moz-selection, .cells-selection th:not(.gts-selection-enabled)::-moz-selection{
     /*background-color: transparent;*/
 }
-.get-table .gts-selected:not(.sel-from){
+.cells-selection .gts-selected:not(.sel-from){
 /*	border: 1px double #4887C7;*/
 /*	background-color: rgba(51, 122, 183, 0.2) !important;*/
     box-shadow: inset 0 0 0 2px #4887C7;
