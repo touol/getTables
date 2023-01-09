@@ -394,7 +394,7 @@ class getTable
             //$this->getTables->addDebug($pdoConfig,'subtable pdoConfig');
         }
         //$subtable['pdoTools'] = $pdoConfig;
-        $subtable['sub_where_current'] = json_encode($where);
+        $this->getTables->REQUEST['sub_where_current'] = $subtable['sub_where_current'] = json_encode($where);
         $subtable['parent_current'] = json_encode(['name'=>$data['table_name'],'tr_data'=>$data['tr_data']]);
         $this->getTables->setClassConfig('getTable',$subtable['name'], $subtable);
         //получаем таблицу дочернию
