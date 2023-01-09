@@ -17,7 +17,7 @@ Changelog for getTables.
 - Исправлен фильтр autocomplect.
 - Копирование в getTree.
 - правка cells-selection.
-- Трехуровневое subtebles.
+- Трехуровневое subtables.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
