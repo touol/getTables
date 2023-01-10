@@ -18,6 +18,7 @@ Changelog for getTables.
 - Копирование в getTree.
 - правка cells-selection.
 - Трехуровневое subtables.
+- Фильтр пустых дат.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.

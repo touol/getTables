@@ -551,12 +551,16 @@ class getTable
                             $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
                         if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
                             $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['empty'])
+                            $date['empty'] = true;
                         break;
                     case 'datetime':
                         if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
                             $datetime['from'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
                         if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
                             $datetime['to'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                        if($this->getTables->REQUEST[$filter['edit']['field']]['empty'])
+                            $datetime['empty'] = true;
                         break;
                     default:
                         $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
@@ -627,6 +631,10 @@ class getTable
                     $query[$filter['edit']['where_field'].':<='] = $date['to'];
                     $filter['value']['to'] = date($this->config['date_format'],strtotime($date['to']));
                 }
+                if($date['empty']){
+                    $query[] = '('.$filter['edit']['where_field']."='' or ".$filter['edit']['where_field'].' IS NULL)';
+                    $filter['value']['empty'] = 1;
+                }
             }
             if(!empty($datetime)){
                 if(!empty($datetime['from'])){
@@ -636,6 +644,10 @@ class getTable
                 if(!empty($datetime['to'])){
                     $query[$filter['edit']['where_field'].':<='] = $datetime['to'];
                     $filter['value']['to'] = date($this->config['datetime_format'],strtotime($datetime['to']));
+                }
+                if($datetime['empty']){
+                    $query[] = '('.$filter['edit']['where_field']."='' or ".$filter['edit']['where_field'].' IS NULL)';
+                    $filter['value']['empty'] = 1;
                 }
             }
             if(!empty($filter['edit']['multiple'])){
@@ -791,7 +803,8 @@ class getTable
         $this->pdoTools->setConfig($pdoTools2);
 
         $rows = $this->pdoTools->run();
-        
+        $this->getTables->addTime("getTable generateData ".print_r($this->pdoTools->getTime(),1));
+
         if($paginator){
             $limit = $pdoTools2['limit'];
             $total = $this->modx->getPlaceholder('total');

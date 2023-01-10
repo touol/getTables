@@ -45,6 +45,7 @@ $_lang['gettables_validate_field_required'] = 'Поле [[+label]] требуе�
 $_lang['gettables_sort_asc'] = 'Сортировка от А до Я';
 $_lang['gettables_sort_desc'] = 'Сортировка от Я до А';
 $_lang['gettables_sort_rank'] = 'Приоритет сортировки';
+$_lang['gettables_date_empty'] = 'Пустая дата';
 
 //не используется
 $_lang['gettables_menu_desc'] = 'Пример расширения для разработки.';

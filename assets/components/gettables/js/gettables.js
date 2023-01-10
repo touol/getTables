@@ -1013,7 +1013,11 @@
                     
                     
                     $th.find('.get-table-filter').each(function(){
-                        $(this).val("");
+                        if($(this).prop("type") == 'checkbox'){
+                            $(this).prop("checked",false);
+                        }else{
+                            $(this).val("");
+                        }
                     });
                     $th.find('.filrt-checkbox-select-all').prop('checked', true);
                     $th.find('.filrt-checkbox-input').prop('checked', true);
@@ -1548,7 +1552,11 @@
             filters = {};
             $ths = $table.children( "table" ).children( "thead" ).children( "tr" ).children( "th" );
             $ths.find('.get-table-filter').each(function(){
-                filters[this.name] = $(this).val();
+                if($(this).prop("type") == 'checkbox'){
+                    if($(this).prop("checked")) filters[this.name] = $(this).val();
+                }else{
+                    filters[this.name] = $(this).val();
+                }
             });
             $table.children(".get-table-filter-container").find('.get-table-filter').each(function(){
                 filters[this.name] = $(this).val();

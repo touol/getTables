@@ -108,6 +108,15 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <div class="controls">
+                    <input type="checkbox" name="{$filter.edit.field}[empty]" {if $filter.value.empty is set}checked{/if} value="1" 
+                    class="get-table-filter" autocomplect="off"/>
+                    <label>{'gettables_date_empty' | lexicon}</label>
+                </div>
+            </div>
+        </div>
     {case 'datetime'}
         <div class="row">
             <div class="form-group col-md-6">
@@ -120,6 +129,15 @@
                 <div class="controls">
                     <input type="text" name="{$filter.edit.field}[to]" value="{if $filter.value.to is set}{$filter.value.to}{/if}" 
                     placeholder="{'gettables_to' | lexicon} {$filter.edit.placeholder}" class="form-control get-datetime get-table-filter" autocomplect="off"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <div class="controls">
+                    <input type="checkbox" name="{$filter.edit.field}[empty]" {if $filter.value.empty is set}checked{/if} value="1" 
+                    class="get-table-filter" autocomplect="off"/>
+                    <label>{'gettables_date_empty' | lexicon}</label>
                 </div>
             </div>
         </div>
