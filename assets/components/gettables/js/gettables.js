@@ -1559,7 +1559,11 @@
                 }
             });
             $table.children(".get-table-filter-container").find('.get-table-filter').each(function(){
-                filters[this.name] = $(this).val();
+                if($(this).prop("type") == 'checkbox'){
+                    if($(this).prop("checked")) filters[this.name] = $(this).val();
+                }else{
+                    filters[this.name] = $(this).val();
+                }
             });
             
             //console.log(1);
