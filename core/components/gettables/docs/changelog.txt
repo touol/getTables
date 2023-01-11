@@ -19,6 +19,8 @@ Changelog for getTables.
 - правка cells-selection.
 - Трехуровневое subtables.
 - Фильтр пустых дат.
+- limit в autocomplect.
+- Фильтр по умолчанию 0 для чекбокса.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.

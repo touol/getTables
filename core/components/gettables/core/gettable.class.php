@@ -457,9 +457,13 @@ class getTable
             $datetime=[];
 
             if(!empty($filter['where'])) $filter['edit']['where_field'] = $filter['where'];
-            
-            if($filter['default'] and empty($this->getTables->REQUEST[$filter['edit']['field']]) and $this->getTables->REQUEST[$filter['edit']['field']] !== "0"){
-                if($filter['default']){
+            $check_default = false;
+            if($filter['default'] or $filter['default'] === '0') {
+                $check_default = true;
+                //$this->getTables->addTime("getTable filter default ".print_r($filter,1));
+            }
+            if($check_default and empty($this->getTables->REQUEST[$filter['edit']['field']]) and $this->getTables->REQUEST[$filter['edit']['field']] !== "0"){
+                if($check_default){
                     if(!is_array($filter['default'])){
                         switch($filter['edit']['type']){
                             case 'date':
@@ -487,7 +491,7 @@ class getTable
                 }
                 
             }
-            if($filter['force']){
+            if($filter['force'] or $filter['force'] === '0'){
                 if(!is_array($filter['force'])){
                     switch($filter['edit']['type']){
                         case 'date':
@@ -516,9 +520,49 @@ class getTable
                             break;
                     }
                 }
-                if(!empty($filter['force']['default'])){
-                    $query[$filter['edit']['where_field']] = $filter['force']['default'];
+                if(isset($filter['force']['default'])){
                     $filter['value'] = $filter['force']['default'];
+                    $pattern = '/^\<\=|\>\=|\=\>|\=\<|\!\=|\=|\<|\>/';
+                    
+                    if(preg_match($pattern,$filter['value'],$matches)){
+                        $filter['value'] = (int)str_replace($matches[0],"",$filter['value']);
+                        //$this->getTables->addTime("getTable filter  {$filter['edit']['where_field']}");
+                        $where_field = explode(":",$filter['edit']['where_field'])[0];
+                        switch($matches[0]){
+                            case '<=': case '=<': 
+                                if($filter['value'] >=0){
+                                    $query[] = "($where_field <= {$filter['value']} OR $where_field IS NULL)";
+                                }else{
+                                    $query[$where_field.":<="] = $filter['value'];
+                                }
+                                break;
+                            case '=':
+                                if($filter['value']==0){
+                                    $query[] = "($where_field = {$filter['value']} OR $where_field IS NULL)";
+                                }else{
+                                    $query[$where_field.":".$matches[0]] = $filter['value'];
+                                }
+                                break;
+                            case '>=': case '=>':
+                                if($filter['value'] <=0){
+                                    $query[] = "($where_field >= {$filter['value']} OR $where_field IS NULL)";
+                                }else{
+                                    $query[$where_field.":>="] = $filter['value'];
+                                }
+                                break;
+                            default:
+                                $query[$where_field.":".$matches[0]] = $filter['value'];
+                        }
+                        $filter['value'] = $filter['force']['default'];
+                        // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
+                    }elseif($filter['force']['default'] === '0'){
+                        $query[] = '('.$filter['edit']['where_field'].'=0 or '.$filter['edit']['where_field'].' IS NULL)';
+                        $filter['value'] = 0;
+                    }else{
+                        $query[$filter['edit']['where_field']] = $filter['force']['default'];
+                        $filter['value'] = $filter['force']['default'];
+                    }
+                    
                 }
                 if(is_array($filter['force']['in'])){
                     $query[$filter['edit']['where_field']] = $filter['force']['in'];

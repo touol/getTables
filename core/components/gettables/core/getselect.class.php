@@ -130,7 +130,7 @@ class getSelect
         if(!$select = $this->getTables->getClassCache('getSelect',$select_name)){
             return $this->error("select $select_name не найден!");
         }
-        $select['pdoTools']['limit'] = 0;
+        if(empty($select['pdoTools']['limit'])) $select['pdoTools']['limit'] = 0;
         if(empty($select['where'])){
             $select['where'] = [];
         }
