@@ -29,7 +29,7 @@ if(!$response['success']){
 }
 
 $log = '';
-if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
+if ($modx->user->hasSessionContext('mgr') && $response['log']) {
     $log .= $response['log'];
 }
 return $output.$log;

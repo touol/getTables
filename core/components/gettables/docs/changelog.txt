@@ -21,6 +21,7 @@ Changelog for getTables.
 - Фильтр пустых дат.
 - limit в autocomplect.
 - Фильтр по умолчанию 0 для чекбокса.
+- Лог для json конфига.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.
