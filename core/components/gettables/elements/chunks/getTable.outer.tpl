@@ -133,4 +133,13 @@
         {/foreach}
       </tbody>
     </table>
+    <div class="get-table-paginator-container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-inline get-table-nav">
+                    {$page.content}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
