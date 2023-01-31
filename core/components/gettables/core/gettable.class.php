@@ -296,9 +296,12 @@ class getTable
                             }else{
                                 $sheet->setCellValueByColumnAndRow($k, $i, "Нет");
                             }
-                        break;    
+                        break;   
+                        case 'content':
+                            $sheet->setCellValueByColumnAndRow($k, $i, trim($v['content']));
+                        break; 
                         default:
-                            $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
+                            $sheet->setCellValueByColumnAndRow($k, $i,$v['value']);
                     }
                     
                     $k++;
