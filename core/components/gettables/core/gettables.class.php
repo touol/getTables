@@ -136,6 +136,8 @@ class getTables
             require_once $PHPExcelPath . 'PHPExcel.php';
             
             $xls = new PHPExcel();
+            //$locale = 'ru';
+            //$validLocale = PHPExcel_Settings::setLocale($locale);
             $xls->setActiveSheetIndex(0);
             $this->PHPExcelSheet = $xls->getActiveSheet();
             $this->PHPExcelSheet->setTitle('Лист1');
@@ -143,6 +145,7 @@ class getTables
     }
 
     public function calc_excel_formula($formula){
+        if(substr($formula, 0, 2) == '==') $formula = substr($formula, 1);
         if(!$this->PHPExcelSheet) $this->get_PHPExcelSheet();
         $sum = PHPExcel_Calculation::getInstance(
             $this->PHPExcelSheet->getParent()
