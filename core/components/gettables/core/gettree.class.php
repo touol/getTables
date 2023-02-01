@@ -481,7 +481,10 @@ class getTree
                             ],
                             'row'=>[
                                 'id'=>[],
-                                'action_key'=>[
+                                'parent'=>[
+                                    'edit'=>['type'=>'hidden'],
+                                    'default'=>'tree_parent',
+                                ],                                'action_key'=>[
                                     'edit'=>['type'=>'hidden'],
                                     'default'=>$key."_".$class,
                                 ],

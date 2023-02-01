@@ -7,6 +7,7 @@
         {
             "name": "Launch currently open script",
             "type": "php",
+            "runtimeExecutable":"C:\\OSPanel\\modules\\php\\PHP_7.2\\php.exe",
             "request": "launch",
             "program": "${file}",
             "cwd": "${fileDirname}",
