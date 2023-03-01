@@ -26,6 +26,7 @@ Changelog for getTables.
 - Инструкция edit.type.content выгрузка в excel поля заданные контентом.
 - Исправление parent в tree.
 - Исправление расчет excel формул.
+- Исправение предупреждений php.
 
 1.11.3-alpha
 - Добавлено событие getTablesLoadGTSConfig для изменения gts-конфига, когда нельзя редактировать исходник.

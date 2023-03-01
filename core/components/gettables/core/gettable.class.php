@@ -2056,10 +2056,11 @@ class getTable
         
         foreach($filters as &$f){
             // $this->modx->log(1,"getTable addAndSortFilter ".print_r($f,1));
-            if(isset($f['edit']['select']) and isset($this->config['selects'][$f['edit']['select']])){
-                $f['edit']['type'] = 'select';
-                $f['edit']['select'] = $this->config['selects'][$f['edit']['select']];
-                
+            if(isset($f['edit']['select']) and is_string($f['edit']['select'])){
+                if(isset($this->config['selects'][$f['edit']['select']])){
+                    $f['edit']['type'] = 'select';
+                    $f['edit']['select'] = $this->config['selects'][$f['edit']['select']];
+                }
             }
 
             if(empty($f['edit']['type'])) $f['edit']['type'] = 'text';
