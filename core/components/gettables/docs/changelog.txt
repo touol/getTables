@@ -36,6 +36,7 @@ Changelog for getTables.
 - Select autocomplect - инструкция treeOn включает для автокомплект дерево в dropdown nemu. Настройки rootIds, where_parent, where_active[, parentIdField, idField].
 - Инструкции prepareRow, prepareRows для table.
 - Исправлены предупреждения php.
+- Отключение автозаполнения Chrome.
 
 1.11.2-alpha
 - Добавлен тип поля number.

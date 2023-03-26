@@ -110,6 +110,7 @@
         this.timeout = 300;
     };
     getTables.setPlugins = function () {
+
         $('.get-select-multiple').each(function () {
             $(this).multiselect();
         });
@@ -159,6 +160,17 @@
         // Indicator of active ajax request
 
         getTables.setPlugins();
+        getTables.$doc.on('focus','.get-date,.get-autocomplect-content,.get-table-autosave',function (e) {
+            //e.target.autocomplete = "new-password";
+            el = e.target;
+            //el.value = ' ';
+            function revert(e){
+                e.preventDefault();
+                $(el).attr('name',$(el).data('name')).off('change',revert).trigger('change');
+            };
+            $(el).data('name',$(el).attr('name')).attr('name',$(el).attr('name') + getTables.Utils.makeid(10)).on('change',revert);
+            
+        });
         getTables.$doc.on('focus','.get-date',function () {
             if(!$(this).hasClass('air_datepicker')){
                 if($(this).val()){
@@ -207,9 +219,8 @@
                 $(this).addClass('air_datepicker');
             }
         });
-        getTables.$doc.on('focus','.get-date,.get-autocomplect-content,.get-table-autosave',function (e) {
-            e.target.autocomplete = "whatever";
-        });
+        
+        
         getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
             if(!e.ctrlKey) return;
             //e.preventDefault();
@@ -482,6 +493,17 @@
             }
             return null;
         },
+        makeid: function(length) {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            let counter = 0;
+            while (counter < length) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+              counter += 1;
+            }
+            return result;
+        }
     };
 
 
