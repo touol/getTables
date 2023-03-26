@@ -166,6 +166,7 @@
             //el.value = ' ';
             function revert(e){
                 e.preventDefault();
+                e.stopPropagation();
                 $(el).attr('name',$(el).data('name')).off('change',revert).trigger('change');
             };
             $(el).data('name',$(el).attr('name')).attr('name',$(el).attr('name') + getTables.Utils.makeid(10)).on('change',revert);
