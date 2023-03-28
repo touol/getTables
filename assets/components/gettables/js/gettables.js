@@ -167,10 +167,12 @@
             function revert(e){
                 e.preventDefault();
                 e.stopPropagation();
-                $(el).attr('name',$(el).data('name')).off('change',revert).trigger('change');
+                $(el).attr('name',$(el).data('name')).off('change',revert).removeClass('no-autocomplect').trigger('change');
             };
-            $(el).data('name',$(el).attr('name')).attr('name',$(el).attr('name') + getTables.Utils.makeid(10)).on('change',revert);
-            
+            if(!$(el).hasClass('no-autocomplect') && typeof($(el).attr('name')) !== "undefined"){
+                $(el).data('name',$(el).attr('name')).attr('name',$(el).attr('name') + getTables.Utils.makeid(10))
+                .addClass('no-autocomplect').on('change',revert);
+            }
         });
         getTables.$doc.on('focus','.get-date',function () {
             if(!$(this).hasClass('air_datepicker')){
