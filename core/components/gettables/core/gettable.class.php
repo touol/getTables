@@ -1109,7 +1109,7 @@ class getTable
     
     public function fetch($table = array())
     {
-        
+        //$this->getTables->addTime("getTable fetch table ".print_r($table,1));
         //$this->getTables->addDebug($table,'fetch  $table');
         //$this->getTables->addDebug($this->config,'fetch  $this->config');
         //$this->getTables->addTime("getTable fetch table ".print_r($this->config,1));
@@ -1142,20 +1142,33 @@ class getTable
         }
         
         if(is_string($table) and strpos(ltrim($table), '{') === 0) $table = json_decode($table, true);
-        //$this->getTables->addTime("getTable fetch table ".print_r($table,1));
+        
         if($table['row']){
             if(isset($this->getTables->REQUEST['button_data']['sub_name'])){
                 $table_main = $this->getTables->getClassCache('getTable',$this->getTables->REQUEST['table_name']);
+                
                 if(!isset($table['name'])){
                     if($table['class'] == 'TV') $table['class'] = 'modTemplateVarResource';
                     $table['class'] = $table['class'] ? $table['class'] : 'modResource';
-                    $table['name'] = $table['class'];
+                    $table['name'] = $table['name'] ? $table['name'] : $table['class'];
                     //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
                     $table['pdoTools']['class'] = $table['class'];
                     
                     $table_compile = $this->compile($table);
                     if($table_main['subtable_in_all_page']) $table_compile['in_all_page'] = true;
                     $this->getTables->setClassConfig('getTable',$table['name'], $table_compile);
+                    //$this->getTables->addTime("getTable fetch table_name 1  {$table['name']}");
+                }else if(!$table_c = $this->getTables->getClassCache('getTable',$table['name'])){
+                    if($table['class'] == 'TV') $table['class'] = 'modTemplateVarResource';
+                    $table['class'] = $table['class'] ? $table['class'] : 'modResource';
+                    $table['name'] = $table['name'] ? $table['name'] : $table['class'];
+                    //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
+                    $table['pdoTools']['class'] = $table['class'];
+                    
+                    $table_compile = $this->compile($table);
+                    if($table_main['subtable_in_all_page']) $table_compile['in_all_page'] = true;
+                    $this->getTables->setClassConfig('getTable',$table['name'], $table_compile);
+                    //$this->getTables->addTime("getTable fetch table_name 2  {$table['name']}");
                 }
                 $this->getTables->REQUEST['button_data']['subtable_name'] = $table['name'];
                 $resp = $this->subtable('subtable',$table_main,$this->getTables->REQUEST);
