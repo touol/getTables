@@ -919,7 +919,30 @@ class getTables
 
         return $response;
     }
-    
+    public function insertToArray($array=array(), $new=array(), $after='') {
+        $res = array();
+        $res1 = array();
+        $res2 = array();
+        $c = 0;
+        $n = 0;
+        foreach ($array as $k => $v) {
+          if ($k == $after) { 
+            $n = $c;
+          } 
+          $c++;
+        }
+        $c = 0;
+        foreach ($array as $i => $a) {
+          if ($c > $n) { 
+            $res1[$i] = $a;
+          } else {
+            $res2[$i] = $a;
+          }
+          $c++;
+        }
+        $res = $res2 + $new + $res1;
+        return $res;
+    }
     public function success($message = '', $data = array())
     {
         if(is_array($message)){
