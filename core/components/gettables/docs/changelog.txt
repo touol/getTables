@@ -1,5 +1,8 @@
 Changelog for getTables.
 1.11.4-alpha
+- В события триггеров добавлены редактируемые объекты.
+
+1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
 - Навигация по таблице с CTRL и стрелочками.
 - Инструкции autosave.refresh.row и autosave.refresh.form.
