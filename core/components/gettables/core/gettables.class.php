@@ -84,6 +84,8 @@ class getTables
                 unset($this->config['config']);
                 $this->config = array_merge($config_set, $this->config);
                 $config = array_merge($config_set, $config);
+            }else{
+                $this->addTime("getTables. Не удалось распознать конфиг {$this->config['config']} ");
             }
         }
         
@@ -92,7 +94,7 @@ class getTables
         }
         $getTablesLoadGTSConfig = $this->modx->invokeEvent('getTablesLoadGTSConfig', [
             'config'=>$this->config,
-            'getTables'=>$this->getTables,
+            'getTables'=>$this,
         ]);
         if (isset($this->modx->event->returnedValues) && is_array($this->modx->event->returnedValues)) {
             if(isset($this->modx->event->returnedValues['config']))

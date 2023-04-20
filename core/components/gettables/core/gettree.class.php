@@ -286,6 +286,14 @@ class getTree
         }
         if(isset($tree['onclick']['action'])){
             $resp = $this->getTables->handleRequestInt($tree['onclick']['action'],$rows[0]);
+            $getTablesLoadGTSConfig = $this->modx->invokeEvent('getTablesLoadGTSConfig', [
+                'config'=>$resp['data'],
+                'getTables'=>$this->getTables,
+            ]);
+            if (isset($this->modx->event->returnedValues) && is_array($this->modx->event->returnedValues)) {
+                if(isset($this->modx->event->returnedValues['config']))
+                    $resp['data'] = $this->modx->event->returnedValues['config'];
+            }
             if(isset($resp['data']['table'])) $response = $this->getTables->handleRequestInt('getTable/fetch',$resp['data']['table']);
             if(isset($resp['data']['form'])) $response = $this->getTables->handleRequestInt('getForm/fetch',$resp['data']['form']);
             if(isset($resp['data']['tabs'])) $response = $this->getTables->handleRequestInt('getTabs/fetch',$resp['data']);
