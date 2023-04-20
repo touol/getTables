@@ -29,7 +29,7 @@ class getTableProcessor
         ], $config);
         
     }
-    public function run_triggers($class, $type, $method, $fields, $object_old, $object_new =[])
+    public function run_triggers($class, $type, $method, $fields, $object_old, $object_new =[], $object = null)
     {
         $getTablesRunTriggers = $this->modx->invokeEvent('getTablesRunTriggers', array(
             'class'=>$class,
@@ -39,6 +39,7 @@ class getTableProcessor
             'object_old'=>$object_old,
             'object_new'=>$object_new,
             'getTables'=>$this->getTables,
+            'object'=>&$object,
         ));
         if (is_array($getTablesRunTriggers)) {
             $canSave = false;
@@ -248,14 +249,14 @@ class getTableProcessor
                 $obj->fromArray($set_data);
                 $object_new = $obj->toArray();
                 
-                $resp = $this->run_triggers($class, 'before', $type, $set_data, $object_old,$object_new);
+                $resp = $this->run_triggers($class, 'before', $type, $set_data, $object_old,$object_new,$obj);
                 if(!$resp['success']) return $resp;
                 
                 //$saved[] = $this->success('Сохранено успешно',$set_data);
                 if($obj->save()){
                     
                     $object_new = $obj->toArray();
-                    $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new);
+                    $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new,$obj);
                     if(!$resp['success']) return $resp;
                     $data['id'] = $obj->id;
                     return $this->success($this->modx->lexicon('gettables_insert_successfully'),$data);
@@ -657,7 +658,7 @@ class getTableProcessor
             }
             
             $object_old = $obj->toArray();
-            $resp = $this->run_triggers($table['class'], 'before', 'remove', [], $object_old);
+            $resp = $this->run_triggers($table['class'], 'before', 'remove', [], $object_old,[],$obj);
             if(!$resp['success']) return $resp;
             
             $id = $obj->id;
@@ -883,14 +884,14 @@ class getTableProcessor
                     $obj->fromArray($set_data);
                     $object_new = $obj->toArray();
                     
-                    $resp = $this->run_triggers($class, 'before', $type, $set_data, $object_old,$object_new);
+                    $resp = $this->run_triggers($class, 'before', $type, $set_data, $object_old,$object_new,$obj);
                     if(!$resp['success']) return $resp;
                     
                     //$saved[] = $this->success('Сохранено успешно',$set_data);
                     if($obj->save()){
                         
                         $object_new = $obj->toArray();
-                        $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new);
+                        $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new,$obj);
                         if(!$resp['success']) return $resp;
                         
                         $saveobj['success'] = true;
