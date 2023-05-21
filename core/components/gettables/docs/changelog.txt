@@ -1,5 +1,5 @@
 Changelog for getTables.
-1.11.4-alpha
+1.12.1-alpha
 - В события тригеров добавлены редактируемые объекты.
 - В getTables добавлена функция insertToArray.
 - Событие getTablesLoadGTSConfig в getree.
