@@ -4,6 +4,7 @@ Changelog for getTables.
 - В getTables добавлена функция insertToArray.
 - Событие getTablesLoadGTSConfig в getree.
 - Обновление класса при обновлении строки.
+- Горячие клавиши на action.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

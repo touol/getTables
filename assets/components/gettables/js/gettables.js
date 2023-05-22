@@ -109,10 +109,35 @@
         this.temp = null;
         this.timeout = 300;
     };
+    getTables.hotkeys = {};
     getTables.setPlugins = function () {
 
         $('.get-select-multiple').each(function () {
             $(this).multiselect();
+        });
+        $('.get-table,.gts-getform').find('[data-hotkey]').each(function(){
+            $action = $(this);
+            if(getTables.hotkeys.hasOwnProperty($action.data('hotkey'))) return;
+            getTables.hotkeys[$action.data('hotkey')] = 1;
+            hotkey = $action.data('hotkey').split('+');
+            ctrl = false; shift = false;
+            for (let n = 0; n < hotkey.length; n++) {
+                if(hotkey[n].toLowerCase() == 'ctrl'){
+                    ctrl = true;
+                }else if(hotkey[n].toLowerCase() == 'shift'){
+                    shift = true;
+                }else{
+                    KeyCode = 'Key' + hotkey[n].toUpperCase();
+                }
+            }
+            $(document).keydown(function (e) {
+                if(ctrl && !e.ctrlKey) return;
+                if(shift && !e.shiftKey) return;
+                if(e.code == KeyCode){
+                    
+                    $action.trigger('click');
+                }
+            });
         });
         if(getTablesConfig.load_ckeditor == 1){
             $('textarea[data-editor=ckeditor]').each(function() {
