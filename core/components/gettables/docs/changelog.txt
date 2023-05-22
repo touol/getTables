@@ -3,6 +3,7 @@ Changelog for getTables.
 - В события тригеров добавлены редактируемые объекты.
 - В getTables добавлена функция insertToArray.
 - Событие getTablesLoadGTSConfig в getree.
+- Обновление класса при обновлении строки.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

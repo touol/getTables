@@ -1253,6 +1253,7 @@
                 }
                 if(response.data.update_row){
                     $new_row =$(response.data.update_row);
+                    getTables.sendData.$row.attr('class',$new_row.attr('class'));
                     getTables.sendData.$row.find('td').each(function(){
                         let $focus;
                         if($(this).find('.get-autocomplect-content').length){
