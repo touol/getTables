@@ -5,6 +5,7 @@ Changelog for getTables.
 - Событие getTablesLoadGTSConfig в getree.
 - Обновление класса при обновлении строки.
 - Горячие клавиши на action.
+- Закрепить шапку в документе и заголовки в таблице.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

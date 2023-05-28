@@ -13,6 +13,18 @@
         {/if}
     </div>
     {if $top}
+        <style>
+            .get-table .get-table-top {
+                position: -webkit-sticky !important;
+                position: sticky !important;
+                z-index: 2;
+                background: white;
+                top:0;
+            }
+            .get-table th {
+                top:132px !important;
+            }
+        </style>
         <div class="get-table-top">
         {$top}
         </div>

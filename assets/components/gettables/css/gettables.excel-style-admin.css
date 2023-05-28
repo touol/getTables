@@ -753,7 +753,7 @@ li {
 }
 
 .get-table-tr .form-control[readonly] {
-    background-color: rgb(194, 194, 194);
+    background-color: rgba(194, 194, 194, 0.041);
 }
 .get-table-autosave:focus {
     background-color: rgb(223, 207, 245);
@@ -782,4 +782,11 @@ li {
 
 .get-table .table > tbody > .get-table-tr > td{
     vertical-align: top;
+}
+.get-table th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    z-index: 2;
+    background: white;
+    top:0;
 }

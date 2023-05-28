@@ -783,3 +783,10 @@ li {
 .get-table .table > tbody > .get-table-tr > td{
     vertical-align: top;
 }
+.get-table th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    z-index: 2;
+    background: white;
+    top:0;
+}
