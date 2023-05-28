@@ -56,6 +56,20 @@ class getForm
                 $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
                 return $getTableProcessor->run($action, $form, $data);
                 break;
+            case 'copy':
+                //$data = $this->getTables->sanitize($data); //Санация $data
+                //return $this->save($data);
+                if(!$form = $this->getTables->getClassCache('getForm',$data['form_name'])){
+                    return $this->error("Форма {$data['form_name']} не найдена!");
+                }
+                
+                $action = 'copy';
+                if(!isset($form['buttons']['copy'])) $form['buttons']['copy'] = [];
+                $form['actions'] = [$action=>$form['buttons']['copy']];
+                require_once('gettableprocessor.class.php');
+                $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
+                return $getTableProcessor->run($action, $form, $data);
+                break;
             case 'test':
                 //$data = $this->getTables->sanitize($data); //Санация $data
                 return $this->test($data);
@@ -304,6 +318,10 @@ class getForm
                     case 'save':
                         $button['action'] = 'getForm/save';
                         $button['lexicon'] = 'gettables_save';
+                        break;
+                    case 'copy':
+                        $button['action'] = 'getForm/copy';
+                        $button['lexicon'] = 'gettables_copy';
                         break;
                 }
             }

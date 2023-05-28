@@ -316,7 +316,7 @@ class getTableProcessor
     {
         
         $saved = [];
-        if(empty($data['trs_data'])) return $this->error('trs_data empty');
+        if(empty($this->old_rows)) return $this->error('old_rows empty');
         
         foreach($this->old_rows as $row){
             $old_row = $row;
