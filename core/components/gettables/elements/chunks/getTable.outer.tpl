@@ -25,7 +25,7 @@
                 top:132px !important;
             }
         </style>
-        <div class="get-table-top">
+        <div class="get-table-top" style="height: 132px;">
         {$top}
         </div>
     {/if}
