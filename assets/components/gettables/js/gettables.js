@@ -203,6 +203,7 @@
             //e.target.autocomplete = "new-password";
             el = e.target;
             //el.value = ' ';
+            getTables.$doc.off('mouseenter','.get-table-td', getTables.mouseenter).off('mouseleave','.get-table-td', getTables.mouseleave);
             function revert(e){
                 e.preventDefault();
                 e.stopPropagation();
