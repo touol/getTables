@@ -180,11 +180,25 @@
               });
         }
     };
+    getTables.mouseenter = function () {
+        if($(this).find('.fullcontent').length == 1){
+            $(this).find('.fullcontent').hide();
+            $(this).find('.fullcontent-edit').show();
+        }
+    };
+    getTables.mouseleave = function () {
+        if($(this).find('.fullcontent').length == 1){
+            $(this).find('.fullcontent').show();
+            $(this).find('.fullcontent-edit').hide();
+        }
+    };
     getTables.initialize = function () {
         getTables.setup();
         // Indicator of active ajax request
 
         getTables.setPlugins();
+        
+
         getTables.$doc.on('focus','.get-date,.get-autocomplect-content,.get-table-autosave',function (e) {
             //e.target.autocomplete = "new-password";
             el = e.target;
@@ -248,10 +262,13 @@
             }
         });
         
-        
+        getTables.$doc.on( "mousemove", function( event ) {
+            getTables.$doc.on('mouseenter','.get-table-td', getTables.mouseenter).on('mouseleave','.get-table-td', getTables.mouseleave);
+        });
         getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
             if(!e.ctrlKey) return;
             //e.preventDefault();
+            let $td0 = $(this).closest('td');
             let $td = $(this).closest('td');
             let $focus;
             if(e.code == 'ArrowLeft'){
@@ -267,7 +284,6 @@
                     }
                     if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
                 }
-                if(typeof($focus) !== "undefined") $focus.trigger("focus");
             }
             if(e.code == 'ArrowRight'){
                 for(i=1;i<10;i++){
@@ -282,7 +298,6 @@
                     }
                     if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
                 }
-                if(typeof($focus) !== "undefined") $focus.trigger("focus");
             }
             $tr = $(this).closest('tr');
             if(e.code == 'ArrowDown'){
@@ -297,7 +312,6 @@
                     }
                     if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
                 }
-                if(typeof($focus) !== "undefined") $focus.trigger("focus");
             }
             if(e.code == 'ArrowUp'){
                 for(i=1;i<10;i++){
@@ -311,9 +325,18 @@
                     }
                     if(typeof($focus) !== "undefined" && !$focus.prop("readonly")) break;
                 }
-                if(typeof($focus) !== "undefined") $focus.trigger("focus");
+                
             }
-            if(typeof($focus) !== "undefined" ){
+            
+            if(typeof($focus) !== "undefined"){
+                //getTables.$doc.off('mouseenter','.get-table-td', getTables.mouseenter).off('mouseleave','.get-table-td', getTables.mouseleave);
+                if($focus.closest('td').find('.fullcontent').length == 1){
+                    $focus.closest('td').find('.fullcontent').hide();
+                    $focus.closest('td').find('.fullcontent-edit').show();
+                    $td0.find('.fullcontent').show();
+                    $td0.find('.fullcontent-edit').hide();
+                }
+                $focus.trigger("focus");
                 setTimeout(function() {$focus.select();}, 0);
             }
             

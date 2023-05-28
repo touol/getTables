@@ -1029,7 +1029,8 @@ class getTable
                         $td['edit']['content'] = $row[$td['edit']['field_content']];
                     }
                     $td['edit']['value'] = $td['value'];
-                    $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit']]);
+                    if(empty($td['edit']['content'])) $td['edit']['content'] = $td['edit']['value'];
+                    $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit'],'table'=>$table]);
                 }else{
                     if($td['edit']['type'] == "checkbox"){
                         if($td['value']){
@@ -1936,6 +1937,7 @@ class getTable
         if(!empty($table['sub_where'])) $table_compile['sub_where'] = $table['sub_where'];
         if(!empty($table['sub_default'])) $table_compile['sub_default'] = $table['sub_default'];
         if(!empty($table['event'])) $table_compile['event'] = $table['event'];
+        if(!empty($table['settings'])) $table_compile['settings'] = $table['settings'];
         if(isset($table['sortable']) and is_array($table['sortable'])){
             $table_compile['sortable'] = $table['sortable'];
         }

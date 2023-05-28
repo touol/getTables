@@ -1,6 +1,25 @@
 {if $edit.buttons}
     <div class="input-group">
 {/if}
+{if $table.settings.fullcontent}
+    <div class="fullcontent">
+        {switch $edit.type}
+            {case 'view_date','date'}
+                {$edit.value | date_format : '%d.%m.%Y'}
+            {case 'datetime'}
+                {$edit.value | date_format : '%d.%m.%Y H:s'}
+            {case 'decimal'}
+                {$edit.value | number : 3 : ',' : ' '}
+            {case 'checkbox'}
+                {if $edit.value}Да{else}Нет{/if}
+            {case 'textarea'}
+                {$edit.value | truncate}
+            {case default}
+                {$edit.content}
+        {/switch}
+    </div>
+    <div class="fullcontent-edit" style="display:none">
+{/if}
 {switch $edit.type}
     {case 'hidden'}
         {$edit.value}
@@ -122,6 +141,9 @@
         {if $edit.readonly}readonly{/if}
         autocomplect="off"/>
 {/switch}
+{if $table.settings.fullcontent}
+    </div>
+{/if}
 {if $edit.buttons}
     <span class="input-group-btn" >{$edit.buttons}</span>
   </div>
