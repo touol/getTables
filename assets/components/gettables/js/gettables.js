@@ -182,12 +182,15 @@
     };
     getTables.mouseenter = function () {
         if($(this).find('.fullcontent').length == 1){
+            $(this).css( "height", $(this).css( "height" ));
+            $(this).css( "width", $(this).css( "width" ));
             $(this).find('.fullcontent').hide();
             $(this).find('.fullcontent-edit').show();
         }
     };
     getTables.mouseleave = function () {
         if($(this).find('.fullcontent').length == 1){
+            $(this).removeAttr('style');
             $(this).find('.fullcontent').show();
             $(this).find('.fullcontent-edit').hide();
         }
@@ -198,6 +201,24 @@
 
         getTables.setPlugins();
         
+        //фиксация сдвига заголовков таблицы
+        let getTableTop = document.querySelector('.get-table .get-table-top');
+        let nlGetTableTH = document.querySelectorAll('.get-table th'); 
+        function setHeight(){
+            if(getTableTop){  
+                if(nlGetTableTH.length > 0){
+                    let height = getTableTop.offsetHeight;
+                    nlGetTableTH.forEach(item=>{ 
+                        item.setAttribute('style', 'top:' + height + 'px !important');
+                    });
+                }
+                
+            }
+        }
+        setHeight()
+        window.addEventListener('resize', function(){ 
+            setHeight();
+        });
 
         getTables.$doc.on('focus','.get-date,.get-autocomplect-content,.get-table-autosave',function (e) {
             //e.target.autocomplete = "new-password";

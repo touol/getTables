@@ -13,21 +13,9 @@
         {/if}
     </div>
     {if $top}
-        <div class="get-table-top" style="height: 132px;">
+        <div class="get-table-top">
         {$top}
         </div>
-        <style>
-            .get-table .get-table-top {
-                position: -webkit-sticky !important;
-                position: sticky !important;
-                z-index: 2;
-                background: white;
-                top:0;
-            }
-            .get-table th {
-                top:132px !important;
-            }
-        </style>
     {/if}
     <div class="gts-form get-table-filter-container get-table-paginator-container">
         {if ($topBar['topBar/topline/filters']['filters'] and count($topBar['topBar/topline/filters']['filters']) == 0) or !isset($topBar['topBar/topline/filters/search'])}

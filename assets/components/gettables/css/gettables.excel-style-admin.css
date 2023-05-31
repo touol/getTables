@@ -790,3 +790,10 @@ li {
     background: white;
     top:0;
 }
+.get-table .get-table-top {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    z-index: 2;
+    background: white;
+    top:0;
+}
