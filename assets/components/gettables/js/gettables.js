@@ -209,7 +209,8 @@
                 if(nlGetTableTH.length > 0){
                     let height = getTableTop.offsetHeight;
                     nlGetTableTH.forEach(item=>{ 
-                        item.setAttribute('style', 'top:' + height + 'px !important');
+                        item.style.removeProperty('top');
+                        item.style.setProperty('top', height + 'px', 'important');
                     });
                 }
                 
