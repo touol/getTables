@@ -1,7 +1,7 @@
 {if $edit.buttons}
     <div class="input-group">
 {/if}
-{if $table.settings.fullcontent}
+{if $table.settings.fullcontent == '1'}
     <div class="fullcontent">
         {switch $edit.type}
             {case 'view_date','date'}
@@ -143,7 +143,7 @@
         {if $edit.readonly}readonly{/if}
         autocomplect="off"/>
 {/switch}
-{if $table.settings.fullcontent}
+{if $table.settings.fullcontent == '1'}
     </div>
 {/if}
 {if $edit.buttons}

@@ -180,21 +180,26 @@
               });
         }
     };
-    getTables.mouseenter = function () {
-        if($(this).find('.fullcontent').length == 1){
+    getTables.click = function () {
+        if($(this).find('.fullcontent').length == 1 && $(this).find('.fullcontent').is(":visible")){
+            $('.get-table td').css( "height", "");
+            $('.get-table td').css( "width", "");
+            $('.get-table td').find('.fullcontent').show();
+            $('.get-table td').find('.fullcontent-edit').hide();
+
             $(this).css( "height", $(this).css( "height" ));
             $(this).css( "width", $(this).css( "width" ));
             $(this).find('.fullcontent').hide();
             $(this).find('.fullcontent-edit').show();
         }
     };
-    getTables.mouseleave = function () {
-        if($(this).find('.fullcontent').length == 1){
-            $(this).removeAttr('style');
-            $(this).find('.fullcontent').show();
-            $(this).find('.fullcontent-edit').hide();
-        }
-    };
+    // getTables.mouseleave = function () {
+    //     if($(this).find('.fullcontent').length == 1){
+    //         $(this).removeAttr('style');
+    //         $(this).find('.fullcontent').show();
+    //         $(this).find('.fullcontent-edit').hide();
+    //     }
+    // };
     getTables.initialize = function () {
         getTables.setup();
         // Indicator of active ajax request
@@ -225,7 +230,7 @@
             //e.target.autocomplete = "new-password";
             el = e.target;
             //el.value = ' ';
-            getTables.$doc.off('mouseenter','.get-table-td', getTables.mouseenter).off('mouseleave','.get-table-td', getTables.mouseleave);
+            //getTables.$doc.off('mouseenter','.get-table-td', getTables.mouseenter).off('mouseleave','.get-table-td', getTables.mouseleave);
             function revert(e){
                 e.preventDefault();
                 e.stopPropagation();
@@ -285,9 +290,9 @@
             }
         });
         
-        getTables.$doc.on( "mousemove", function( event ) {
-            getTables.$doc.on('mouseenter','.get-table-td', getTables.mouseenter).on('mouseleave','.get-table-td', getTables.mouseleave);
-        });
+        
+        getTables.$doc.on('click','.get-table-td', getTables.click);
+        
         getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
             if(!e.ctrlKey) return;
             //e.preventDefault();
@@ -1337,6 +1342,8 @@
                             if(!$focus.is(':focus')){
                                 $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
                                 $(this).replaceWith($td);
+                            }else if($focus.closest('.get-table-td').find('.fullcontent').length == 1){
+                                $focus.closest('.get-table-td').find('.fullcontent').text($new_row.find('td[data-field="'+$(this).data('field')+'"]').find('.fullcontent').text());
                             }
                         }else{
                             $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
