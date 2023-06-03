@@ -770,11 +770,12 @@ li {
     z-index: 1;
     width: auto;
     background-color: #dfcff5;
+    top: 5;
 }
 
 .get-table-tr .get-autocomplect-content:focus{
     position: absolute;
-    z-index: 1;
+    z-index: 4;
     width: auto;
     left:30px;
     background-color: #dfcff5;
@@ -782,6 +783,7 @@ li {
 
 .get-table .table > tbody > .get-table-tr > td{
     vertical-align: top;
+    position: relative;
 }
 .get-table th {
     position: -webkit-sticky !important;

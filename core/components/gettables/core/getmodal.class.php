@@ -351,10 +351,10 @@ class getModal
                         $edit['content'] = $row[$edit['field_content']];
                     }
                     if($edit['type'] == "date"){
-                        $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
+                        if($edit['value'] and !$edit['options']) $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
                     }
                     if($edit['type'] == "datetime"){
-                        $edit['value'] = date($this->config['datetime_format'],strtotime($edit['value']));
+                        if($edit['value'] and !$edit['options']) $edit['value'] = date($this->config['datetime_format'],strtotime($edit['value']));
                     }
                     //$this->getTables->addDebug($edit,'$edit generateEditsData');
                 }

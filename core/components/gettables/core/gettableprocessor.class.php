@@ -799,6 +799,8 @@ class getTableProcessor
                     if(isset($data[$edit['field']])){
                         if($data[$edit['field']] == ''){
                             $set_data[$edit['field']] = null;
+                        }else if(strpos($edit['options'],'onlyTimepicker') !== false){
+                            $set_data[$edit['field']] = $data[$edit['field']];
                         }else{
                             $set_data[$edit['field']] = date('Y-m-d H:i',strtotime($data[$edit['field']]));
                         }

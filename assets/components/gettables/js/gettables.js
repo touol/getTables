@@ -345,27 +345,39 @@
                 }else{
                     var startDate = new Date();
                 }
-                new AirDatepicker(this,{
+                options = {
                     startDate:startDate,
                     autoClose:true,
                     onSelect({datepicker}) {
                         $(datepicker.$el).trigger('change');
                     }
-                });
+                };
+                if($(this).data('options') !='') options = Object.assign(options,$(this).data('options'));
+                new AirDatepicker(this,options);
                 $(this).addClass('air_datepicker');
             }
         });
         getTables.$doc.on('focus','.get-datetime',function () {
             if(!$(this).hasClass('air_datepicker')){
+                $data_options = $(this).data('options');
                 if($(this).val()){
                     var dateString = $(this).val(); //"25/04/1987"; yyyy-mm-dd dd/mm/yyyy
-                    dateString = dateString.substring(6, 10)+"-"+dateString.substring(3, 5)+"-"+dateString.substring(0, 2)+" "+dateString.substring(11);
-                    var startDate = new Date(dateString);
+                    if($data_options.onlyTimepicker){
+                        var startDate = '2000-01-01 ' + dateString;
+	                    
+					}else{
+                        dateString = dateString.substring(6, 10)+"-"+dateString.substring(3, 5)+"-"+dateString.substring(0, 2)+" "+dateString.substring(11);
+	                    var startDate = new Date(dateString);
+					}
+                    
+                    
+                    
                 }else{
                     var startDate = new Date();
                 }
                 var time1;
-                new AirDatepicker(this,{
+                options = {
+					timeFormat:'H:mm',
                     startDate:startDate,
                     autoClose:true,
                     timepicker:true,
@@ -380,7 +392,9 @@
                           1000
                         );
                     }
-                });
+                };
+                if($data_options !='') options = Object.assign(options,$data_options);
+                new AirDatepicker(this,options);
                 $(this).addClass('air_datepicker');
             }
         });
@@ -1854,6 +1868,7 @@
         
         initialize: function () {
             this.timeoutId = 0;
+            
             getTables.$doc
                 .on('click', 'body', function (e) {
                     $(this).find('.get-autocomplect-menu').hide();
@@ -2167,9 +2182,10 @@
 //    клик вне фильтра
     $(document).mouseup(function (e){ // событие клика по веб-документу
         var filter = $(".filrt-window"); // тут указываем ID элемента
-       
+        var datepicker = $('.air-datepicker-global-container');
         if (!filter.is(e.target) // если клик был не по нашему блоку
-            && filter.has(e.target).length === 0) { // и не по его дочерним элементам и не по календарю
+            && filter.has(e.target).length === 0 // и не по его дочерним элементам 
+            && datepicker.has(e.target).length === 0) { //и не по календарю
             filter.removeClass('filrt-window__open'); // скрываем его
         }
     });

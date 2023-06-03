@@ -144,7 +144,9 @@
             <div class="controls">
                 <input type="text" id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" 
                     class="form-control {if !$edit.readonly}get-date{/if}"
-                    autocomplect="off" {if $edit.readonly}readonly{/if}/>
+                    autocomplect="off" {if $edit.readonly}readonly{/if}
+                    data-options='{if $edit.options}{$edit.options}{/if}'
+                    />
                 <span class="error_{$edit.field}"></span>
             </div>
         </div>
@@ -154,7 +156,9 @@
             <div class="controls">
                 <input type="text" id="{$edit.field}" name="{$edit.field}" value="{$edit.value}" placeholder="{$edit.placeholder}" 
                     class="form-control {if !$edit.readonly}get-datetime{/if}"
-                    autocomplect="off" {if $edit.readonly}readonly{/if}/>
+                    autocomplect="off" {if $edit.readonly}readonly{/if}
+                    data-options='{if $edit.options}{$edit.options}{/if}'
+                    />
                 <span class="error_{$edit.field}"></span>
             </div>
         </div>

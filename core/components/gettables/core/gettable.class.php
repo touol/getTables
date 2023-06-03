@@ -957,11 +957,11 @@ class getTable
                     }
                 }
                 if($td['edit']['type'] == "date"){
-                    if($td['value'])
+                    if($td['value'] and !$td['edit']['options'])
                         $td['value'] = date($this->config['date_format'],strtotime($td['value']));
                 }
                 if($td['edit']['type'] == "datetime"){
-                    if($td['value'])
+                    if($td['value'] and !$td['edit']['options'])
                         $td['value'] = date($this->config['datetime_format'],strtotime($td['value']));
                 }
                 // if($td['edit']['type'] == 'textarea' and $this->getTables->REQUEST['gts_action'] != 'getTable/export_excel'){
