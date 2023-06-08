@@ -799,3 +799,6 @@ li {
     background: white;
     top:0;
 }
+td .input-group .form-control {
+    z-index: 0;
+}
