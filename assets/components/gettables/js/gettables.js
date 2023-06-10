@@ -197,6 +197,7 @@
 
 		for (var i = 0; i < cols.length; i++) {
 			cols[i].style.width = cols[i].offsetWidth + 'px';
+            console.log('cols[i].offsetHeight',cols[i].offsetHeight);
 			var div = createDiv(cols[i].offsetHeight);
 			cols[i].appendChild(div);
 			cols[i].style.position = 'relative';
