@@ -396,32 +396,6 @@
             }
         }
     }
-    getTables.click = function () {
-        if($(this).find('.fullcontent').length == 1 && $(this).find('.fullcontent').is(":visible")){
-            $('.get-table td').css( "height", "");
-            $('.get-table td').css( "width", "");
-            $('.get-table td').css( "padding", "");
-            $('.get-table td').find('.fullcontent').show();
-            $('.get-table td').find('.fullcontent-edit').hide();
-            
-            $(this).css( "height", $(this).css( "height" ));
-            $(this).css( "width", $(this).css( "width" ));
-            $(this).css( "padding", "0px");
-            $(this).find('.fullcontent').hide();
-            $(this).find('.fullcontent-edit').show();  
-        }
-        if($(this).find('.get-autocomplect-content').length){
-            $focus = $(this).find('.get-autocomplect-content');
-        }else if($(this).find('.get-table-autosave').length){
-            $focus = $(this).find('.get-table-autosave');
-        }
-        if(typeof($focus) !== "undefined"){
-            $focus.css( "height", ($(this).height() - 1) + 'px');
-            $focus.css( "width", ($(this).width() - 1) + 'px');
-            $focus.trigger("focus");
-            setTimeout(function() {$focus.select();}, 0);
-        }
-    };
     
     getTables.initialize = function () {
         getTables.setup();
@@ -528,7 +502,35 @@
         });
         
         
-        getTables.$doc.on('click','.get-table-td', getTables.click);
+        getTables.$doc.on('click','.get-table-td', function (e) {
+            if($(this).find('.fullcontent').length == 1 && $(this).find('.fullcontent').is(":visible")){
+                $('.get-table td').css( "height", "");
+                $('.get-table td').css( "width", "");
+                $('.get-table td').css( "padding", "");
+                $('.get-table td').find('.fullcontent').show();
+                $('.get-table td').find('.fullcontent-edit').hide();
+                
+                $(this).css( "height", $(this).css( "height" ));
+                $(this).css( "width", $(this).css( "width" ));
+                $(this).css( "padding", "0px");
+                $(this).find('.fullcontent').hide();
+                $(this).find('.fullcontent-edit').show();
+                 
+                if($(this).find('.get-autocomplect-content').length){
+                    $focus = $(this).find('.get-autocomplect-content');
+                }else if($(this).find('.get-table-autosave').length){
+                    $focus = $(this).find('.get-table-autosave');
+                }
+                if(typeof($focus) !== "undefined"){
+                    $focus.css( "height", ($(this).height() - 1) + 'px');
+                    $focus.css( "width", ($(this).width() - 1) + 'px');
+                    $focus.trigger("focus");
+                    setTimeout(function() {$focus.select();}, 0);
+                } 
+            }
+            
+            
+        });
         
         getTables.$doc.on('keydown','.get-table-autosave,.get-autocomplect-content',function (e) {
             if(!e.ctrlKey) return;
