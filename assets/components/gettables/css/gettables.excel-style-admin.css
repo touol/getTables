@@ -761,6 +761,9 @@ li {
 .get-table-autosave:focus {
     background-color: rgb(223, 207, 245);
 }
+textarea.get-table-autosave:focus {
+    white-space:pre-line;
+}
 .get-autocomplect-menu a:focus{
     background-color: rgb(223, 207, 245);
 }
@@ -779,8 +782,6 @@ li {
 .get-table-tr .get-autocomplect-content:focus{
     position: absolute;
     z-index: 4;
-    width: auto;
-    left:30px;
     background-color: #dfcff5;
 }
 
@@ -804,4 +805,23 @@ li {
 }
 td .input-group .form-control {
     z-index: 0;
+}
+.resizeable-menu{
+    z-index: 1000;
+    position: absolute;
+    background-color: #C0C0C0;
+    border: 1px solid blue;
+    padding: 2px;
+    display: block;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+    width: 300px;
+}
+.resizeable-menu ul{
+    padding: 5px;
+}
+.resizeable-menu li{
+    padding: 5px;
+    list-style: none;
 }
