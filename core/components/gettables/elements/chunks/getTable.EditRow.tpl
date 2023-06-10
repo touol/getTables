@@ -28,9 +28,13 @@
     {case 'view_date'}
         {$edit.value | date_format : '%d.%m.%Y'}
     {case 'text'}
-        <input type="text" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
+        {*<input type="text" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
             placeholder="{$edit.placeholder}" class="form-control get-table-autosave"
-            {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>
+            {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly}readonly{/if}/>*}
+        <textarea  data-field="{$edit.field}" name="{$edit.field}" placeholder="{$edit.placeholder}" class="form-control  get-table-autosave"
+            {if $edit.style} style="{$edit.style}"{else}style="height: 34px;"{/if} {if $edit.readonly}readonly{/if}
+             
+            >{$edit.value}</textarea>
         <span class="error_{$edit.field}"></span>
     {case 'decimal'}
         <input type="number" step="{if $edit.step}{$edit.step}{else}0.01{/if}" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
@@ -111,12 +115,17 @@
                         </span>
                     </span>
                     {set $edit.title = $edit.content}
-                    <input type="search" 
+                    {*<input type="search" 
                         class="form-control get-autocomplect-content {if $edit.content_name}get-table-autosave{/if}"
                         {if $edit.content_name}name="{$edit.content_name}" data-field="{$edit.field}"{/if} 
                         value="{$edit.content}" placeholder="{$edit.placeholder}"
                         {if $edit.readonly}readonly{/if}
-                    />
+                    />*}
+                    <textarea  data-field="{$edit.field}" name="{$edit.field}" placeholder="{$edit.placeholder}" 
+                        class="form-control  get-autocomplect-content get-table-autosave"
+                        {if $edit.style} style="{$edit.style}"{else}style="height: 34px;"{/if} {if $edit.readonly}readonly{/if}
+                        
+                        >{$edit.content}</textarea>
                     {if !$edit.readonly}
                         <div class="input-group-btn">
                             <button class="btn get-autocomplect-all">

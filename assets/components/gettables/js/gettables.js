@@ -262,6 +262,8 @@
             var row = table.getElementsByTagName('tr')[0],
                 cols = row ? row.children : undefined;
             if (!cols) return;
+            
+            
             var name = $(table).closest('.get-table').data('name') + '_' + $(table).closest('.get-table').data('hash');
             settings = window.localStorage.getItem('table_' + name);
             if(settings){
@@ -335,7 +337,10 @@
 
                 document.addEventListener('mousemove', function(e) {
                     if (curCol) {
-                        
+                        $('.get-table td').css( "height", "");
+                        $('.get-table td').css( "width", "");
+                        $('.get-table-autosave').css( "height", "");
+                        $('.get-table-autosave').css( "width", "");
                         var diffX = e.pageX - pageX;
                         curCol.style.width = (curColWidth + diffX) + 'px';
                         if ($table)
@@ -395,22 +400,29 @@
         if($(this).find('.fullcontent').length == 1 && $(this).find('.fullcontent').is(":visible")){
             $('.get-table td').css( "height", "");
             $('.get-table td').css( "width", "");
+            $('.get-table td').css( "padding", "");
             $('.get-table td').find('.fullcontent').show();
             $('.get-table td').find('.fullcontent-edit').hide();
-
+            
             $(this).css( "height", $(this).css( "height" ));
             $(this).css( "width", $(this).css( "width" ));
+            $(this).css( "padding", "0px");
             $(this).find('.fullcontent').hide();
-            $(this).find('.fullcontent-edit').show();
+            $(this).find('.fullcontent-edit').show();  
+        }
+        if($(this).find('.get-autocomplect-content').length){
+            $focus = $(this).find('.get-autocomplect-content');
+        }else if($(this).find('.get-table-autosave').length){
+            $focus = $(this).find('.get-table-autosave');
+        }
+        if(typeof($focus) !== "undefined"){
+            $focus.css( "height", ($(this).height() - 1) + 'px');
+            $focus.css( "width", ($(this).width() - 1) + 'px');
+            $focus.trigger("focus");
+            setTimeout(function() {$focus.select();}, 0);
         }
     };
-    // getTables.mouseleave = function () {
-    //     if($(this).find('.fullcontent').length == 1){
-    //         $(this).removeAttr('style');
-    //         $(this).find('.fullcontent').show();
-    //         $(this).find('.fullcontent-edit').hide();
-    //     }
-    // };
+    
     getTables.initialize = function () {
         getTables.setup();
         // Indicator of active ajax request
