@@ -179,103 +179,218 @@
                 })
               });
         }
-		$('.get-table>.table').each(function () {
-            if(!$(this).hasClass('resizable')){
-				getTables.resizableGrid($(this)[0]);
-				$(this).addClass('resizable');
-			}
+        $('.get-table>.table').each(function () {
+            if(!$(this).hasClass('resizeable')){
+                getTables.resizableGrid.initTable($(this)[0]);
+                $(this).addClass('resizeable');
+            }
         });
     };
-	getTables.resizableGrid = function(table) {
-		var row = table.getElementsByTagName('tr')[0],
-			cols = row ? row.children : undefined;
-		if (!cols) return;
+    getTables.resizableGrid = {
+        callbacks: {
+            set_default_width: getTablesConfig.callbacksObjectTemplate(),
+        },
+        setup: function () {
+            getTables.Callbacks.resizableGrid = {
+                set_default_width: getTablesConfig.callbacksObjectTemplate(),
+            };
+        },
+        init: function(){
+            this.setup();
+            $(document).mouseup(function (e){ // событие клика по веб-документу
+                var resizeable_menu = $(".resizeable-menu"); // тут указываем ID элемента
+                if (!resizeable_menu.is(e.target) // если клик был не по нашему блоку
+                    && resizeable_menu.has(e.target).length === 0 // и не по его дочерним элементам 
+                    ) { 
+                        resizeable_menu.remove(); // скрываем его
+                }
+            });
+            getTables.$doc.on('click','.resizeable-menu button',function () {
+                switch($(this).data('action')){
+                    case 'set_width_100':
+                        $table = $(this).closest('.get-table-table');
+                        width = $table.width();
+                        $(this).closest('tr').find('th').each(function(){
+                            $(this).width(($(this).width()/width*100) + '%');
+                        });
+                        $table.width('100%');
+                        settings = {
+                            width:'100%',
+                            ths:{}
+                        };
+                        $(this).closest('tr').find('th').each(function(){
+                            settings.ths[$(this).data('field')] = $(this).width() + 'px';
+                        });
+                        window.localStorage.setItem('table_' + name,JSON.stringify(settings));
+                    break;
+                    
+                    case 'remove_local_width':
+                        var name = $(this).closest('.get-table').data('name') + '_' + $(this).closest('.get-table').data('hash');
+                        settings = window.localStorage.removeItem('table_' + name);
+                        location.reload();
+                    break;
+                    case 'set_default_width':
+                        $table = $(this).closest('.get-table-table');
+                        settings = {
+                            width:$table.css('width'),
+                            ths:{}
+                        };
+                        $(this).closest('tr').find('th').each(function(){
+                            settings.ths[$(this).data('field')] = $(this).css('width');
+                        });
+                        getTables.sendData.data = {
+                            gts_action: 'getTable/set_default_width',
+                            hash: $(this).closest('.get-table').data('hash'),
+                            table_name: $(this).closest('.get-table').data('name'),
+                            settings: settings
+                        };
 
-		//table.style.overflow = 'hidden';
+                        var callbacks = getTables.resizableGrid.callbacks;
+            
+                        callbacks.set_default_width.response.success = function (response) {
+                            
+                        };
+            
+                        return getTables.send(getTables.sendData.data, getTables.resizableGrid.callbacks.set_default_width,
+                            getTables.Callbacks.resizableGrid.set_default_width);
+                    break;
+                }
+                
+            });
+        },
+        initTable: function(table) {
+            var row = table.getElementsByTagName('tr')[0],
+                cols = row ? row.children : undefined;
+            if (!cols) return;
+            var name = $(table).closest('.get-table').data('name') + '_' + $(table).closest('.get-table').data('hash');
+            settings = window.localStorage.getItem('table_' + name);
+            if(settings){
+                settings = JSON.parse(settings);
+                $(table).width(settings.width);
+                for (var key of Object.keys(settings.ths)) {
+                    if(key != ''){
+                        $(table).find('th[data-field="' + key + '"]').width(settings.ths[key]);
+                    }
+                }
+            }
 
-		//var tableHeight = table.offsetHeight;
+            for (var i = 0; i < cols.length; i++) {
+                var div = createDiv();
+                cols[i].appendChild(div);
+                cols[i].style.position = 'relative';
+                setListeners(div);
+            }
+            $('body').on('contextmenu', 'div.resizeable-th', function() {
+                $th = $(this).parent();
+                $('.resizeable-menu').remove();
+                $th.append(`
+                    <div class="resizeable-menu">
+                        <ul>
+                            <li>
+                                <button class="resizeable-menu-button btn btn-primary" data-action="set_width_100">
+                                    Установить размер таблицы 100%
+                                </button>
+                            </li>
+                            <li>
+                                <button class="resizeable-menu-button btn btn-primary" data-action="set_default_width">
+                                    Сохранить размер таблицы как размер по-умолчанию
+                                </button>
+                            </li>
+                            <li>
+                                <button class="resizeable-menu-button btn btn-primary" data-action="remove_local_width">
+                                    Удалить локальные настройки
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                `);
+                $('.resizeable-menu').css('top', $th.outerHeight());
+                window.event.returnValue = false;
+            });
+            
+            function setListeners(div) {
+                var pageX, curCol, $table, curColWidth, $tableWidth;
 
-		for (var i = 0; i < cols.length; i++) {
-			cols[i].style.width = cols[i].offsetWidth + 'px';
-            console.log('cols[i].offsetHeight',cols[i].offsetHeight);
-			var div = createDiv(cols[i].offsetHeight);
-			cols[i].appendChild(div);
-			cols[i].style.position = 'relative';
-			setListeners(div);
-		}
+                div.addEventListener('mousedown', function(e) {
+                    curCol = e.target.parentElement;
+                    $table = $(e.target.parentElement).closest('.get-table-table');
+                    $(e.target.parentElement).closest('tr').find('th').each(function(){
+                        $(this).width($(this).width() + 'px');
+                    });
+                    $table.width($table.width() + 'px');
+                    $tableWidth = $table.width();
+                    pageX = e.pageX;
+                    var padding = paddingDiff(curCol);
 
-		function setListeners(div) {
-			var pageX, curCol, nxtCol, curColWidth, nxtColWidth;
+                    curColWidth = curCol.offsetWidth - padding;
+                });
 
-			div.addEventListener('mousedown', function(e) {
-				curCol = e.target.parentElement;
-				nxtCol = curCol.nextElementSibling;
-				pageX = e.pageX;
+                div.addEventListener('mouseover', function(e) {
+                    e.target.style.borderRight = '2px solid #0000ff';
+                })
 
-				var padding = paddingDiff(curCol);
+                div.addEventListener('mouseout', function(e) {
+                    e.target.style.borderRight = '';
+                })
 
-				curColWidth = curCol.offsetWidth - padding;
-				if (nxtCol)
-					nxtColWidth = nxtCol.offsetWidth - padding;
-			});
+                document.addEventListener('mousemove', function(e) {
+                    if (curCol) {
+                        
+                        var diffX = e.pageX - pageX;
+                        curCol.style.width = (curColWidth + diffX) + 'px';
+                        if ($table)
+                            $table.width(($tableWidth + (diffX)) + 'px');
+                        
+                        settings = {
+                            width:($tableWidth + (diffX)) + 'px',
+                            ths:{}
+                        };
+                        $(curCol).closest('tr').find('th').each(function(){
+                            settings.ths[$(this).data('field')] = $(this).width() + 'px';
+                        });
+                        window.localStorage.setItem('table_' + name,JSON.stringify(settings));
+                    }
+                });
 
-			div.addEventListener('mouseover', function(e) {
-				e.target.style.borderRight = '2px solid #0000ff';
-			})
+                document.addEventListener('mouseup', function(e) {
+                    curCol = undefined;
+                    nxtCol = undefined;
+                    pageX = undefined;
+                    nxtColWidth = undefined;
+                    curColWidth = undefined
+                });
+            }
 
-			div.addEventListener('mouseout', function(e) {
-				e.target.style.borderRight = '';
-			})
+            function createDiv() {
+                var div = document.createElement('div');
+                div.style.top = 0;
+                div.style.right = 0;
+                div.style.width = '5px';
+                div.style.position = 'absolute';
+                div.style.cursor = 'col-resize';
+                div.style.userSelect = 'none';
+                div.style.height = '100%';
+                div.classList.add("resizeable-th");
+                return div;
+            }
 
-			document.addEventListener('mousemove', function(e) {
-				if (curCol) {
-					
-					var diffX = e.pageX - pageX;
+            function paddingDiff(col) {
 
-					if (nxtCol)
-						nxtCol.style.width = (nxtColWidth - (diffX)) + 'px';
+                if (getStyleVal(col, 'box-sizing') == 'border-box') {
+                    return 0;
+                }
 
-					curCol.style.width = (curColWidth + diffX) + 'px';
-				}
-			});
+                var padLeft = getStyleVal(col, 'padding-left');
+                var padRight = getStyleVal(col, 'padding-right');
+                return (parseInt(padLeft) + parseInt(padRight));
 
-			document.addEventListener('mouseup', function(e) {
-				curCol = undefined;
-				nxtCol = undefined;
-				pageX = undefined;
-				nxtColWidth = undefined;
-				curColWidth = undefined
-			});
-		}
+            }
 
-		function createDiv(height) {
-			var div = document.createElement('div');
-			div.style.top = 0;
-			div.style.right = 0;
-			div.style.width = '5px';
-			div.style.position = 'absolute';
-			div.style.cursor = 'col-resize';
-			div.style.userSelect = 'none';
-			div.style.height = height + 'px';
-			return div;
-		}
-
-		function paddingDiff(col) {
-
-			if (getStyleVal(col, 'box-sizing') == 'border-box') {
-				return 0;
-			}
-
-			var padLeft = getStyleVal(col, 'padding-left');
-			var padRight = getStyleVal(col, 'padding-right');
-			return (parseInt(padLeft) + parseInt(padRight));
-
-		}
-
-		function getStyleVal(elm, css) {
-			return (window.getComputedStyle(elm, null).getPropertyValue(css))
-		}
-	};
+            function getStyleVal(elm, css) {
+                return (window.getComputedStyle(elm, null).getPropertyValue(css))
+            }
+        }
+    }
     getTables.click = function () {
         if($(this).find('.fullcontent').length == 1 && $(this).find('.fullcontent').is(":visible")){
             $('.get-table td').css( "height", "");
@@ -365,11 +480,11 @@
                     var dateString = $(this).val(); //"25/04/1987"; yyyy-mm-dd dd/mm/yyyy
                     if($data_options.onlyTimepicker){
                         var startDate = '2000-01-01 ' + dateString;
-	                    
-					}else{
+                        
+                    }else{
                         dateString = dateString.substring(6, 10)+"-"+dateString.substring(3, 5)+"-"+dateString.substring(0, 2)+" "+dateString.substring(11);
-	                    var startDate = new Date(dateString);
-					}
+                        var startDate = new Date(dateString);
+                    }
                     
                     
                     
@@ -378,7 +493,7 @@
                 }
                 var time1;
                 options = {
-					timeFormat:'H:mm',
+                    timeFormat:'H:mm',
                     startDate:startDate,
                     autoClose:true,
                     timepicker:true,
@@ -530,6 +645,7 @@
         getTables.Table.initialize();
         getTables.Form.initialize();
         getTables.Tree.initialize();
+        getTables.resizableGrid.init();
     };
     getTables.controller = function () {
         var self = this;

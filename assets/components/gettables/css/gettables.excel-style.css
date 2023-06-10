@@ -805,3 +805,22 @@ li {
 td .input-group .form-control {
     z-index: 0;
 }
+.resizeable-menu{
+    z-index: 1000;
+    position: absolute;
+    background-color: #C0C0C0;
+    border: 1px solid blue;
+    padding: 2px;
+    display: block;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+    width: 300px;
+}
+.resizeable-menu ul{
+    padding: 5px;
+}
+.resizeable-menu li{
+    padding: 5px;
+    list-style: none;
+}

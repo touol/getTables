@@ -129,9 +129,32 @@ class getTable
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->get_tree_child($action, $table, $data);
                 break;
+            case 'set_default_width':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->set_default_width($action, $table, $data);
+                break;
         }
         return $this->error("Метод $action в классе $class не найден!");
     }
+    public function set_default_width($action, $table, $data)
+    {
+        if(!$this->modx->user->isMember('Administrator')) 
+            return $this->error("Установить ширину по умолчанию может только администратор!");
+        
+        $cacheElementKey = 'table_name_'.$data['table_name']. "_" . $this->config['hash'];
+        $cacheKey = 'getTables_settings';
+        $cacheHandler = $this->modx->getOption('cache_resource_handler', null, $this->modx->getOption(xPDO::OPT_CACHE_HANDLER, null, 'xPDOFileCache'));
+        $cacheExpires = (integer) $this->modx->getOption('cache_resource_expires', null, $this->modx->getOption(xPDO::OPT_CACHE_EXPIRES, null, 0));
+        
+        $this->modx->cacheManager->set($cacheElementKey, $data['settings'], $cacheExpires, [
+            xPDO::OPT_CACHE_KEY => $cacheKey,
+            xPDO::OPT_CACHE_HANDLER => $cacheHandler,
+            xPDO::OPT_CACHE_EXPIRES => $cacheExpires,
+        ]);
+        return $this->success('Успешно');
+    }
+    
+    
     public function get_tree_child($action, $table, $data)
     {
         $table2 = $this->generateData($table);
@@ -398,7 +421,7 @@ class getTable
         }
         //$subtable['pdoTools'] = $pdoConfig;
         $subtable['sub_where_current'] = json_encode($where);
-		$this->getTables->REQUEST['sub_where_current'] = $where;
+        $this->getTables->REQUEST['sub_where_current'] = $where;
         $subtable['parent_current'] = json_encode(['name'=>$data['table_name'],'tr_data'=>$data['tr_data']]);
         $this->getTables->setClassConfig('getTable',$subtable['name'], $subtable);
         //получаем таблицу дочернию
@@ -882,6 +905,29 @@ class getTable
         if(!empty($table['prepareRows'])){
             $this->getTables->addTime("prepareRows ".$table['prepareRows']); 
             $this->prepareRows($table['prepareRows'],$rows,$table);
+        }
+        //Установка ширины таблицы thead.tr.ths
+        $cacheElementKey = 'table_name_'.$table['name']. "_" . $this->config['hash'];
+        $cacheKey = 'getTables_settings';
+        $cacheHandler = $this->modx->getOption('cache_resource_handler', null, $this->modx->getOption(xPDO::OPT_CACHE_HANDLER, null, 'xPDOFileCache'));
+        $cacheExpires = (integer) $this->modx->getOption('cache_resource_expires', null, $this->modx->getOption(xPDO::OPT_CACHE_EXPIRES, null, 0));
+        
+        if($settings = $this->modx->cacheManager->get($cacheElementKey,[
+            xPDO::OPT_CACHE_KEY => $cacheKey,
+            xPDO::OPT_CACHE_HANDLER => $cacheHandler,
+            xPDO::OPT_CACHE_EXPIRES => $cacheExpires,
+        ])){
+            //$this->getTables->addTime("settings thead.tr.ths ".print_r($settings,1));
+            $table['table']['style'] = 'width:'.$settings['width'].';';
+            foreach($table['thead']['tr']['ths'] as $ktd0=>$th0){
+                foreach($settings['ths'] as $field=>$width){
+                    if($field and $th0['field'] == $field){
+                        //$this->getTables->addTime("settings thead.tr.ths {$th0['field']} $field $width");
+                        $table['thead']['tr']['ths'][$ktd0]['style'] = 'width:'.$width.';';
+                    }
+                }
+                
+            }
         }
         
         //Автозаполнение content на select autocomplect
@@ -1869,10 +1915,10 @@ class getTable
             if($value['thstyle']){
                 $th['style'] = $th['style'].$value['thstyle'];
             }
-			if($value['tdstyle']){
+            if($value['tdstyle']){
                 $td['style'] = $td['style'].$value['tdstyle'];
             }
-			if($value['style']){
+            if($value['style']){
                 $td['style'] = $td['style'].$value['style'];
             }
             $ths[] = $th;

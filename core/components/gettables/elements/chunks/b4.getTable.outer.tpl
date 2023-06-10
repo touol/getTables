@@ -86,7 +86,8 @@
             </div>
         {/if}
     </div>
-    <table class="table get-table-table">
+    
+    <table class="table get-table-table" {if $table.style}style="{$table.style}"{/if}>
       <thead class="get-table-thead">
         <tr>
             {foreach $thead.tr.ths as $th}
