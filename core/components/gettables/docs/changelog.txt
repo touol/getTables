@@ -17,6 +17,7 @@ Changelog for getTables.
 - правка z-index.
 - Редактирование ширины столбцов 2.
 - Фуллконтент 2.
+- Исправление autosave autocomplect.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

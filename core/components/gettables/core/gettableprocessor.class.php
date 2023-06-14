@@ -543,22 +543,25 @@ class getTableProcessor
         $set_data['id'] = (int)$data['tr_data']['id'];
         $set_data[$data['td']['field']] = $data['td']['value'];
         $set_data[$data['td']['field']] = $data['td']['value'];
-
+		if(isset($data['td2'])){
+			$set_data[$data['td2']['name']] = $data['td2']['value'];
+		}
+		//$this->getTables->addTime("getTable autosave set_data ".print_r($data,1));
         $refresh_table = false;
         foreach($edit_tables as &$class_edits){
             foreach($class_edits as $edit){
                 if($edit['field'] == $data['td']['field']){
                     if($edit['refresh_table']) $refresh_table = true;
                 }
-                if($edit['field'] == $data['td']['field'] and $edit['type'] == 'select'){
-                    if($data['td']['field'] != $data['td']['name']){
-                        $set_data[$data['td']['name']] = $data['td']['value'];
-                        unset($set_data[$data['td']['field']]);
-                        // $edit2 = $edit;
-                        // $edit2['field'] = $data['td']['name'];
-                        // $class_edits[] = $edit2;
-                    }
-                }
+                // if($edit['field'] == $data['td']['field'] and $edit['type'] == 'select'){
+                    // if($data['td']['field'] != $data['td']['name']){
+                        // $set_data[$data['td']['name']] = $data['td']['value'];
+                        // unset($set_data[$data['td']['field']]);
+                        $edit2 = $edit;
+                        $edit2['field'] = $data['td']['name'];
+                        $class_edits[] = $edit2;
+                    // }
+                // }
                 if($edit['force']){
                     switch($edit['type']){
                         case 'date':

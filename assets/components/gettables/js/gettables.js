@@ -1332,6 +1332,17 @@
                         },
                         tr_data: tr_data
                     };
+					if($autocomplect.length){
+						if($autocomplect.find('.get-autocomplect-content').data('name') !=''){
+							value = $autocomplect.find('.get-autocomplect-content').val();
+							fname = $autocomplect.find('.get-autocomplect-content').data('name');
+							getTables.sendData.data.td2 = {
+								name: fname,
+								value: value
+							};
+						}
+					}
+					
                     getTables.Table.autosave(field, value, table_data, tr_data);
                 });
             getTables.$doc
@@ -2155,8 +2166,9 @@
             
                     callbacks.load.response.success = function (response) {
                         $autocomplect = getTables.sendData.$autocomplect;
-                        $autocomplect.find('.get-autocomplect-hidden-id').val($autocomplect.find('.get-autocomplect-id').val()).trigger('change');
+                        
                         $autocomplect.find('.get-autocomplect-content').val(response.data.content);
+						$autocomplect.find('.get-autocomplect-hidden-id').val($autocomplect.find('.get-autocomplect-id').val()).trigger('change');
                     };
                     getTables.send(getTables.sendData.data, getTables.Autocomplect.callbacks.load, getTables.Callbacks.Autocomplect.load);
                 });
@@ -2250,8 +2262,9 @@
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $autocomplect.find('.get-autocomplect-menu').hide();
                     $autocomplect.find('.get-autocomplect-id').val($(this).data('id'));
-                    $autocomplect.find('.get-autocomplect-hidden-id').val($(this).data('id')).trigger('change');
-                    $autocomplect.find('.get-autocomplect-content').val($(this).text()).trigger('change').trigger('focus');
+                    
+                    $autocomplect.find('.get-autocomplect-content').val($(this).text()).trigger('focus');
+					$autocomplect.find('.get-autocomplect-hidden-id').val($(this).data('id')).trigger('change');
                     
                 });
             getTables.$doc.on('keydown','.get-autocomplect-content',function (e) {

@@ -121,8 +121,10 @@
                         value="{$edit.content}" placeholder="{$edit.placeholder}"
                         {if $edit.readonly}readonly{/if}
                     />*}
-                    <textarea  data-field="{$edit.field}" name="{$edit.field}" placeholder="{$edit.placeholder}" 
-                        class="form-control  get-autocomplect-content get-table-autosave"
+                    <textarea  
+                        {if $edit.content_name}name="{$edit.content_name}" data-name="{$edit.content_name}" data-field="{$edit.field}"{/if}
+                         placeholder="{$edit.placeholder}" 
+                        class="form-control  get-autocomplect-content"
                         {if $edit.style} style="{$edit.style}"{else}style="height: 34px;"{/if} {if $edit.readonly}readonly{/if}
                         
                         >{$edit.content}</textarea>

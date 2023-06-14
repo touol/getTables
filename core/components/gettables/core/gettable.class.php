@@ -954,6 +954,7 @@ class getTable
                             }
                         }
                     }
+					//$this->getTables->addTime("getTable generateData prepareRow ".print_r($row,1));
                     
                 }
                 
@@ -1075,7 +1076,13 @@ class getTable
                         $td['edit']['content'] = $row[$td['edit']['field_content']];
                     }
                     $td['edit']['value'] = $td['value'];
-                    if(empty($td['edit']['content'])) $td['edit']['content'] = $td['edit']['value'];
+                    if(empty($td['edit']['content'])){
+						if(!empty($td['edit']['select'])){
+							//$td['edit']['content'] = $this->pdoTools->getChunk('@INLINE '.$td['edit']['select']['content'],$row);
+						}else{
+							$td['edit']['content'] = $td['edit']['value'];
+						}
+					}
                     $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit'],'table'=>$table]);
                 }else{
                     if($td['edit']['type'] == "checkbox"){
