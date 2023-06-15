@@ -553,15 +553,11 @@ class getTableProcessor
                 if($edit['field'] == $data['td']['field']){
                     if($edit['refresh_table']) $refresh_table = true;
                 }
-                // if($edit['field'] == $data['td']['field'] and $edit['type'] == 'select'){
-                    // if($data['td']['field'] != $data['td']['name']){
-                        // $set_data[$data['td']['name']] = $data['td']['value'];
-                        // unset($set_data[$data['td']['field']]);
+                if(isset($data['td2'])){
                         $edit2 = $edit;
-                        $edit2['field'] = $data['td']['name'];
+                        $edit2['field'] = $data['td2']['name'];
                         $class_edits[] = $edit2;
-                    // }
-                // }
+                }
                 if($edit['force']){
                     switch($edit['type']){
                         case 'date':
