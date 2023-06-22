@@ -289,10 +289,19 @@ class getTree
             $getTablesLoadGTSConfig = $this->modx->invokeEvent('getTablesLoadGTSConfig', [
                 'config'=>$resp['data'],
                 'getTables'=>$this->getTables,
+                'treeOn'=>1,
+                'tree'=>$tree,
             ]);
             if (isset($this->modx->event->returnedValues) && is_array($this->modx->event->returnedValues)) {
                 if(isset($this->modx->event->returnedValues['config']))
                     $resp['data'] = $this->modx->event->returnedValues['config'];
+                if(isset($this->modx->event->returnedValues['selects'])){
+                    $request = $this->getTables->handleRequest('getSelect/compile',$this->modx->event->returnedValues['selects']);
+                    $selects = $request['data']['selects'];
+                
+                    $this->getTables->setClassConfig('getSelect','all', $selects);
+                }
+                    
             }
             if(isset($resp['data']['table'])) $response = $this->getTables->handleRequestInt('getTable/fetch',$resp['data']['table']);
             if(isset($resp['data']['form'])) $response = $this->getTables->handleRequestInt('getForm/fetch',$resp['data']['form']);
