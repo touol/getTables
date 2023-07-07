@@ -290,15 +290,16 @@ class getTree
                 'config'=>$resp['data'],
                 'getTables'=>$this->getTables,
                 'treeOn'=>1,
-                'tree'=>$tree,
+                'tree'=>$this->config,
             ]);
             if (isset($this->modx->event->returnedValues) && is_array($this->modx->event->returnedValues)) {
                 if(isset($this->modx->event->returnedValues['config']))
                     $resp['data'] = $this->modx->event->returnedValues['config'];
                 if(isset($this->modx->event->returnedValues['selects'])){
-                    $request = $this->getTables->handleRequest('getSelect/compile',$this->modx->event->returnedValues['selects']);
+					// $this->modx->log(1,'getSelect/compile1 '.print_r($this->modx->event->returnedValues['selects'],1));
+                    $request = $this->getTables->handleRequestInt('getSelect/compile',$this->modx->event->returnedValues['selects']);
                     $selects = $request['data']['selects'];
-                
+					// $this->modx->log(1,'getSelect/compile2 '.print_r($selects,1));
                     $this->getTables->setClassConfig('getSelect','all', $selects);
                 }
                     

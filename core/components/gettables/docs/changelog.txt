@@ -19,6 +19,7 @@ Changelog for getTables.
 - Фуллконтент 2.
 - Исправление autosave autocomplect.
 - Добавлена обработка селектов в tree при событии getTablesLoadGTSConfig.
+- Исправлена обработка селектор в tree.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
