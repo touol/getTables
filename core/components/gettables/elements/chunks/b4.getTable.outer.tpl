@@ -8,8 +8,8 @@
     {if $label}<h2>{$label}</h2>{/if}
     <div class="form-inline float-sm-right">
         {if $parent_current}
-            <button class="get-table-in_all_page"><span class="fa fa-expand"></span></button>
-            <button class="get-table-close-subtable">X</button>
+            <button type="button" class="get-table-in_all_page"><span class="fa fa-expand"></span></button>
+            <button type="button" class="get-table-close-subtable">X</button>
         {/if}
     </div>
     {if $top}
@@ -73,10 +73,10 @@
                         <div class="input-group">
                             {$topBar['topBar/topline/filters/search']['content']}
                             <span class="input-group-btn">
-                            <button class="btn btn-primary get-table-search" type="submit" name="gts_action" value="getTable/filter">
+                            <button type="button" class="btn btn-primary get-table-search" type="submit" name="gts_action" value="getTable/filter">
                                 <span class="fa fa-search"></span>
                             </button>
-                                <button class="btn btn-danger get-table-reset" type="reset">
+                                <button type="button" class="btn btn-danger get-table-reset" type="reset">
                                 X
                             </button>
                             </span>
@@ -94,7 +94,7 @@
                 <th class="{$th.cls}" style="{$th.style}" data-field="{$th.field}">
                     {$th.content}
                     {if $th.filter}
-                        <button class="filtr-btn {$th.filter_class}"></button>
+                        <button type="button" class="filtr-btn {$th.filter_class}"></button>
                         <div class="filrt-window">
                             <div class="filrt-standart">
                                 {foreach $th.filters as $f}
@@ -105,13 +105,13 @@
                             </div>
                             <div class="filrt-add">
                                 <div class="filtr-btn__box-top">
-                                    <button class="filtr-btn-clear">{'filtr_btn_checkbox_clear' | lexicon}</button>
-                                    <button class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
+                                    <button type="button" class="filtr-btn-clear">{'filtr_btn_checkbox_clear' | lexicon}</button>
+                                    <button type="button" class="filtr-btn-checkbox-load">{'filtr_btn_checkbox_load' | lexicon}</button>
                                 </div>
                                 <div class="filrt-checkbox-container">
                                 
                                 </div>
-                                <button class="filtr-btn-checkbox-apply" style="display:none;">{'filtr_btn_checkbox_apply' | lexicon}</button>
+                                <button type="button" class="filtr-btn-checkbox-apply" style="display:none;">{'filtr_btn_checkbox_apply' | lexicon}</button>
                             </div>
                         </div>
                     {/if}
