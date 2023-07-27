@@ -263,6 +263,7 @@ class getTable
     {
         
         //$table['pdoTools']['limit'] = 0;
+        ini_set('max_execution_time', '300');
         $table2 = $this->generateData($table);
         
         $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';

@@ -21,6 +21,7 @@ Changelog for getTables.
 - Добавлена обработка селектов в tree при событии getTablesLoadGTSConfig.
 - Исправлена обработка селектор в tree.
 - Исправлено button type. Для таблицы в модалке.
+- Долгий экспорт эксель. Max 5m.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
