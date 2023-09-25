@@ -1086,7 +1086,7 @@ class getTable
 					}
                     $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit'],'table'=>$table]);
                 }else{
-                    if($td['edit']['type'] == "checkbox"){
+                    if($td['edit']['type'] == "checkbox" and empty($td['content'])){
                         if($td['value']){
                             $td['content'] = "Да";
                         }else{
