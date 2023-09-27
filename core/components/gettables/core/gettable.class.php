@@ -452,7 +452,7 @@ class getTable
     public function addFilterTable($table)
     {
         $query = [];
-        
+        $having = [];
         if($table['sub_where'] and $this->getTables->REQUEST['sub_where_current']){
             $sub_where_current = $this->getTables->REQUEST['sub_where_current']; 
             foreach($sub_where_current as $field =>$v){
@@ -615,79 +615,83 @@ class getTable
                 }
                 
             }else if(!empty($this->getTables->REQUEST[$filter['edit']['field']]) or $this->getTables->REQUEST[$filter['edit']['field']] ==='0'){
-                
-                switch($filter['edit']['type']){
-                    case 'date':
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
-                            $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
-                            $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['empty'])
-                            $date['empty'] = true;
-                        break;
-                    case 'datetime':
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
-                            $datetime['from'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
-                            $datetime['to'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
-                        if($this->getTables->REQUEST[$filter['edit']['field']]['empty'])
-                            $datetime['empty'] = true;
-                        break;
-                    default:
-                        $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
-                        $pattern = '/^\<\=|\>\=|\=\>|\=\<|\!\=|\=|\<|\>/';
-                        
-                        if(preg_match($pattern,$filter['value'],$matches)){
-                            $filter['value'] = (int)str_replace($matches[0],"",$filter['value']);
-                            //$this->getTables->addTime("getTable filter  {$filter['edit']['where_field']}");
-                            $where_field = explode(":",$filter['edit']['where_field'])[0];
-                            switch($matches[0]){
-                                case '<=': case '=<': 
-                                    if($filter['value'] >=0){
-                                        $query[] = "($where_field <= {$filter['value']} OR $where_field IS NULL)";
-                                    }else{
-                                        $query[$where_field.":<="] = $filter['value'];
-                                    }
-                                    break;
-                                case '=':
-                                    if($filter['value']==0){
-                                        $query[] = "($where_field = {$filter['value']} OR $where_field IS NULL)";
-                                    }else{
-                                        $query[$where_field.":".$matches[0]] = $filter['value'];
-                                    }
-                                    break;
-                                case '>=': case '=>':
-                                    if($filter['value'] <=0){
-                                        $query[] = "($where_field >= {$filter['value']} OR $where_field IS NULL)";
-                                    }else{
-                                        $query[$where_field.":>="] = $filter['value'];
-                                    }
-                                    break;
-                                default:
-                                    $query[$where_field.":".$matches[0]] = $filter['value'];
-                            }
+                if(isset($filter['having'])){
+                    $having[$filter['having']] = $this->getTables->REQUEST[$filter['edit']['field']];
+                    $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
+                }else{
+                    switch($filter['edit']['type']){
+                        case 'date':
+                            if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
+                                $date['from'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
+                            if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
+                                $date['to'] = date('Y-m-d',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                            if($this->getTables->REQUEST[$filter['edit']['field']]['empty'])
+                                $date['empty'] = true;
+                            break;
+                        case 'datetime':
+                            if($this->getTables->REQUEST[$filter['edit']['field']]['from'])
+                                $datetime['from'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['from']));
+                            if($this->getTables->REQUEST[$filter['edit']['field']]['to'])
+                                $datetime['to'] = date('Y-m-d H:i',strtotime($this->getTables->REQUEST[$filter['edit']['field']]['to']));
+                            if($this->getTables->REQUEST[$filter['edit']['field']]['empty'])
+                                $datetime['empty'] = true;
+                            break;
+                        default:
+                            $filter['value'] = $this->getTables->REQUEST[$filter['edit']['field']];
+                            $pattern = '/^\<\=|\>\=|\=\>|\=\<|\!\=|\=|\<|\>/';
                             
-                            // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
-                        }else{
-                            if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
-                                if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
-                                    $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
+                            if(preg_match($pattern,$filter['value'],$matches)){
+                                $filter['value'] = (int)str_replace($matches[0],"",$filter['value']);
+                                //$this->getTables->addTime("getTable filter  {$filter['edit']['where_field']}");
+                                $where_field = explode(":",$filter['edit']['where_field'])[0];
+                                switch($matches[0]){
+                                    case '<=': case '=<': 
+                                        if($filter['value'] >=0){
+                                            $query[] = "($where_field <= {$filter['value']} OR $where_field IS NULL)";
+                                        }else{
+                                            $query[$where_field.":<="] = $filter['value'];
+                                        }
+                                        break;
+                                    case '=':
+                                        if($filter['value']==0){
+                                            $query[] = "($where_field = {$filter['value']} OR $where_field IS NULL)";
+                                        }else{
+                                            $query[$where_field.":".$matches[0]] = $filter['value'];
+                                        }
+                                        break;
+                                    case '>=': case '=>':
+                                        if($filter['value'] <=0){
+                                            $query[] = "($where_field >= {$filter['value']} OR $where_field IS NULL)";
+                                        }else{
+                                            $query[$where_field.":>="] = $filter['value'];
+                                        }
+                                        break;
+                                    default:
+                                        $query[$where_field.":".$matches[0]] = $filter['value'];
                                 }
-                                if(strpos($filter['edit']['where_field'], ':IN') !== false){
-                                    if(!is_array($filter['value'])){
-                                        $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                                
+                                // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
+                            }else{
+                                if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
+                                    if(!empty($filter['edit']['multiple']) and strpos($filter['edit']['where_field'], ':IN') === false){
+                                        $filter['edit']['where_field'] = $filter['edit']['where_field'].':IN';
+                                    }
+                                    if(strpos($filter['edit']['where_field'], ':IN') !== false){
+                                        if(!is_array($filter['value'])){
+                                            $query[$filter['edit']['where_field']] = explode(',',$filter['value']);
+                                        }else{
+                                            $query[$filter['edit']['where_field']] = $filter['value'];
+                                        }
                                     }else{
                                         $query[$filter['edit']['where_field']] = $filter['value'];
                                     }
+                                    
                                 }else{
-                                    $query[$filter['edit']['where_field']] = $filter['value'];
+                                    $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
                                 }
-                                
-                            }else{
-                                $query[$filter['edit']['where_field']] = '%'.$filter['value'].'%';
                             }
-                        }
-                        //if(isset($filter['edit']['where_field'])) $query[$filter['edit']['where_field']] = $filter['value'];
+                            //if(isset($filter['edit']['where_field'])) $query[$filter['edit']['where_field']] = $filter['value'];
+                    }
                 }
             }else{
                 $filter['value'] = '';
@@ -743,7 +747,14 @@ class getTable
         //$query = array_merge($table['pdoTools2']['where'],$query);
 
         $table['query'] = ['where'=>$query];
-
+        if(!empty($having)){
+            if(!isset($table['pdoTools2']['having'])) $table['pdoTools2']['having'] = [];
+            $having_str = [];
+            foreach($having as $hk=>$hv){
+                $having_str[] = "$hk = '$hv'";
+            }
+            $table['pdoTools2']['having'] = implode(' and ',$having_str);
+        }
         foreach($table['filters'] as $f){
             if($f['section'] == 'topBar/topline/filters') $table['topBar'][$f['section']]['filters'][] = $f;
             if($f['section'] == 'th'){

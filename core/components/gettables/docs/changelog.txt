@@ -23,6 +23,7 @@ Changelog for getTables.
 - Исправлено button type. Для таблицы в модалке.
 - Долгий экспорт эксель. Max 5m.
 - Правка чекбокс content.
+- having на фильтрах.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
