@@ -1391,6 +1391,18 @@ class getTable
                 'attr' => '',
                 'style' => '',
             ],
+            'set' =>[
+                'action'=>"getTable/set",
+                'title'=>'set',
+                'cls' => 'btn btn-primary',
+                'text' => '',
+                'field' => 'published',
+                'value' => 1,
+                'row' => [],
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
+            ],
             'subtable' =>[
                 'action'=>"getTable/subtable",
                 'title'=>[$this->modx->lexicon('gettables_open'),$this->modx->lexicon('gettables_close')],//['Открыть','Закрыть'],
@@ -1616,6 +1628,9 @@ class getTable
                     if($a['action'] == "getTable/sub"){
                         $data['sub_name'] = $a['sub_name'];
                     }
+                    // if($a['action'] == "getTable/set"){
+                    //     $data['value'] = $a['value'];
+                    // }
                     if($a['long_process']) $data['long_process'] = 1;
 
                     $a['buttons'] = [

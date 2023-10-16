@@ -90,12 +90,17 @@ class getTableProcessor
         
         if(!(isset($table['actions'][$action]) or ($action == "autosave" and !empty($table['autosave'])
         or ($action == "sort" and !empty($table['sortable']))))){ 
-            return $this->error("Action $action not found! ",$table);
+            if(!isset($table['actions'][$data['button_data']['name']])){
+                return $this->error("Action $action not found! ",$table);
+            }
         }
         if($this->getTables->REQUEST['pageID']){
             array_walk_recursive($table,array(&$this, 'walkFuncInsertMenuId'),$this->getTables->REQUEST['pageID']);
         }
         $this->current_action = $table['actions'][$action];
+        if(isset($table['actions'][$data['button_data']['name']])){
+            $this->current_action = $table['actions'][$data['button_data']['name']];
+        }
         $this->action = $action;
         $edit_tables = [];
         ////$this->getTables->addDebug($table['edits'],'run $table[edits] ');
@@ -611,8 +616,13 @@ class getTableProcessor
             if(isset($data['button_data']['toggle'])){
                 if($data['button_data']['toggle'] == 'enable') $value = 1;
             }
+            if(isset($this->current_action['value'])){
+                $value = $this->current_action['value'];
+            }
             $set_data[$this->current_action['field']] = $value;
             $set_data['table_name'] = $data['table_name'];
+            // $saved[] = $this->current_action['field'];
+            // $saved[] = $this->current_action['value'];
             $saved[] = $this->update($table, $edit_tables, $set_data);
         }
         
