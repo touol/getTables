@@ -1299,7 +1299,7 @@
                     $autocomplect = $(this).closest('.get-autocomplect');
                     if($autocomplect.length){
                         $menu = $autocomplect.find('.get-autocomplect-menu');
-                        if($menu.is(':visible')){
+                        if($menu.is(':visible') && !$(this).val()){
                             return;
                         }
                     }

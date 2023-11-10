@@ -758,20 +758,23 @@ li {
 .get-table-tr .form-control[readonly] {
     background-color: rgba(194, 194, 194, 0.041);
 }
+
+
+.input-group-append{
+    z-index: 0;
+}
+.get-autocomplect-menu a:focus{
+    background-color: rgb(223, 207, 245);
+}
+
 .get-table-autosave:focus {
     background-color: rgb(223, 207, 245);
 }
 textarea.get-table-autosave:focus {
     white-space:pre-line;
 }
-.get-autocomplect-menu a:focus{
-    background-color: rgb(223, 207, 245);
-}
-.input-group-append{
-    z-index: 0;
-}
-
-.get-table-tr .get-table-autosave:not(.get-autocomplect-content):focus{
+/* focus position: absolute;*/
+/* .get-table-tr .get-table-autosave:not(.get-autocomplect-content):focus{
     position: absolute;
     z-index: 1;
     width: auto;
@@ -783,7 +786,7 @@ textarea.get-table-autosave:focus {
     position: absolute;
     z-index: 4;
     background-color: #dfcff5;
-}
+} */
 
 .get-table .table > tbody > .get-table-tr > td{
     vertical-align: top;

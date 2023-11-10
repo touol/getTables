@@ -25,6 +25,7 @@ Changelog for getTables.
 - Правка чекбокс content.
 - having на фильтрах.
 - action set.
+- отмена focus position: absolute;
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
