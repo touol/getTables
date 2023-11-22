@@ -134,9 +134,11 @@ class getTables
     
     public function get_PHPExcelSheet(){
         if(!$this->PHPExcelSheet){
-            $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
-            require_once $PHPExcelPath . 'PHPExcel.php';
-            
+            if (!class_exists('PHPExcel')) {
+                $PHPExcelPath = MODX_CORE_PATH.'components/gettables/vendor/PHPOffice/';
+                require_once $PHPExcelPath . 'PHPExcel.php';
+                
+            }
             $xls = new PHPExcel();
             //$locale = 'ru';
             //$validLocale = PHPExcel_Settings::setLocale($locale);
