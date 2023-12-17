@@ -27,6 +27,7 @@ Changelog for getTables.
 - action set.
 - отмена focus position: absolute;
 - !class_exists('PHPExcel')
+- onsklad
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

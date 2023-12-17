@@ -288,6 +288,20 @@
 .table > thead > tr.outwork > th,
 .table > thead > tr > td.outwork,
 .table > thead > tr > th.outwork {
+    background-color: #eff189;
+}
+.table > tbody > tr.onsklad > td,
+.table > tbody > tr.onsklad > th,
+.table > tbody > tr > td.onsklad,
+.table > tbody > tr > th.onsklad,
+.table > tfoot > tr.onsklad > td,
+.table > tfoot > tr.onsklad > th,
+.table > tfoot > tr > td.onsklad,
+.table > tfoot > tr > th.onsklad,
+.table > thead > tr.onsklad > td,
+.table > thead > tr.onsklad > th,
+.table > thead > tr > td.onsklad,
+.table > thead > tr > th.onsklad {
     background-color: #f19989;
 }
 .table > tbody > tr.canceled > td,
