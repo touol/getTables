@@ -278,8 +278,17 @@ class getTable
         $i = 1;$k = 0;
         foreach($table2['edits'] as $edit){
             if(!$edit['modal_only']){
-                $sheet->setCellValueByColumnAndRow($k, $i, $edit['label']);
-                $k++;
+                switch($edit['type']){
+                    case 'select':
+                        $sheet->setCellValueByColumnAndRow($k, $i, 'ID '.$edit['label']);
+                        $k++;
+                        $sheet->setCellValueByColumnAndRow($k, $i, $edit['label']);
+                        $k++;
+                    break;
+                    default:
+                        $sheet->setCellValueByColumnAndRow($k, $i, $edit['label']);
+                        $k++;
+                    }
             }
         }
         $i++;
@@ -289,6 +298,8 @@ class getTable
                 if($v['field']){
                     switch($v['edit']['type']){
                         case 'select':
+                            $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
+                            $k++;
                             switch($v['edit']['select']['type']){
                                 case 'select':
                                     $content = [];
