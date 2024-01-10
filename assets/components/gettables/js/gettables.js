@@ -1195,10 +1195,6 @@
                         filters = getTables.Table.getFilters($table);
                         table_data = $table.data();
                         if(table_data.sub_where_current){
-                            // console.log('table_data.sub_where_current',table_data.sub_where_current);
-                            // for(key in table_data.sub_where_current){
-                            //     filters[key] = table_data.sub_where_current[key];
-                            // }
                             filters['sub_where_current'] = table_data.sub_where_current;
                         }
                         filters['hash'] = table_data.hash;
