@@ -1912,7 +1912,7 @@
                 if($(this).prop("type") == 'checkbox'){
                     if($(this).prop("checked")) filters[this.name] = $(this).val();
                 }else{
-                    filters[this.name] = $(this).val();
+                    if(!filters[this.name]) filters[this.name] = $(this).val();
                 }
             });
             $table.children(".get-table-filter-container").find('.get-table-filter').each(function(){

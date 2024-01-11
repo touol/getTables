@@ -30,6 +30,7 @@ Changelog for getTables.
 - onsklad style color.
 - экспорт в эксель id.
 - triggers. gtsfunction2.
+- Фильтр для дубликата по полю.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

@@ -770,7 +770,7 @@ class getTable
             if($f['section'] == 'topBar/topline/filters') $table['topBar'][$f['section']]['filters'][] = $f;
             if($f['section'] == 'th'){
                 foreach($table['thead']['tr']['ths'] as &$th){
-                    if($th['field']==$f['edit']['field']){
+                    if($th['field2']==$f['edit']['field2']){
                         $th['filter'] = 1;
                         $th['filters'][] = $f;
                         if(!empty($f['value']) or $f['value'] === '0' or $f['value'] === 0){
@@ -1829,6 +1829,7 @@ class getTable
             $th = [];
             $th['cls'] = $value['cls'];
             $th['field'] = $value['field'];
+            $th['field2'] = $field;
             $th['name'] = $value['name'] ? $value['name'] : $value['field'];
             $th['content'] = $value['label'] ? $value['label'] : $th['name'];
             
@@ -1846,6 +1847,7 @@ class getTable
             
             //конфигурация редактирования поля
             $edit = [
+                'field2' => $field,
                 'field' => $value['field'],
                 'type' => 'text',
                 'label' => $th['content'],
