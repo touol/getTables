@@ -29,6 +29,7 @@ Changelog for getTables.
 - !class_exists('PHPExcel')
 - onsklad style color.
 - экспорт в эксель id.
+- triggers. gtsfunction2.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

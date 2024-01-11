@@ -31,7 +31,7 @@ class getTableProcessor
     }
     public function run_triggers($class, $type, $method, $fields, $object_old, $object_new =[], $object = null)
     {
-        $getTablesRunTriggers = $this->modx->invokeEvent('getTablesRunTriggers', array(
+        $getTablesRunTriggers = $this->modx->invokeEvent('getTablesRunTriggers', [
             'class'=>$class,
             'type'=>$type,
             'method'=>$method,
@@ -40,7 +40,7 @@ class getTableProcessor
             'object_new'=>$object_new,
             'getTables'=>$this->getTables,
             'object'=>&$object,
-        ));
+        ]);
         if (is_array($getTablesRunTriggers)) {
             $canSave = false;
             foreach ($getTablesRunTriggers as $msg) {
@@ -72,6 +72,27 @@ class getTableProcessor
                 if(method_exists($service,$triggers[$class]['gtsfunction'])){ 
                     //$this->getTables->addTime("run_triggers gtsfunction");
                     return  $service->{$triggers[$class]['gtsfunction']}($this->getTables,$class, $type, $method, $fields, $object_old, $object_new);
+                }
+            }
+        }
+        if(isset($triggers[$class]['gtsfunction2']) and isset($triggers[$class]['model'])){
+            $response = $this->getTables->loadService($triggers[$class]['model']);
+            if(is_array($response) and $response['success']){
+                $service = $this->getTables->models[$triggers[$class]['model']]['service'];
+                if(method_exists($service,$triggers[$class]['gtsfunction2'])){ 
+                    //$this->getTables->addTime("run_triggers gtsfunction");
+                    return  $service->{$triggers[$class]['gtsfunction2']}(
+                        [
+                            'class'=>$class,
+                            'type'=>$type,
+                            'method'=>$method,
+                            'fields'=>$fields,
+                            'object_old'=>$object_old,
+                            'object_new'=>$object_new,
+                            'getTables'=>$this->getTables,
+                            'object'=>&$object,
+                        ]
+                    );
                 }
             }
         }
