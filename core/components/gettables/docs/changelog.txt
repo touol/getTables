@@ -27,7 +27,7 @@ Changelog for getTables.
 - action set.
 - отмена focus position: absolute;
 - !class_exists('PHPExcel')
-- onsklad.
+- onsklad style color.
 - экспорт в эксель id.
 
 1.11.4-alpha
