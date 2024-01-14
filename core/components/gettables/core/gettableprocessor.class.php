@@ -81,18 +81,17 @@ class getTableProcessor
                 $service = $this->getTables->models[$triggers[$class]['model']]['service'];
                 if(method_exists($service,$triggers[$class]['gtsfunction2'])){ 
                     //$this->getTables->addTime("run_triggers gtsfunction");
-                    return  $service->{$triggers[$class]['gtsfunction2']}(
-                        [
-                            'class'=>$class,
-                            'type'=>$type,
-                            'method'=>$method,
-                            'fields'=>$fields,
-                            'object_old'=>$object_old,
-                            'object_new'=>$object_new,
-                            'getTables'=>$this->getTables,
-                            'object'=>&$object,
-                        ]
-                    );
+                    $params = [
+                        'class'=>$class,
+                        'type'=>$type,
+                        'method'=>$method,
+                        'fields'=>$fields,
+                        'object_old'=>$object_old,
+                        'object_new'=>$object_new,
+                        'getTables'=>$this->getTables,
+                        'object'=>&$object,
+                    ];
+                    return  $service->{$triggers[$class]['gtsfunction2']}($params);
                 }
             }
         }

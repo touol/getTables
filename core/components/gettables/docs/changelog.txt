@@ -31,6 +31,7 @@ Changelog for getTables.
 - экспорт в эксель id.
 - triggers. gtsfunction2.
 - Фильтр для дубликата по полю.
+- Правка gtsfunction2.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
