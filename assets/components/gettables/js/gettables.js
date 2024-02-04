@@ -837,6 +837,7 @@
         initialize: function () {
             getTables.Modal.setup();
             getTables.$doc.on('hidden.bs.modal', function (event) {
+                if($(event.target).hasClass('excel-calc-modal')) return;
                 $('.gts_modal').remove();
             });
             getTables.$doc.on('shown.bs.modal', function (event) {
