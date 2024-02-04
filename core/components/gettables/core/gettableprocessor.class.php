@@ -422,6 +422,11 @@ class getTableProcessor
         if(!$childs = $source->getMany($child_alias)){
             return $this->success('child_alias not found',array('child_alias'=>$child_alias));
         }
+        if(!$dest_childs = $dest->getMany($child_alias)){
+            foreach($dest_childs as $dch){
+                $dch->remove();
+            }
+        }
         foreach($childs as $ch){
             if($newchild = $this->modx->newObject($child_class,$ch->toArray())){
                 $newchild->addOne($dest);

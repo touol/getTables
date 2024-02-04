@@ -32,6 +32,7 @@ Changelog for getTables.
 - triggers. gtsfunction2.
 - Фильтр для дубликата по полю.
 - Правка gtsfunction2.
+- Удаление дочерних если они есть при копировании copy_many.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
