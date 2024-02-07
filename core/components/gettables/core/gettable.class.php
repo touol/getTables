@@ -1092,7 +1092,11 @@ class getTable
                     }
                 }
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
-
+                if(isset($td['edit']['buttons'])){
+                    // $this->modx->log(1,"getTable compileActions td edit buttons ".print_r($td['edit']['buttons'],1));
+                    $td['edit']['buttons'] = $this->pdoTools->getChunk('@INLINE '.$td['edit']['buttons'], $row);
+                    // $this->modx->log(1,"getTable compileActions td edit buttons ".print_r($td['edit']['buttons'],1));
+                }
                 if(!empty($table['autosave']) and !empty($td['edit']) and $autosave){
                     //autocomplect
                     if(isset($td['edit']['field_content'])){
@@ -1121,6 +1125,7 @@ class getTable
                 /*if(isset($td['buttons'])){
                     $td['content'] .= '<div style=""width:'.count($td['buttons'])*40 .'px;">'.$this->pdoTools->getChunk('@INLINE '.$td['buttons'], $row)."</div>";
                 }*/
+                
                 //$this->getTables->addTime("getTable generateData td field ".print_r($td['edit']['field'],1));
                 //$this->getTables->addTime("getTable generateData tr field ".$tr['data'][$td['edit']['field']].print_r($tr['data'],1));
                 foreach($tr['data'] as $dv){
@@ -1945,13 +1950,14 @@ class getTable
                 foreach($td['actions'] as $k=>$a){
                     //$buttons[$k]['buttons'] = $a['buttons'];
                     if(empty($a['buttons'])){
+                        //$this->getTables->addTime("getTable compileActions a buttons ".print_r($a['buttons'],1));
                         $buttons[$k] = $this->pdoTools->getChunk($this->config['getTableActionTpl'], $a);
                         //'<'.$a['tag'].' class="'.$a['cls'].' '.$a['attr'].' title="'.$a['title'].'"> '.$a['html'].'</'.$a['tag'].'>';
                     }else{
                         $buttons[$k] = $this->compileActionButtons($a);
                     }
                 }
-                //$this->getTables->addTime("getTable compileActions td actions ".print_r($td['actions'],1));
+                //$this->modx->log(1,"getTable compileActions td buttons ".print_r($buttons,1));
                 //$buttons = $this->compileActionButtons($buttons);
                 $td['edit']['buttons'] = implode('&nbsp;',$buttons);
             }
