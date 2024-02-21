@@ -35,6 +35,7 @@ Changelog for getTables.
 - excel-calc-button.
 - Удаление дочерних если они есть при копировании copy_many.
 - td actions параметры.
+- Глюк кеша.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

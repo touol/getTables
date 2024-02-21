@@ -334,6 +334,7 @@ class getTables
     }*/
     public function setClassConfig($gts_class, $gts_name, $gts_config)
     {
+        $this->addTime("setClassConfig $gts_class $gts_name");
         if(!$this->config[$gts_class][$gts_name]) $this->config[$gts_class][$gts_name] = [];
         if($gts_name == 'all'){
             $this->config[$gts_class] = array_merge($this->config[$gts_class], $gts_config);
