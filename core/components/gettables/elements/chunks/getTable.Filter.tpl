@@ -141,4 +141,11 @@
                 </div>
             </div>
         </div>
+    {case 'calc'}
+        <div class="form-group">
+            <div class="controls">
+                <input type="text" step="1" name="{$filter.edit.field}" value="{$filter.value}" 
+                placeholder="{$filter.edit.placeholder}" class="form-control get-table-filter"/>
+            </div>
+        </div>
 {/switch}

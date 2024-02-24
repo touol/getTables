@@ -36,6 +36,7 @@ Changelog for getTables.
 - Удаление дочерних если они есть при копировании copy_many.
 - td actions параметры.
 - Глюк кеша.
+- Фильтр calc.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
