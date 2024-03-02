@@ -35,7 +35,7 @@ $_lang['gettables_stop'] = 'Stop';//Stop
 $_lang['gettables_stop_message'] = '<h2>Stoping</h2> <p>Wait for the process to complete to avoid errors!</p>';//gettables_stop_message
 
 //фильтры
-$_lang['filtr_btn_checkbox_load'] = 'Load';
+$_lang['filtr_btn_checkbox_load'] = 'Filter-list';
 $_lang['filtr_btn_checkbox_clear'] = 'Clean';
 $_lang['filtr_btn_checkbox_apply'] = 'Apply';
 $_lang['filtr_checkbox_select_all'] = 'Select all';

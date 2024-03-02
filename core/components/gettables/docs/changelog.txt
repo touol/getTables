@@ -37,6 +37,7 @@ Changelog for getTables.
 - td actions параметры.
 - Глюк кеша.
 - Фильтр calc.
+- Загрузить переименовать в Фильтр-список.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
