@@ -39,6 +39,7 @@ Changelog for getTables.
 - Фильтр calc.
 - Загрузить переименовать в Фильтр-список.
 - Исправлен импорт excel файла.
+- get-autocomplect-content get-table-autosave.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

@@ -123,7 +123,7 @@
                     <textarea  
                         {if $edit.content_name}name="{$edit.content_name}" data-name="{$edit.content_name}" data-field="{$edit.field}"{/if}
                         placeholder="{$edit.placeholder}" 
-                        class="form-control  get-autocomplect-content "
+                        class="form-control  get-autocomplect-content {if $edit.content_name}get-table-autosave{/if}"
                         {if $edit.style} style="{$edit.style}"{else}style="height: 34px;"{/if} {if $edit.readonly}readonly{/if}
                         
                         >{$edit.content}</textarea>
