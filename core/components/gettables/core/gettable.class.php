@@ -1234,7 +1234,7 @@ class getTable
                     $table['class'] = $table['class'] ? $table['class'] : 'modResource';
                     $table['name'] = $table['name'] ? $table['name'] : $table['class'];
                     //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
-                    $table['pdoTools']['class'] = $table['class'];
+                    if(empty($table['pdoTools']['class'])) $table['pdoTools']['class'] = $table['class'];
                     
                     $table_compile = $this->compile($table);
                     if($table_main['subtable_in_all_page']) $table_compile['in_all_page'] = true;
@@ -1245,7 +1245,7 @@ class getTable
                     $table['class'] = $table['class'] ? $table['class'] : 'modResource';
                     $table['name'] = $table['name'] ? $table['name'] : $table['class'];
                     //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
-                    $table['pdoTools']['class'] = $table['class'];
+                    if(empty($table['pdoTools']['class'])) $table['pdoTools']['class'] = $table['class'];
                     
                     $table_compile = $this->compile($table);
                     if($table_main['subtable_in_all_page']) $table_compile['in_all_page'] = true;
@@ -1300,7 +1300,7 @@ class getTable
                             if($subtable['class'] == 'TV') $subtable['class'] = 'modTemplateVarResource';
                             $subtable['class'] = $subtable['class'] ? $subtable['class'] : 'modResource';
                             //$name = $table['subtable']['name'] ? $table['subtable']['name'] : $table['subtable']['class'];
-                            $subtable['pdoTools']['class'] = $subtable['class'];
+                            if(empty($subtable['pdoTools']['class'])) $subtable['pdoTools']['class'] = $subtable['class'];
                             
                             $subtable_compile = $this->compile($subtable);
                             if($table_compile['subtable_in_all_page']) $subtable_compile['in_all_page'] = true;
