@@ -302,7 +302,7 @@ class getTables
             xPDO::OPT_CACHE_EXPIRES => $this->config['cacheExpires'],
         );
         //$this->addDebug($this->config,'cacheConfig');
-        $this->addTime('cacheConfig');
+        $this->addTime('cacheConfig '.$this->config['hash']);
     }
     public function getClassCache($gts_class,$gts_name)
     {
