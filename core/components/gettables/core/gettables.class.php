@@ -30,7 +30,7 @@ class getTables
      */
     function __construct(modX &$modx, array $config = [])
     {
-        $this->modx =& $modx;
+        $this->modx = & $modx;
         $corePath = MODX_CORE_PATH . 'components/gettables/';
         $assetsUrl = MODX_ASSETS_URL . 'components/gettables/';
         
@@ -294,7 +294,8 @@ class getTables
         if (empty($this->config['cacheHandler'])) $this->config['cacheHandler'] = $this->modx->getOption('cache_resource_handler', null, $this->modx->getOption(xPDO::OPT_CACHE_HANDLER, null, 'xPDOFileCache'));
         if (!isset($this->config['cacheExpires'])) $this->config['cacheExpires'] = (integer) $this->modx->getOption('cache_resource_expires', null, $this->modx->getOption(xPDO::OPT_CACHE_EXPIRES, null, 0));
         
-        if (empty($this->config['cacheElementKey'])) $this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $this->config['hash'];
+        // if (empty($this->config['cacheElementKey'])) 
+        $this->config['cacheElementKey'] = 'user_id_'.$this->modx->user->id. "_" . $this->config['hash'];
 
         $this->config['cacheOptions'] = array(
             xPDO::OPT_CACHE_KEY => $this->config['cacheKey'],
@@ -302,7 +303,7 @@ class getTables
             xPDO::OPT_CACHE_EXPIRES => $this->config['cacheExpires'],
         );
         //$this->addDebug($this->config,'cacheConfig');
-        $this->addTime('cacheConfig '.$this->config['hash']);
+        $this->addTime('cacheConfig '.$this->modx->user->id.'_'.$this->config['cacheElementKey']);
     }
     public function getClassCache($gts_class,$gts_name)
     {
