@@ -41,6 +41,7 @@ Changelog for getTables.
 - Исправлен импорт excel файла.
 - get-autocomplect-content get-table-autosave.
 - if(empty($subtable['pdoTools']['class']))
+- Доработка filter having.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

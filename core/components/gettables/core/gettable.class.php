@@ -7,7 +7,7 @@ class getTable
     public $pdoTools;
     
     public $getTables;
-
+    public $config;
     /**
      * @param modX $modx
      * @param array $config
@@ -594,10 +594,18 @@ class getTable
                         $filter['value'] = $filter['force']['default'];
                         // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
                     }elseif($filter['force']['default'] === '0'){
-                        $query[] = '('.$filter['edit']['where_field'].'=0 or '.$filter['edit']['where_field'].' IS NULL)';
+                        if(isset($filter['having'])){
+                            $having[$filter['having']] = $filter['value'];
+                        }else{
+                            $query[] = '('.$filter['edit']['where_field'].'=0 or '.$filter['edit']['where_field'].' IS NULL)';
+                        } 
                         $filter['value'] = 0;
                     }else{
-                        $query[$filter['edit']['where_field']] = $filter['force']['default'];
+                        if(isset($filter['having'])){
+                            $having[$filter['having']] = $filter['value'];
+                        }else{
+                            $query[$filter['edit']['where_field']] = $filter['force']['default'];
+                        } 
                         $filter['value'] = $filter['force']['default'];
                     }
                     
