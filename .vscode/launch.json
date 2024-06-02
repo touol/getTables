@@ -6,6 +6,7 @@
     "configurations": [
         {
             "name": "Launch currently open script",
+            "runtimeExecutable":"C:\\OSPanel\\modules\\php\\PHP_7.2\\php.exe",
             "type": "php",
             "request": "launch",
             "program": "${file}",

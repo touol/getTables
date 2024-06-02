@@ -158,7 +158,7 @@
                 
                 var editDiv = $('<div>', {
                   position: 'absolute',
-                  width: textarea.width(),
+                //   width: textarea.width(),
                   height: height,
                   'class': textarea.attr('class'),
                   'readonly': textarea.attr('readonly')

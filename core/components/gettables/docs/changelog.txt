@@ -42,6 +42,7 @@ Changelog for getTables.
 - get-autocomplect-content get-table-autosave.
 - if(empty($subtable['pdoTools']['class']))
 - Доработка filter having.
+- Правка ace_editor.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
