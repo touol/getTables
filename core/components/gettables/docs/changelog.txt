@@ -43,6 +43,7 @@ Changelog for getTables.
 - if(empty($subtable['pdoTools']['class']))
 - Доработка filter having.
 - Правка ace_editor.
+- export_excel content2.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

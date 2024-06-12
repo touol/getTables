@@ -332,13 +332,17 @@ class getTable
                                 $sheet->setCellValueByColumnAndRow($k, $i, "Нет");
                             }
                         break;   
-                        case 'content':
-                            $sheet->setCellValueByColumnAndRow($k, $i, trim($v['content']));
-                        break; 
+                        // case 'content':
+                        //     $sheet->setCellValueByColumnAndRow($k, $i, trim($v['content']));
+                        // break; 
                         default:
-                            $sheet->setCellValueByColumnAndRow($k, $i,$v['value']);
+                            if(isset($v['content2'])){
+                                $sheet->setCellValueByColumnAndRow($k, $i,$v['content2']);
+                            }else{
+                                $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
+                            }
+                            
                     }
-                    
                     $k++;
                 }
                 
@@ -1068,6 +1072,7 @@ class getTable
                     //$this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);
                     //$this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
+                    $td['content2'] = $td['content'];
                     $autosave = false;
                 }else{
                     $td['content'] = $td['value'];
