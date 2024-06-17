@@ -337,7 +337,7 @@ class getTable
                         // break; 
                         default:
                             if(isset($v['content2'])){
-                                $sheet->setCellValueByColumnAndRow($k, $i,$v['content2']);
+                                $sheet->setCellValueByColumnAndRow($k, $i,trim($v['content2']));
                             }else{
                                 $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
                             }
