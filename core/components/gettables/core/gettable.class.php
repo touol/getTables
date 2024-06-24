@@ -908,6 +908,7 @@ class getTable
         $this->pdoTools->setConfig($pdoTools2);
 
         $rows = $this->pdoTools->run();
+        
         $this->getTables->addTime("getTable generateData ".print_r($this->pdoTools->getTime(),1));
 
         if($paginator){
@@ -1071,11 +1072,12 @@ class getTable
                     $row['filters'] = $filters;
                     //$this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
                     $td['content'] = $this->pdoTools->getChunk('@INLINE '.$td['content'], $row);
-                    //$this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
+                    // $this->getTables->addTime("getTable generateData {$td['content']} row 1 {$row['id']}");
                     $td['content2'] = $td['content'];
                     $autosave = false;
                 }else{
                     $td['content'] = $td['value'];
+                    // $this->getTables->addTime("getTable generateData {$td['content']} row {$row['id']}");
                     $autosave = true;
                 }
                 //tree
@@ -1123,7 +1125,8 @@ class getTable
 							$td['edit']['content'] = $td['edit']['value'];
 						}
 					}
-                    $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>&$td['edit'],'table'=>$table]);
+                    $td['edit']['readonly1'] = $td['edit']['readonly']; // костыль для php 8.1
+                    $td['content'] = $this->pdoTools->getChunk($this->config['getTableEditRowTpl'],['edit'=>$td['edit'],'table'=>$table]);
                 }else{
                     if($td['edit']['type'] == "checkbox" and empty($td['content'])){
                         if($td['value']){
@@ -2179,11 +2182,9 @@ class getTable
         usort
         ( 
             $filters,
-            create_function
-            (   
-                '$a,$b', 
-                'return ($a["position"] - $b["position"]);' 
-            )
+            function($a,$b){
+                return ($a["position"] - $b["position"]); 
+            }
         );
         
         foreach($filters as &$f){

@@ -356,6 +356,7 @@ class getModal
                     if($edit['type'] == "datetime"){
                         if($edit['value'] and !$edit['options']) $edit['value'] = date($this->config['datetime_format'],strtotime($edit['value']));
                     }
+                    $edit['readonly1'] = $edit['readonly']; // костыль для php 8.1
                     //$this->getTables->addDebug($edit,'$edit generateEditsData');
                 }
             }
