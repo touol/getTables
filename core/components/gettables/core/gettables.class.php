@@ -278,7 +278,7 @@ class getTables
                         foreach($triggers as &$trigger){
                             $trigger['model'] = $name;
                         }
-                        $this->config['modaltriggers'] = array_merge($this->config['triggers'],$triggers);
+                        $this->config['modaltriggers'] = array_merge($this->config['modaltriggers'],$triggers);
                     }
                 }else{
                     $this->addTime("getModels triggers. Not load $name.");
