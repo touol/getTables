@@ -48,6 +48,7 @@ class getTables
             'frontend_framework_style' => $this->modx->getOption('gettables_frontend_framework_style',null,'bootstrap_v3'),
             'date_format' => $this->modx->getOption('gettables_date_format','','Y-m-d'),
             'datetime_format' => $this->modx->getOption('gettables_datetime_format','','Y-m-d H:i'),
+            'modaltriggers'=>[],
 
         ], $config);
         if($this->config['ctx'] == 'mgr') $this->config['frontend_framework_style'] = $this->modx->getOption('gettables_mgr_framework_style',null,'bootstrap_v3');
