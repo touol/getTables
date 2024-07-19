@@ -917,6 +917,16 @@ class getTableProcessor
                     //$saved[] = $obj->toArray();
                     $object_old = $obj->toArray();
                     //$this->getTables->addTime("update set_data".print_r($set_data,1));
+                    
+                    foreach($set_data as $field=>$v){
+                        if($v === ''){
+                            if (isset ($this->modx->map[$class])) {
+                                if($this->modx->map[$class]['fieldMeta'][$field]['phptype'] == 'float'){
+                                    unset($set_data[$field]);
+                                }
+                            }
+                        }
+                    }
                     $obj->fromArray($set_data);
                     $object_new = $obj->toArray();
                     
