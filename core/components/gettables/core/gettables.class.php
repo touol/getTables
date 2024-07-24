@@ -803,8 +803,10 @@ class getTables
                         return $this->error("Компонент $class не найден!");
                     }
                 }else{
-                    if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path']."$class/",[])) {
-                        return $this->error("Компонент $class не найден!");
+                    if(file_exists($this->models[$class]['path']."$class/".strtolower($class).".class.php")){
+                        if(!$this->models[$class]['service'] = $this->modx->getService($class,$class,$this->models[$class]['path']."$class/",[])) {
+                            return $this->error("Компонент $class не найден!");
+                        }
                     }
                 }
             }
