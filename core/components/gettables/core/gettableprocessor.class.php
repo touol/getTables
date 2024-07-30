@@ -926,6 +926,9 @@ class getTableProcessor
                                 }
                             }
                         }
+                        if(empty($field)){
+                            unset($set_data[$field]);
+                        }
                     }
                     $obj->fromArray($set_data);
                     $object_new = $obj->toArray();
