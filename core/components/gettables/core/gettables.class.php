@@ -128,7 +128,7 @@ class getTables
         }
         if(!empty($config['toFenom'])){
             unset($config['toFenom']);
-            $this->addTime('toFenom '.$this->varexport($config,1));
+            $this->modx->log(1,'toFenom '.$this->varexport($config,1));
         }
         $this->addTime('__construct');
     }
