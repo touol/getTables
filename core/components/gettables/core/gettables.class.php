@@ -124,7 +124,7 @@ class getTables
         $this->config['hash'] = sha1(json_encode($this->config));
         if(!empty($config['toJSON'])){
             unset($config['toJSON']);
-            $this->addTime('toJSON '.json_encode($config,JSON_PRETTY_PRINT));
+            $this->modx->log(1,'toJSON '.json_encode($config,JSON_PRETTY_PRINT));
         }
         if(!empty($config['toFenom'])){
             unset($config['toFenom']);
