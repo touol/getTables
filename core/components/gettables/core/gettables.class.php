@@ -80,7 +80,7 @@ class getTables
                 $json_config = $this->modx->getOption($this->config['config']);
                 if(!empty($this->config['var00'])){
                     $json_config = str_replace('var00',$this->config['var00'],$json_config);
-                    $this->modx->log(1,"getTables {$this->config['config']}");
+                    // $this->modx->log(1,"getTables {$this->config['config']}");
                 }
                 $config_set = json_decode($json_config,1);
             } 
