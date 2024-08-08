@@ -55,6 +55,7 @@ Changelog for getTables.
 - empty field.
 - export to log.
 - var00.
+- field3.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

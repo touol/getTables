@@ -181,15 +181,19 @@ class getTable
         $table['pdoTools2']['where'] = array_merge($table['pdoTools2']['where'],$table['query']['where']);
         $select = "DISTINCT ";
         $checkbox_edit = [];
+        $field = $data['field'];
         foreach($table['edits'] as $edit){
             if($edit['field'] == $data['field']){
-                $select .= $edit['class'].".".$data['field'];
+                if(isset($edit['field3'])){
+                    $field = $edit['field3'];
+                }
+                $select .= $edit['class'].".".$field;
                 $checkbox_edit = $edit;
             }
         }
         $table['pdoTools2']['select'] = $select;
         $table['pdoTools2']['sortby'] = [
-            $data['field']=>'DESC',
+            $field=>'DESC',
         ];
         $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
         $rows = $this->pdoTools->run();
@@ -198,24 +202,24 @@ class getTable
             case 'date': case 'datetime': case 'text': case 'decimal': case 'row_view': 
                 foreach($rows as $row){
                     $checkboxs[] = [
-                        'value'=>$row[$data['field']],
-                        'content'=>$row[$data['field']],
+                        'value'=>$row[$field],
+                        'content'=>$row[$field],
                     ];
                 }
                 break;
             case 'checkbox':
                 foreach($rows as $row){
                     $checkboxs[] = [
-                        'value'=>$row[$data['field']],
-                        'content'=>$row[$data['field']] ? $this->modx->lexicon('gettables_yes') : $this->modx->lexicon('gettables_no'),
+                        'value'=>$row[$field],
+                        'content'=>$row[$field] ? $this->modx->lexicon('gettables_yes') : $this->modx->lexicon('gettables_no'),
                     ];
                 }
                 break;
             case 'textarea':
                 foreach($rows as $row){
                     $checkboxs[] = [
-                        'value'=>$row[$data['field']],
-                        'content'=> substr(strip_tags($row[$data['field']]),0,40),
+                        'value'=>$row[$field],
+                        'content'=> substr(strip_tags($row[$field]),0,40),
                     ];
                 }
                 break;
@@ -224,10 +228,10 @@ class getTable
                     case 'select':
                         foreach($rows as $row){
                             foreach($checkbox_edit['select']['data'] as $d){
-                                if($d['id']==$row[$data['field']]) $content=$d['content'];
+                                if($d['id']==$row[$field]) $content=$d['content'];
                             }
                             $checkboxs[] = [
-                                'value'=>$row[$data['field']],
+                                'value'=>$row[$field],
                                 'content'=> $content,
                             ];
                         }
@@ -235,10 +239,10 @@ class getTable
                     case 'autocomplect':
                         foreach($rows as $row){
                             $content = "";
-                            if($row[$data['field']] != 0){
+                            if($row[$field] != 0){
                                 $pdoTools = $checkbox_edit['select']['pdoTools'];
                                 $pdoTools['where'] = [
-                                    $pdoTools['class'].".id"=>$row[$data['field']],
+                                    $pdoTools['class'].".id"=>$row[$field],
                                 ];
                                 $pdoTools['limit'] = 1;
                                 $pdoTools['return'] = 'data';
@@ -248,7 +252,7 @@ class getTable
                                 $content=$this->pdoTools->getChunk('@INLINE '.$checkbox_edit['select']['content'],$select[0]);
                             }
                             $checkboxs[] = [
-                                'value'=>$row[$data['field']],
+                                'value'=>$row[$field],
                                 'content'=> $content,
                             ];
                         }
@@ -758,7 +762,9 @@ class getTable
               
             //checkbox filter
             if(isset($this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']])){
-                $query[$filter['edit']['class'].".".$filter['edit']['field'].':IN'] = 
+                $field3 = $filter['edit']['field'];
+                if(isset($filter['edit']['field3'])) $field3 = $filter['edit']['field3'];
+                $query[$filter['edit']['class'].".".$field3.':IN'] = 
                 $this->getTables->REQUEST['filter_checkboxs'][$filter['edit']['field']];
             }
             
@@ -1893,6 +1899,9 @@ class getTable
                 $edit['as'] = $td['field'];
             }else{
                 $edit['as'] = $value['as'];
+            }
+            if(isset($value['field3'])){
+                $edit['field3'] = $value['field3'];
             }
             if($value['skip_modal']){
                 $edit['skip_modal'] = $value['skip_modal'];
