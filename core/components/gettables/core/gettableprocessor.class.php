@@ -547,6 +547,7 @@ class getTableProcessor
             foreach($trs_data as $tr_data){
                 $ids[] = $tr_data['id'];
             }
+            if(empty($ids)) return $this->error('trs_data empty');
             $pdoConfig['where'][$table['class'].".id:IN"] = $ids;
             $pdoConfig['limit'] = 1;
             $pdoConfig['sortby'] = [$table['class'].'.id'=>'ASC'];
