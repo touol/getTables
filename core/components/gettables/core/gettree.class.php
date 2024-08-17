@@ -540,7 +540,7 @@ class getTree
                         $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
                         $data['form'] = $response['data']['html'];
                         if(!isset($form['row']['parent'])){
-                            $this->modx->log(1," compile_actions".print_r($form['row'],1));
+                            // $this->modx->log(1," compile_actions".print_r($form['row'],1));
                         }
                         $data['action'] = "getTree/get_form_create";
                         $compile_actions[$key."_".$class] = $data;  

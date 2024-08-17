@@ -57,6 +57,7 @@ Changelog for getTables.
 - var00.
 - field3.
 - trs_data empty.
+- tree. insert_child. expanded_ids.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

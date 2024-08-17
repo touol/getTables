@@ -32,7 +32,7 @@ class getForm
         
         $this->getTables->REQUEST = $_REQUEST;
         $this->getTables->REQUEST = $this->getTables->sanitize($this->getTables->REQUEST); //Санация запросов
-
+        if(isset($this->getTables->REQUEST['id'])) $this->getTables->REQUEST['form_id'] = $this->getTables->REQUEST['id'];
         switch($action){
             case 'fetch':
                 if($this->config['isAjax'] and !$skype_check_ajax) $data = [];
@@ -117,7 +117,7 @@ class getForm
 
         
         if(!$form_compile['only_create']){
-            $this->getTables->addTime("getForm generateData start id={$this->getTables->REQUEST['id']}");
+            $this->getTables->addTime("getForm generateData start id={$this->getTables->REQUEST['form_id']}");
             $this->generateData($form_compile);
             $this->getTables->addTime("getForm generateData end");
         }
@@ -175,9 +175,9 @@ class getForm
         if(!isset($form['pdoTools'])) $form['pdoTools'] = [];
         if(!isset($form['pdoTools']['class'])) $form['pdoTools']['class'] = $form['class'];
         $form['pdoTools']['limit'] = 1;
-        if($this->getTables->REQUEST['id']){
+        if($this->getTables->REQUEST['form_id']){
             if(!isset($form['pdoTools']['where'])) $form['pdoTools']['where'] = [];
-            $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['id'];
+            $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['form_id'];
             //$form['pdoTools']['setTotal'] = 1;
             $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$form['pdoTools']));
             $rows = $this->pdoTools->run();
@@ -194,9 +194,9 @@ class getForm
         if(!isset($form['pdoTools']['class'])) $form['pdoTools']['class'] = $form['class'];
         $form['pdoTools']['limit'] = 1;
         
-        if($this->getTables->REQUEST['id']){
+        if($this->getTables->REQUEST['form_id']){
             if(!isset($form['pdoTools']['where'])) $form['pdoTools']['where'] = [];
-            $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['id'];
+            $form['pdoTools']['where'][$form['pdoTools']['class'].'.id'] = (int)$this->getTables->REQUEST['form_id'];
             //$form['pdoTools']['setTotal'] = 1;
             $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$form['pdoTools']));
             $rows = $this->pdoTools->run();

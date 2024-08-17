@@ -95,7 +95,7 @@ class getTable
         }  
 
         switch($action){
-            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy': case 'sort':case 'insert':
+            case 'create': case 'update': case 'toggle': case 'remove': case 'set': case 'autosave': case 'copy': case 'sort':case 'insert':case 'insert_child':
                 require_once('gettableprocessor.class.php');
                 $getTableProcessor = new getTableProcessor($this->getTables, $this->config);
                 return $getTableProcessor->run($action, $table, $data);
@@ -157,6 +157,13 @@ class getTable
     
     public function get_tree_child($action, $table, $data)
     {
+        if(isset($_SESSION['getTable'][$this->config['hash']]['expanded_ids'])){
+            $expanded_ids = $_SESSION['getTable'][$this->config['hash']]['expanded_ids'];
+        }else{
+            $expanded_ids = [];
+        }
+        $expanded_ids[] = $data['gts_tree']['parent'];
+        $_SESSION['getTable'][$this->config['hash']]['expanded_ids'] = $expanded_ids;
         $table2 = $this->generateData($table);
         //$this->getTables->addDebug($table2,'refresh  table 2');
         $html = '';
@@ -1086,32 +1093,7 @@ class getTable
                     // $this->getTables->addTime("getTable generateData {$td['content']} row {$row['id']}");
                     $autosave = true;
                 }
-                //tree
-                if($table['tree']){
-                    if($table['tree']['treeShowField'] == $td['edit']['field']){
-                        $level = (int)$this->getTables->REQUEST['gts_tree']['level'];
-                        $expand = "";
-                        if($level){
-                            for($i=0;$i<=$level;$i++){
-                                $expand .= '<span class="gtstree-indent"></span>';
-                            }
-                        }
-                        $level++;
-                        $tree_where[$table['class'].".".$table['tree']['parentIdField']] = $row[$table['tree']['idField']];
-                        $table['pdoTools2']['where'] = $tree_where;
-                        $table['pdoTools2']['select'] = $table['class'].".".'id';
-
-                        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
-                        $treerows = $this->pdoTools->run();
-                        $child_count = count($treerows);
-                        if($child_count){
-                            $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].'" class="gtstree-expander gtstree-expander-collapsed"></span>';
-                        }else{
-                            $expand .= '<class="gtstree-expander"></span>';
-                        }
-                        $td['content'] = $expand.$td['content'];
-                    }
-                }
+                
                 if($td['cls']) $td['cls'] = $this->pdoTools->getChunk('@INLINE '.$td['cls'], $row);
                 if(isset($td['edit']['buttons'])){
                     // $this->modx->log(1,"getTable compileActions td edit buttons ".print_r($td['edit']['buttons'],1));
@@ -1143,7 +1125,32 @@ class getTable
                         
                     }
                 }
-                
+                //tree
+                if($table['tree']){
+                    if($table['tree']['treeShowField'] == $td['edit']['field']){
+                        $level = (int)$this->getTables->REQUEST['gts_tree']['level'];
+                        $expand = "";
+                        if($level){
+                            for($i=0;$i<=$level;$i++){
+                                $expand .= '<span class="gtstree-indent"></span>';
+                            }
+                        }
+                        $level++;
+                        $tree_where[$table['class'].".".$table['tree']['parentIdField']] = $row[$table['tree']['idField']];
+                        $table['pdoTools2']['where'] = $tree_where;
+                        $table['pdoTools2']['select'] = $table['class'].".".'id';
+
+                        $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
+                        $treerows = $this->pdoTools->run();
+                        $child_count = count($treerows);
+                        if($child_count){
+                            $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].'" class="gtstree-expander gtstree-expander-collapsed"></span>';
+                        }else{
+                            $expand .= '<class="gtstree-expander"></span>';
+                        }
+                        $td['content'] = $expand.$td['content'];
+                    }
+                }
                 /*if(isset($td['buttons'])){
                     $td['content'] .= '<div style=""width:'.count($td['buttons'])*40 .'px;">'.$this->pdoTools->getChunk('@INLINE '.$td['buttons'], $row)."</div>";
                 }*/
@@ -1163,6 +1170,7 @@ class getTable
                 }
             }
             $r['data'] = $data;
+            
             //tree
             if($table['tree']){
                 $r['data']['gts_tree_child'] = $row[$table['tree']['idField']];
@@ -1177,6 +1185,22 @@ class getTable
                 'tr'=>$r,
                 'html'=> $html,
                 ];
+            //tree
+            if($table['tree']){
+                if(isset($_SESSION['getTable'][$this->config['hash']]['expanded_ids'])){
+                    $expanded_ids = $_SESSION['getTable'][$this->config['hash']]['expanded_ids'];
+                }else{
+                    $expanded_ids = [];
+                }
+                if(in_array($row[$table['tree']['idField']],$expanded_ids)){
+                    $this->getTables->REQUEST['gts_tree']['parent'] = $row[$table['tree']['idField']];
+                    $this->getTables->REQUEST['gts_tree']['level'] = $level;
+                    $tableChild = $this->generateData($table,$pdoConfig);
+                    foreach($tableChild['tbody']['trs'] as $tr){
+                        $trs[] = $tr;
+                    }
+                }
+            }
             //$output[] = $html;
         }
         
@@ -1228,7 +1252,7 @@ class getTable
         //$table['pdoTools']['return'] = 'data';
         $top = '';
         if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
-            $this->getTables->REQUEST['id'] = (int)$table['role']['id'];
+            $this->getTables->REQUEST['form_id'] = (int)$table['role']['id'];
             $this->getTables->addTime("document id = {$this->getTables->REQUEST['id']}");
             $resp =$this->getTables->handleRequestInt('getForm/test',$table['top']['form']);
             if(!$resp['success']){
@@ -1489,6 +1513,16 @@ class getTable
                 'row' => [],
                 'multiple' => ['title'=>'Скопировать выбранное'],
                 'icon' => $icon_prefix == 'fa fa' ? "$icon_prefix-clone" : 'glyphicon glyphicon-duplicate', //'glyphicon-glyphicon-duplicate',
+                'tag' =>'button',
+                'attr' => '',
+                'style' => '',
+            ],
+            'insert_child' =>[
+                'action'=>"getTable/insert_child",
+                'title'=>$this->modx->lexicon('gettables_insert'), 
+                'cls'=>'btn',
+                'row' => [],
+                'icon' => "$icon_prefix-plus", 
                 'tag' =>'button',
                 'attr' => '',
                 'style' => '',

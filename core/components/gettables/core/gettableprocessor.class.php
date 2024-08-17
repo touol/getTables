@@ -144,6 +144,9 @@ class getTableProcessor
             case 'insert':
                 $response = $this->insert($table, $edit_tables);
                 break;
+            case 'insert_child':
+                $response = $this->insert_child($table, $edit_tables, $data);
+                break;
             case 'toggle':
                 $response = $this->sets($table, $edit_tables, $data);
                 break;
@@ -288,6 +291,135 @@ class getTableProcessor
                 }
             }
         }
+        return $this->error($this->modx->lexicon('gettables_insert_error'));
+    }
+    public function insert_child($table, $edit_tables, $data = array())
+    {
+        if(empty($data['trs_data'])) return $this->error('trs_data empty');
+        if(empty($table['tree']) or empty($table['tree']['idField']) or empty($table['tree']['parentIdField'])) return $this->error('tree table empty');
+
+        $id = $data['trs_data'][0][$table['tree']['idField']];
+
+        $create = true;
+        $class = $table['class'];
+        if($edit_tables[$class]){
+            $set_data = [];
+            foreach($edit_tables[$class] as $edit){
+                if($edit['default']) $edit['force'] = $edit['default'];
+                if($edit['force']){
+                    switch($edit['type']){
+                        case 'date':
+                            $edit['force'] = date('Y-m-d',strtotime($edit['force']));
+                            break;
+                        case 'datetime':
+                            $edit['force'] = date('Y-m-d H:i',strtotime($edit['force']));
+                            break;
+                    }
+                    switch($edit['force']){
+                        case 'user_id':
+                            $edit['force'] = $this->modx->user->id;
+                            break;
+                    }
+                    $data[$edit['field']] = $edit['force'];
+                }
+                if($data[$edit['field']] !== null)
+                    $set_data[$edit['field']] = $data[$edit['field']];
+
+                if($edit['type'] == 'date'){
+                    if(isset($data[$edit['field']])){
+                        if($data[$edit['field']] == ''){
+                            $set_data[$edit['field']] = null;
+                        }else{
+                            $set_data[$edit['field']] = date('Y-m-d',strtotime($data[$edit['field']]));
+                        }
+                    }
+                }
+                
+                if($edit['type'] == 'datetime'){
+                    if(isset($data[$edit['field']])){
+                        if($data[$edit['field']] == ''){
+                            $set_data[$edit['field']] = null;
+                        }else{
+                            $set_data[$edit['field']] = date('Y-m-d H:i',strtotime($data[$edit['field']]));
+                        }
+                    }
+                }
+            }
+            if(isset($table['defaultFieldSet'])){
+                foreach($table['defaultFieldSet'] as $df=>$dfv){
+                    if($dfv['class'] == $class)
+                        $set_data[$df] = $dfv['value'];
+                }
+            }
+            if(isset($table['role']['where'])){
+                foreach($table['role']['where'] as $k=>$v){
+                    $k = str_replace("`","",$k);
+                    $arr = explode(".",$k);
+                    if($arr[0] == $class){
+                        if($v == 'id'){
+                            $set_data[$arr[1]] = (int)$table['role']['id'];
+                        }else{
+                            $set_data[$arr[1]] = $v;
+                        }
+                    }
+                    
+                }
+            }
+            $set_data_event = $set_data;
+            
+            $saveobj = ['success'=>false,'class'=>$class];
+            //$saved[] = $data;
+            //$this->getTables->addDebug($set_data,'$set_data update');
+            if($create){
+                $obj = $this->modx->newObject($class);
+                $data['id'] = false;
+                $type = 'insert_child';
+                $set_data[$table['tree']['parentIdField']] = $id;
+                $set_data['fixed'] = 1;
+                //sortable
+                if(isset($table['sortable']) and is_array($table['sortable'])){
+                    if($table['sortable']['field']){
+                        $field = $table['sortable']['field'];
+                        if(is_array($table['sortable']['where'])){
+                            $where = $table['sortable']['where'];
+                        }else{
+                            $where = [];
+                        }
+                        $c = $this->modx->newQuery($class);
+                        $c->select("MAX($field) as max");
+                        $c->where($where);
+                        $max = 0;
+                        if ($c->prepare() && $c->stmt->execute()) {
+                            $max = $c->stmt->fetchColumn();
+                        }
+                        $set_data[$table['sortable']['field']] = $max + 1;
+                    }
+                }
+                // $this->getTables->addDebug($table['sortable'],'sortable update');
+                // $this->getTables->addDebug($set_data,'$set_data update');
+            }
+            if($obj){
+                //$saved[] = $obj->toArray();
+                $object_old = $obj->toArray();
+                
+                $obj->fromArray($set_data);
+                $object_new = $obj->toArray();
+                
+                $resp = $this->run_triggers($class, 'before', $type, $set_data, $object_old,$object_new,$obj);
+                if(!$resp['success']) return $resp;
+                
+                //$saved[] = $this->success('Сохранено успешно',$set_data);
+                if($obj->save()){
+                    
+                    $object_new = $obj->toArray();
+                    $resp = $this->run_triggers($class, 'after', $type, $set_data, $object_old,$object_new,$obj);
+                    if(!$resp['success']) return $resp;
+                    $data['id'] = $obj->id;
+                    return $this->success($this->modx->lexicon('gettables_insert_successfully'),$data);
+                }
+            }
+        }
+
         return $this->error($this->modx->lexicon('gettables_insert_error'));
     }
     public function sort($table, $edit_tables, $data = array())
