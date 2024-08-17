@@ -129,6 +129,10 @@ class getTable
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->get_tree_child($action, $table, $data);
                 break;
+            case 'del_expand':
+                $data = $this->getTables->sanitize($data); //Санация $data
+                return $this->del_expand($action, $table, $data);
+                break;
             case 'set_default_width':
                 $data = $this->getTables->sanitize($data); //Санация $data
                 return $this->set_default_width($action, $table, $data);
@@ -170,6 +174,22 @@ class getTable
         foreach($table2['tbody']['trs'] as $tr){
             $html .= $tr['html'];
         }
+        
+        return $this->success('',array('html'=>$html));
+    }
+    public function del_expand($action, $table, $data)
+    {
+        if(isset($_SESSION['getTable'][$this->config['hash']]['expanded_ids'])){
+            $expanded_ids = $_SESSION['getTable'][$this->config['hash']]['expanded_ids'];
+        }else{
+            $expanded_ids = [];
+        }
+        foreach($expanded_ids as $k=>$v){
+            if($v == $data['gts_tree']['parent']){
+                unset($expanded_ids[$k]);
+            }
+        }
+        $_SESSION['getTable'][$this->config['hash']]['expanded_ids'] = $expanded_ids;
         
         return $this->success('',array('html'=>$html));
     }
@@ -907,8 +927,13 @@ class getTable
             $table['pdoTools2']['sortby'] = $sort;
             //$this->getTables->addTime("getTable generateData filter_sort ".print_r($filter_sort,1));
         }
+            
         //tree
+        $expanded_ids = [];
         if($table['tree']){
+            if(isset($_SESSION['getTable'][$this->config['hash']]['expanded_ids'])){
+                $expanded_ids = $_SESSION['getTable'][$this->config['hash']]['expanded_ids'];
+            }
             $tree_where = $table['pdoTools2']['where'];
             if(isset($this->getTables->REQUEST['gts_tree']['parent'])){
                 $table['pdoTools2']['where'][$table['class'].".".$table['tree']['parentIdField']] = (int)$this->getTables->REQUEST['gts_tree']['parent'];
@@ -1144,7 +1169,14 @@ class getTable
                         $treerows = $this->pdoTools->run();
                         $child_count = count($treerows);
                         if($child_count){
-                            $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].'" class="gtstree-expander gtstree-expander-collapsed"></span>';
+                            if(in_array($row[$table['tree']['idField']],$expanded_ids)){
+                                $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].
+                                '" class="gtstree-expander gtstree-expander-expanded"></span>';
+                            }else{
+                                $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].
+                                '" class="gtstree-expander gtstree-expander-collapsed"></span>';
+                            }
+                                
                         }else{
                             $expand .= '<class="gtstree-expander"></span>';
                         }
@@ -1187,11 +1219,6 @@ class getTable
                 ];
             //tree
             if($table['tree']){
-                if(isset($_SESSION['getTable'][$this->config['hash']]['expanded_ids'])){
-                    $expanded_ids = $_SESSION['getTable'][$this->config['hash']]['expanded_ids'];
-                }else{
-                    $expanded_ids = [];
-                }
                 if(in_array($row[$table['tree']['idField']],$expanded_ids)){
                     $this->getTables->REQUEST['gts_tree']['parent'] = $row[$table['tree']['idField']];
                     $this->getTables->REQUEST['gts_tree']['level'] = $level;

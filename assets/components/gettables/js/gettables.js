@@ -1474,10 +1474,32 @@
                     e.preventDefault();
                     $table = $(this).closest('.get-table');
                     $row = $(this).closest('.get-table-tr');
-                    $row.find('.gtstree-expander').removeClass('gtstree-expander-expanded').addClass('gtstree-expander-collapsed');
-                    //$childs = $table.find('tr[data-gts_tree_parent="'+$row.data('gts_tree_child')+'"]').remove();
-                    getTables.Table.childs_remove($table,$row.data('gts_tree_child'));
-                    
+
+                    $table = $(this).closest('.get-table');
+                    $row = $(this).closest('.get-table-tr');
+
+                    getTables.sendData.$GtsApp = $table;
+                    getTables.sendData.$row = $row;
+
+                    hash = $table.data('hash');
+                    gts_tree = $(this).data();
+                    getTables.sendData.data = {
+                        gts_action: 'getTable/del_expand',
+                        hash: hash,
+                        table_name:$table.data('name'),
+                        gts_tree: gts_tree,
+                    };
+                    // del_expand
+
+                    var callbacks = getTables.Table.callbacks;
+
+                    callbacks.get_tree_child.response.success = function (response) {
+                        $row.find('.gtstree-expander').removeClass('gtstree-expander-expanded').addClass('gtstree-expander-collapsed');
+                        //$childs = $table.find('tr[data-gts_tree_parent="'+$row.data('gts_tree_child')+'"]').remove();
+                        getTables.Table.childs_remove($table,$row.data('gts_tree_child'));
+                    };
+
+                    return getTables.send(getTables.sendData.data, getTables.Table.callbacks.get_tree_child, getTables.Callbacks.Table.get_tree_child);
                 });
             getTables.$doc
                 .on('click', '.gtstree-expander-collapsed', function (e) {
