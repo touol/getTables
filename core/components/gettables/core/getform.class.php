@@ -223,7 +223,11 @@ class getForm
                             $edit['json'] = json_encode($value);
                             
                         }else{
-                            $edit['value'] = $row[$edit['as']];
+                            if(isset($edit['as'])){
+                                $edit['value'] = $row[$edit['as']];
+                            }else{
+                                $edit['value'] = $row[$edit['field']];
+                            }
                         }
                         if($edit['type'] == "date"){
                             $edit['value'] = date($this->config['date_format'],strtotime($edit['value']));
@@ -233,7 +237,7 @@ class getForm
                         }
                         if(isset($edit['content'])){
                             $edit['form_content'] = $this->pdoTools->getChunk('@INLINE '.$edit['content'], $row);
-                            //$this->getTables->addTime("form generateData {ignore}".print_r($row,1)."{$edit['content']}{/ignore}");
+                            // $this->getTables->addTime("form generateData {ignore}".print_r($row,1)."{$edit['content']}{/ignore}");
                         }
                         if(isset($edit['field_content'])){
                             $edit['content'] = $row[$edit['field_content']];

@@ -1289,7 +1289,7 @@ class getTable
         $top = '';
         if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
             $this->getTables->REQUEST['form_id'] = (int)$table['role']['id'];
-            $this->getTables->addTime("document id = {$this->getTables->REQUEST['id']}");
+            $this->getTables->addTime("document id = {$this->getTables->REQUEST['form_id']}");
             $resp =$this->getTables->handleRequestInt('getForm/test',$table['top']['form']);
             if(!$resp['success']){
                 return $this->error("Документ не найден!");
