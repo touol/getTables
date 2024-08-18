@@ -8,6 +8,7 @@ class getTable
     
     public $getTables;
     public $config;
+
     /**
      * @param modX $modx
      * @param array $config
@@ -879,7 +880,7 @@ class getTable
     public function walkFuncInsertMenuId(&$item, $key, $id){
         $item = str_replace("insert_menu_id",$id,$item);
     }
-    public function generateData($table,$pdoConfig =[])
+    public function generateData($table,$pdoConfig =[], $level = 0)
     {
         $table['pdoTools2'] = array_merge($table['pdoTools'],$pdoConfig);
         
@@ -1153,14 +1154,17 @@ class getTable
                 //tree
                 if($table['tree']){
                     if($table['tree']['treeShowField'] == $td['edit']['field']){
-                        $level = (int)$this->getTables->REQUEST['gts_tree']['level'];
+                        if($level == 0){
+                            $level = (int)$this->getTables->REQUEST['gts_tree']['level'];
+                            $level++;
+                        }
                         $expand = "";
-                        if($level){
-                            for($i=0;$i<=$level;$i++){
+                        if($level > 1){
+                            for($i=0;$i<$level;$i++){
                                 $expand .= '<span class="gtstree-indent"></span>';
                             }
                         }
-                        $level++;
+                        
                         $tree_where[$table['class'].".".$table['tree']['parentIdField']] = $row[$table['tree']['idField']];
                         $table['pdoTools2']['where'] = $tree_where;
                         $table['pdoTools2']['select'] = $table['class'].".".'id';
@@ -1172,6 +1176,7 @@ class getTable
                             if(in_array($row[$table['tree']['idField']],$expanded_ids)){
                                 $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].
                                 '" class="gtstree-expander gtstree-expander-expanded"></span>';
+                                
                             }else{
                                 $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].
                                 '" class="gtstree-expander gtstree-expander-collapsed"></span>';
@@ -1220,11 +1225,15 @@ class getTable
             //tree
             if($table['tree']){
                 if(in_array($row[$table['tree']['idField']],$expanded_ids)){
+                    
                     $this->getTables->REQUEST['gts_tree']['parent'] = $row[$table['tree']['idField']];
-                    $this->getTables->REQUEST['gts_tree']['level'] = $level;
-                    $tableChild = $this->generateData($table,$pdoConfig);
-                    foreach($tableChild['tbody']['trs'] as $tr){
-                        $trs[] = $tr;
+                    // $this->getTables->REQUEST['gts_tree']['level'] = $level;
+                    // $this->getTables->addTime("generateDataChild start $level {$row[$table['tree']['idField']]}");
+                    $tableChild = $this->generateData($table,$pdoConfig,$level + 1);
+                    
+                    foreach($tableChild['tbody']['trs'] as $trc){
+                        // $this->getTables->addTime("generateDataChild end $level {$row[$table['tree']['idField']]} {$trc['data']['id']}");
+                        $trs[] = $trc;
                     }
                 }
             }

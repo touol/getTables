@@ -59,6 +59,7 @@ Changelog for getTables.
 - trs_data empty.
 - tree. insert_child. expanded_ids.
 - del_expand.
+- table tree level.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
