@@ -396,7 +396,6 @@
             }
         }
     }
-    
     getTables.initialize = function () {
         getTables.setup();
         // Indicator of active ajax request
@@ -1123,7 +1122,7 @@
                         if (button_data.js_action != "undefined")
                             getTables.Table[button_data.js_action](button_data, table_data, tr_data);
                     }else if (button_data.action == 'getTable/sub') {
-                            getTables.Table.sub(button_data, table_data, tr_data);
+                        getTables.Table.sub(button_data, table_data, tr_data);
                     }else if (button_data.name == 'remove') {
                         trs_data = [tr_data];
                         getTables.Table.remove(button_data, table_data, trs_data);
@@ -1599,7 +1598,10 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.autosave.response.success = function (response) {
-                if(response.data.refresh_table == 1) getTables.Table.refresh();
+                if(response.data.refresh_table == 1){
+                    getTables.Table.refresh();
+                    return;
+                }
                 if(response.data.update_form){
                     $('.get-table-top form').replaceWith(response.data.update_form);
                 }
@@ -1785,11 +1787,16 @@
             var callbacks = getTables.Table.callbacks;
 
             callbacks.sets.response.success = function (response) {
-                //console.log('callbacks.update.response.success',getTables.sendData);
                 //getTables.Modal.close();
                 if(response.data.modal) getTables.Modal.show(response.data.modal);
                 if(response.data.redirect) location = response.data.redirect;
-                if(!(response.data.redirect || response.data.modal)) getTables.Table.refresh();
+                if(button_data.action == 'getTable/insert_child'){
+                    if(getTables.sendData.$row.find('.gtstree-expander-collapsed').length == 1){
+                        getTables.sendData.$row.find('.gtstree-expander-collapsed').trigger('click');
+                    }else{
+                        getTables.Table.refresh();
+                    }
+                }else if(!(response.data.redirect || response.data.modal)) getTables.Table.refresh();
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.sets, getTables.Callbacks.Table.sets);
@@ -2296,7 +2303,9 @@
                 if(e.code == 'ArrowDown'){
                     $autocomplect = $(this).closest('.get-autocomplect');
                     $menu = $autocomplect.find('.get-autocomplect-menu');
+                    
                     if($menu.is(':visible')){
+                        $(this).on('change',function(e){e.stopPropagation();$(this).off('change');});
                         $menu.find('a').first().trigger('focus');
                     }
                 }
