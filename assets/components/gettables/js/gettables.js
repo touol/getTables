@@ -696,6 +696,7 @@
             }
             return true;
         };
+        
         // set context
         if ($.isArray(data)) {
             data.push({
@@ -703,6 +704,9 @@
                 value: getTablesConfig.ctx
             });
         } else if ($.isPlainObject(data)) {
+            if(getTables.sendData.$row && getTables.sendData.$row.find('.gtstree-expander').length == 1){
+                data.gts_tree = getTables.sendData.$row.find('.gtstree-expander').data();
+            }
             data.ctx = getTablesConfig.ctx;
         } else if (typeof data == 'string') {
             data += '&ctx=' + getTablesConfig.ctx;
@@ -1606,36 +1610,37 @@
                     $('.get-table-top form').replaceWith(response.data.update_form);
                 }
                 if(response.data.update_row){
-                    $new_row =$(response.data.update_row);
-                    getTables.sendData.$row.attr('class',$new_row.attr('class'));
-                    getTables.sendData.$row.find('td').each(function(){
-                        let $focus;
-                        if($(this).find('.get-autocomplect-content').length){
-                            $focus = $(this).find('.get-autocomplect-content');
-                            
-                        }else if($(this).find('.get-table-autosave').length){
-                            $focus = $(this).find('.get-table-autosave');
-                        }
-                        if(typeof($focus) !== "undefined"){
-                            if(!$focus.is(':focus')){
-                                $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
-                                $(this).replaceWith($td);
-                            }else if($focus.closest('.get-table-td').find('.fullcontent').length == 1){
-                                $focus.closest('.get-table-td').find('.fullcontent').text($new_row.find('td[data-field="'+$(this).data('field')+'"]').find('.fullcontent').text());
-                            }
-                        }else{
-                            $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
-                            $(this).replaceWith($td);
-                        }
-                        
-                    });
+                    getTables.Table.update_row($(response.data.update_row));
                 }
                 
             };
 
             return getTables.send(getTables.sendData.data, getTables.Table.callbacks.autosave, getTables.Callbacks.Table.autosave);
         },
-        
+        update_row: function($new_row){
+            getTables.sendData.$row.attr('class',$new_row.attr('class'));
+            getTables.sendData.$row.find('td').each(function(){
+                let $focus;
+                if($(this).find('.get-autocomplect-content').length){
+                    $focus = $(this).find('.get-autocomplect-content');
+                    
+                }else if($(this).find('.get-table-autosave').length){
+                    $focus = $(this).find('.get-table-autosave');
+                }
+                if(typeof($focus) !== "undefined"){
+                    if(!$focus.is(':focus')){
+                        $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
+                        $(this).replaceWith($td);
+                    }else if($focus.closest('.get-table-td').find('.fullcontent').length == 1){
+                        $focus.closest('.get-table-td').find('.fullcontent').text($new_row.find('td[data-field="'+$(this).data('field')+'"]').find('.fullcontent').text());
+                    }
+                }else{
+                    $td = $new_row.find('td[data-field="'+$(this).data('field')+'"]');
+                    $(this).replaceWith($td);
+                }
+                
+            });
+        },
         remove: function (button_data, table_data, trs_data) {
             getTables.Message.close();
 
@@ -1790,6 +1795,9 @@
                 //getTables.Modal.close();
                 if(response.data.modal) getTables.Modal.show(response.data.modal);
                 if(response.data.redirect) location = response.data.redirect;
+                if(response.data.update_row){
+                    getTables.Table.update_row($(response.data.update_row));
+                }
                 if(button_data.action == 'getTable/insert_child'){
                     if(getTables.sendData.$row.find('.gtstree-expander-collapsed').length == 1){
                         getTables.sendData.$row.find('.gtstree-expander-collapsed').trigger('click');
@@ -1897,6 +1905,7 @@
             // $form.trigger('submit');
             getTables.Message.close();
             hash = $table.data('hash');
+            getTables.sendData.$row = null;
             getTables.sendData.data = {
                 gts_action: 'getTable/refresh',
                 hash: hash,

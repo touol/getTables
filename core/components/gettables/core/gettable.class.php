@@ -1167,8 +1167,11 @@ class getTable
                         }
                         
                         $tree_where[$table['class'].".".$table['tree']['parentIdField']] = $row[$table['tree']['idField']];
+                        unset($tree_where[$table['class'].".".$table['tree']['idField']]);
                         $table['pdoTools2']['where'] = $tree_where;
                         $table['pdoTools2']['select'] = $table['class'].".".'id';
+
+                        $this->getTables->addTime("getTable generateData tree ".print_r($table['pdoTools2']['where'],1).print_r($this->config['pdoClear'],1));
 
                         $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
                         $treerows = $this->pdoTools->run();
@@ -1184,7 +1187,8 @@ class getTable
                             }
                                 
                         }else{
-                            $expand .= '<class="gtstree-expander"></span>';
+                            $expand .= '<span data-level="'.$level.'" data-parent="'.$row[$table['tree']['idField']].
+                                '" class="gtstree-expander"></span>';
                         }
                         $td['content'] = $expand.$td['content'];
                     }

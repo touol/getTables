@@ -169,7 +169,27 @@ class getTableProcessor
                 $response = $this->error("Action $action not found! ",$table);
                 break;
         }
-        
+        if(is_array($table['autosave'])){
+            if(isset($data['trs_data'])) $data['tr_data'] = $data['trs_data'][0];
+            if(isset($table['autosave']['refresh']['row'])){
+                $table['pdoTools']['where'][$table['pdoTools']['class'].'.id'] = (int)$data['tr_data']['id'];
+
+                if(isset($data['tr_data']['gts_tree_parent'])){
+                    $this->getTables->REQUEST['gts_tree']['parent'] = $data['tr_data']['gts_tree_parent'];
+                }
+                $getTable = $this->getTables->models['getTable']['service'];
+                $table2 = $getTable->generateData($table);
+                
+                if(isset($table2['tbody']['trs'][0])) $response['data']['update_row'] = $table2['tbody']['trs'][0]['html'];
+            }
+            if(isset($table['autosave']['refresh']['form'])){
+                if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
+                    $this->getTables->REQUEST['form_id'] = (int)$table['role']['id'];
+                    $resp2 = $this->getTables->handleRequestInt('getForm/fetch',$table['top']['form']);
+                    if($resp2['success']) $response['data']['update_form'] = $resp2['data']['html'];
+                }
+            }
+        }
         return $response;
     }
     public function insert($table, $edit_tables)
@@ -742,26 +762,7 @@ class getTableProcessor
         $set_data['table_name'] = $data['table_name'];
         $resp = $this->update($table, $edit_tables, $set_data, false, $data['tr_data']);
         if($refresh_table) $resp['data']['refresh_table'] = 1;
-        if(is_array($table['autosave'])){
-            if(isset($table['autosave']['refresh']['row'])){
-                $table['pdoTools']['where'][$table['pdoTools']['class'].'.id'] = (int)$data['tr_data']['id'];
-
-                if(isset($data['tr_data']['gts_tree_parent'])){
-                    $this->getTables->REQUEST['gts_tree']['parent'] = $data['tr_data']['gts_tree_parent'];
-                }
-                $getTable = $this->getTables->models['getTable']['service'];
-                $table2 = $getTable->generateData($table);
-                
-                if(isset($table2['tbody']['trs'][0])) $resp['data']['update_row'] = $table2['tbody']['trs'][0]['html'];
-            }
-            if(isset($table['autosave']['refresh']['form'])){
-                if($table['role']['type'] == 'document' and $table['top']['type'] == 'form'){
-                    $this->getTables->REQUEST['form_id'] = (int)$table['role']['id'];
-                    $resp2 = $this->getTables->handleRequestInt('getForm/fetch',$table['top']['form']);
-                    if($resp2['success']) $resp['data']['update_form'] = $resp2['data']['html'];
-                }
-            }
-        }
+        
         return $resp;
     }
 
