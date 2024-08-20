@@ -1016,6 +1016,7 @@ class getTable
                 if(!empty($ids)){
                     $pdoTools = $td0['edit']['select']['pdoTools'];
                     $pdoTools['where'][$pdoTools['class'].'.id:IN'] = $ids;
+                    $pdoTools['limit'] = 0;
                     $pdoTools = array_merge($this->config['pdoClear'],$pdoTools);
                     $this->pdoTools->setConfig($pdoTools);
                     $rows_select = $this->pdoTools->run();

@@ -61,6 +61,7 @@ Changelog for getTables.
 - del_expand.
 - table tree level.
 - Правка форм.
+- export_excel limit 0 на autocomplect.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.
