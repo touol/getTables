@@ -1171,7 +1171,7 @@ class getTable
                         $table['pdoTools2']['where'] = $tree_where;
                         $table['pdoTools2']['select'] = $table['class'].".".'id';
 
-                        $this->getTables->addTime("getTable generateData tree ".print_r($table['pdoTools2']['where'],1).print_r($this->config['pdoClear'],1));
+                        // $this->getTables->addTime("getTable generateData tree ".print_r($table['pdoTools2']['where'],1).print_r($this->config['pdoClear'],1));
 
                         $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$table['pdoTools2']));
                         $treerows = $this->pdoTools->run();
