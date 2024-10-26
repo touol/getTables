@@ -305,6 +305,7 @@ class getTree
                     
             }
             if(isset($resp['data']['table'])) $response = $this->getTables->handleRequestInt('getTable/fetch',$resp['data']['table']);
+            if(isset($this->getTables->REQUEST['id'])) $this->getTables->REQUEST['form_id'] = $this->getTables->REQUEST['id'];
             if(isset($resp['data']['form'])) $response = $this->getTables->handleRequestInt('getForm/fetch',$resp['data']['form']);
             if(isset($resp['data']['tabs'])) $response = $this->getTables->handleRequestInt('getTabs/fetch',$resp['data']);
             if($response){
@@ -338,6 +339,7 @@ class getTree
                     break;
                     case "form":
                         $form = $tree['panels'][$case['name']];
+                        if(isset($this->getTables->REQUEST['id'])) $this->getTables->REQUEST['form_id'] = $this->getTables->REQUEST['id'];
                         $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
                         return $response;
                     break;
@@ -536,7 +538,8 @@ class getTree
                             $form = array_merge($form,$data['form']);
                         }
                         $form['only_create'] = 1;
-                        //$this->getTables->addTime("getTree fetch".print_r($form,1)); 
+                        //$this->getTables->addTime("getTree fetch".print_r($form,1));
+                        if(isset($this->getTables->REQUEST['id'])) $this->getTables->REQUEST['form_id'] = $this->getTables->REQUEST['id']; 
                         $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
                         $data['form'] = $response['data']['html'];
                         if(!isset($form['row']['parent'])){
@@ -599,7 +602,8 @@ class getTree
                                     $form = array_merge($form,$data['form']);
                                 }
                                 $form['only_create'] = 1;
-                                //$this->getTables->addTime("getTree fetch".print_r($form,1)); 
+                                //$this->getTables->addTime("getTree fetch".print_r($form,1));
+                                if(isset($this->getTables->REQUEST['id'])) $this->getTables->REQUEST['form_id'] = $this->getTables->REQUEST['id']; 
                                 $response = $this->getTables->handleRequestInt('getForm/fetch',$form);
                                 $data['form'] = $response['data']['html'];
                                 // if(!isset($form['row']['parent'])){

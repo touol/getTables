@@ -31,6 +31,6 @@
     </div>
     
     <button class="btn btn-sm get-nav-refresh" type="button" >
-       <span class="fa fa-refresh"></span>
+       <i class="fa fa-sync"></i>
     </button>
     <span>{'gettables_all' | lexicon} <span class="get-page-total">{$page.total}</span></span>
