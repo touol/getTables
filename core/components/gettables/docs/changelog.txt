@@ -64,6 +64,7 @@ Changelog for getTables.
 - export_excel limit 0 на autocomplect.
 - refresh tree.
 - fa-sync.
+- form multiple.
 
 1.11.4-alpha
 - Адаптация под modx3(3.0.1) и pdoTools3.

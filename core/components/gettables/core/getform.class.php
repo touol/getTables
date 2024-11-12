@@ -215,6 +215,7 @@ class getForm
                             
                             $this->pdoTools->setConfig(array_merge($this->config['pdoClear'],$edit['pdoTools']));
                             $edit['value'] = $this->pdoTools->run();
+                            $this->getTables->addTime("form generateData multiple {ignore}".print_r($this->pdoTools->getTime(),1)."{/ignore}");
                             $value = [];
                             foreach($edit['value'] as $v){
                                 $value[$v[$edit['field']]] = $v[$edit['field']];
@@ -294,6 +295,7 @@ class getForm
             if(!empty($value['force'])) $edit['force'] = $value['force'];
             if(!empty($value['edit'])) $edit = array_merge($edit,$value['edit']);
             if(!empty($value['content'])) $edit['content'] = $value['content'];
+            if(isset($value['pdoTools'])) $edit['pdoTools'] = $value['pdoTools'];
 
             if(empty($value['as'])){
                 $edit['as'] = $value['field'];
