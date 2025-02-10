@@ -956,7 +956,7 @@ class getTableProcessor
                     $data[$edit['field']] = $edit['force'];
                 }
                 if($data[$edit['field']] !== null)
-                    $set_data[$edit['field']] = $data[$edit['field']];
+                    $set_data[$edit['field']] = str_replace('"','&quot;',$data[$edit['field']]);
 
                 if($edit['type'] == 'date'){
                     if(isset($data[$edit['field']])){
