@@ -154,7 +154,7 @@
         {if $edit.readonly1}readonly{/if} data-options='{if $edit.options}{$edit.options}{/if}'
         autocomplect="off"/>
     {case 'calc'}
-        <div class="input-group">
+        <div class="input-group" style="min-width:140px">
             <input type="number" step="{if $edit.step}{$edit.step}{else}0.01{/if}" data-field="{$edit.field}" name="{$edit.field}" value="{$edit.value}" 
                 placeholder="{$edit.placeholder}" class="form-control get-table-autosave"
                 {if $edit.style} style="{$edit.style}"{/if} {if $edit.readonly1}readonly{/if}/>
