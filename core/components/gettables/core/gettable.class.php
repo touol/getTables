@@ -704,27 +704,36 @@ class getTable
                                         if($filter['value'] >=0){
                                             $query[] = "($where_field <= {$filter['value']} OR $where_field IS NULL)";
                                         }else{
-                                            $query[$where_field.":<="] = $filter['value'];
+                                            $query[] = "($where_field <= {$filter['value']})";
+                                            // $query[$where_field.":<="] = $filter['value'];
                                         }
                                         break;
                                     case '=':
                                         if($filter['value']==0){
                                             $query[] = "($where_field = {$filter['value']} OR $where_field IS NULL)";
                                         }else{
-                                            $query[$where_field.":".$matches[0]] = $filter['value'];
+                                            $query[] = "($where_field = {$filter['value']})";
+                                            // $query[$where_field.":".$matches[0]] = $filter['value'];
                                         }
                                         break;
                                     case '>=': case '=>':
                                         if($filter['value'] <=0){
                                             $query[] = "($where_field >= {$filter['value']} OR $where_field IS NULL)";
                                         }else{
-                                            $query[$where_field.":>="] = $filter['value'];
+                                            $query[] = "($where_field >= {$filter['value']})";
+                                            // $query[$where_field.":>="] = $filter['value'];
                                         }
+                                        break;
+                                    case '<':
+                                        $query[] = "($where_field < {$filter['value']})";
+                                        break;
+                                    case '>':
+                                        $query[] = "($where_field > {$filter['value']})";
                                         break;
                                     default:
                                         $query[$where_field.":".$matches[0]] = $filter['value'];
                                 }
-                                
+                                // $this->getTables->addTime("getTable filter query ".print_r($query,1));
                                 // <!-- $query->where(array('width:IS' => null, 'width:<='=> 0,)); -->
                             }else{
                                 if(strpos($filter['edit']['where_field'], ':LIKE') === false) {
