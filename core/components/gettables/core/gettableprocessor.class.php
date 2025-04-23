@@ -920,7 +920,11 @@ class getTableProcessor
                     }
                 }else{
                     $data[$edit['field']] = $this->getTables->sanitize($data[$edit['field']]); //Санация записей в базу
-                    $data[$edit['field']] = str_replace('"','&quot;',$data[$edit['field']]);
+                    switch($edit['field']){
+                        case 'shortname': case 'longname':
+                            $data[$edit['field']] = str_replace('"','&quot;',$data[$edit['field']]);
+                        break;
+                    }
                 }
             }
         }
