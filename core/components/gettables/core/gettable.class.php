@@ -1075,9 +1075,21 @@ class getTable
                     //$this->getTables->addTime("getTable generateData td ".print_r($td,1));
                 }else{
                     $td['value'] = $row[$td['edit']['as']];
+                    $json_field = explode('.',$td['edit']['field']);
+                    if(count($json_field) > 1){
+                        
+                        if(is_string($row[$json_field[0]])) $row[$json_field[0]] = json_decode($row[$json_field[0]],1);
+                        $td['value'] = $row[$json_field[0]];
+                        foreach($json_field as $k111=>$jfield){
+                            if($k111 == 0) continue;
+                            $td['value'] = $td['value'][$jfield];
+                        }
+                        // $this->getTables->addTime("getTable generateData row ".print_r($row[$json_field[0]],1));
+                        // $this->getTables->addTime("getTable generateData td ".print_r($td,1));
+                    }
                 }
-                //$this->getTables->addTime("getTable generateData row ".print_r($row,1));
-                //$this->getTables->addTime("getTable generateData td ".print_r($td,1));
+                // $this->getTables->addTime("getTable generateData row ".print_r($row,1));
+                // $this->getTables->addTime("getTable generateData td ".print_r($td,1));
                 if(isset($td['number'])){
                     if(!is_array($td['number'])) $td['number'] = [];
                     if(!isset($td['number'][0])){
@@ -1126,6 +1138,8 @@ class getTable
                     $autosave = false;
                 }else{
                     $td['content'] = $td['value'];
+                    
+                    
                     // $this->getTables->addTime("getTable generateData {$td['content']} row {$row['id']}");
                     $autosave = true;
                 }
