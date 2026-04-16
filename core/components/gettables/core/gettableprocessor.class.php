@@ -1105,9 +1105,9 @@ class getTableProcessor
                 
                 if(!empty($edit['search_fields'])){
                     $saveobj = ['success'=>false,'class'=>$class,'field'=>$edit['field']];
-                    //$this->getTables->addDebug($edit,'$edit update search_fields '.$edit['field']);
-                    //$this->getTables->addDebug($tr_data,'$tr_data');
-                    //$this->getTables->addDebug($edit['search_fields'],'111 update $edit[search_fields]');
+                    // $this->getTables->addDebug($edit,'$edit update search_fields '.$edit['field']);
+                    // $this->getTables->addDebug($tr_data,'$tr_data');
+                    // $this->getTables->addDebug($edit['search_fields'],'111 update $edit[search_fields]');
                     $search_fields = [];
                     foreach($edit['search_fields'] as $k=>$v){
                         $search_fields[$k] = $v;
@@ -1134,28 +1134,29 @@ class getTableProcessor
                         }
                         ////$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 3 k update $$search_fields');
                     }
-                    //$this->getTables->addDebug($search_fields,'222 update $$search_fields');
-                    ////$this->getTables->addDebug($search_fields,'$search_fields');
+                    // $this->getTables->addDebug($search_fields,'222 update $$search_fields');
+                    // $this->getTables->addDebug($data,'$data');
                     if($edit['multiple']){
-                        $cols = $this->modx->getIterator($class,$search_fields);
-                        foreach($cols as $obj1){
-                            $object_old = $obj1->toArray();
-                            $resp = $this->run_triggers($class, 'before', 'remove', [], $object_old);
-                            if(!$resp['success']) return $resp;
-                            
-                            $id = $obj1->id;
-                            if($obj1->remove()){
-                                $resp = $this->run_triggers($class, 'after', 'remove', [], $object_old);
+                        if(isset($data[$edit['field']])){
+                            $cols = $this->modx->getIterator($class,$search_fields);
+                            foreach($cols as $obj1){
+                                $object_old = $obj1->toArray();
+                                $resp = $this->run_triggers($class, 'before', 'remove', [], $object_old);
                                 if(!$resp['success']) return $resp;
                                 
+                                $id = $obj1->id;
+                                if($obj1->remove()){
+                                    $resp = $this->run_triggers($class, 'after', 'remove', [], $object_old);
+                                    if(!$resp['success']) return $resp;
+                                    
+                                }
+                                
                             }
-                            
-                        }
-                        if(isset($data[$edit['field']])){
+                        
                             foreach($data[$edit['field']] as $v){
                                 $search_fields2 = $search_fields;
                                 $search_fields2[$edit['field']] = $v;
-                                ////$this->getTables->addDebug($search_fields2,'multiple update $search_fields2');
+                                // $this->getTables->addDebug($search_fields2,'multiple update $search_fields2');
                                 if($obj2 = $this->modx->newObject($class,$search_fields2)){
                                     if($obj2->save()){
                                         $object_old = $obj2->toArray();
@@ -1167,6 +1168,23 @@ class getTableProcessor
                                 }
                             }
                         }else{
+                            if (array_key_exists($edit['field'], $data) && is_null($data[$edit['field']])) {
+                                $cols = $this->modx->getIterator($class,$search_fields);
+                                foreach($cols as $obj1){
+                                    $object_old = $obj1->toArray();
+                                    $resp = $this->run_triggers($class, 'before', 'remove', [], $object_old);
+                                    if(!$resp['success']) return $resp;
+                                    
+                                    $id = $obj1->id;
+                                    if($obj1->remove()){
+                                        $resp = $this->run_triggers($class, 'after', 'remove', [], $object_old);
+                                        if(!$resp['success']) return $resp;
+                                        
+                                    }
+                                    
+                                }
+                            }
+                            $saveobj['success'] = true;
                             /*if($obj2->save()){ //кажется не нужно
                                         
                                 $saveobj['success'] = true;
