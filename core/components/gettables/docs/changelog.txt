@@ -1,4 +1,10 @@
 Changelog for getTables.
+1.12.2-alpha
+- Совместимость с PHP 8: в опубликованной сборке 1.12.1-alpha оставался
+  create_function(), удалённый в PHP 8.0 - на MODX 3 с PHP 8 админка падала
+  с "Call to undefined function create_function()". В исходниках он был убран
+  раньше, но сборку на модсторе не перезаливали.
+
 1.12.1-alpha
 - В события тригеров добавлены редактируемые объекты.
 - В getTables добавлена функция insertToArray.
