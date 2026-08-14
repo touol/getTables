@@ -79,7 +79,9 @@ class PHPExcel_Cell_DefaultValueBinder implements PHPExcel_Cell_IValueBinder
             return PHPExcel_Cell_DataType::TYPE_STRING;
         } elseif ($pValue instanceof PHPExcel_RichText) {
             return PHPExcel_Cell_DataType::TYPE_INLINE;
-        } elseif ($pValue[0] === '=' && strlen($pValue) > 1) {
+        // is_string обязателен: числу тут брали нулевой символ, и каждое числовое
+        // значение в выгрузке писало в лог «Trying to access array offset on int».
+        } elseif (is_string($pValue) && strlen($pValue) > 1 && $pValue[0] === '=') {
             return PHPExcel_Cell_DataType::TYPE_FORMULA;
         } elseif (is_bool($pValue)) {
             return PHPExcel_Cell_DataType::TYPE_BOOL;
