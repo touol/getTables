@@ -291,6 +291,37 @@ class getTable
         $html=$this->pdoTools->getChunk($this->config['getTableFilterCheckboxTpl'],['checkboxs' => $checkboxs]);
         return $this->success('',['html'=>$html]);
     }
+    /**
+     * HTML колонки → плоский текст для ячейки Excel.
+     *
+     * У колонки может быть задан шаблон `content`: generateData рендерит его
+     * чанком и кладёт результат и в `content` (им рисуется таблица), и в
+     * `content2`. Экспорт брал `content2` как есть, поэтому в ячейку попадала
+     * разметка — «<a href="logistika/zakazy…», «<p class="…».
+     *
+     * Чистим именно на выгрузке, а не в generateData: таблице тот же `content2`
+     * нужен разметкой.
+     */
+    protected function htmlToText($value)
+    {
+        if (!is_string($value) || strpos($value, '<') === false) return $value;
+
+        // Содержимое script/style в текст не входит вообще.
+        $text = preg_replace('#<(script|style)\b[^>]*>.*?</\1>#isu', ' ', $value);
+        // Границы блоков и переносы — иначе соседние куски слипнутся в одно слово.
+        $text = preg_replace('#<br\s*/?>#iu', "\n", $text);
+        $text = preg_replace('#</(p|div|li|tr|h[1-6])\s*>#iu', "\n", $text);
+        $text = preg_replace('#<(td|th)\b[^>]*>#iu', ' ', $text);
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+        // &nbsp; после декода — неразрывный пробел, в Excel он выглядит как мусор.
+        $text = str_replace("\xC2\xA0", ' ', $text);
+        $text = preg_replace('/[ \t]+/u', ' ', $text);
+        $text = preg_replace('/\s*\n\s*/u', "\n", $text);
+        $text = preg_replace('/\n{2,}/u', "\n", $text);
+
+        return trim($text);
+    }
     public function export_excel($action, $table, $data)
     {
         
@@ -348,10 +379,10 @@ class getTable
                                             }
                                         }
                                     }
-                                    $sheet->setCellValueByColumnAndRow($k, $i, implode(" ",$content));
+                                    $sheet->setCellValueByColumnAndRow($k, $i, $this->htmlToText(implode(" ",$content)));
                                 break;
                                 case 'autocomplect':
-                                    $sheet->setCellValueByColumnAndRow($k, $i, $v['edit']['content']);
+                                    $sheet->setCellValueByColumnAndRow($k, $i, $this->htmlToText($v['edit']['content']));
                                 break;
                                 default:
                                     $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
@@ -369,7 +400,7 @@ class getTable
                         // break; 
                         default:
                             if(isset($v['content2'])){
-                                $sheet->setCellValueByColumnAndRow($k, $i,trim($v['content2']));
+                                $sheet->setCellValueByColumnAndRow($k, $i, $this->htmlToText($v['content2']));
                             }else{
                                 $sheet->setCellValueByColumnAndRow($k, $i, $v['value']);
                             }
