@@ -1111,11 +1111,13 @@ class getTableProcessor
                     $search_fields = [];
                     foreach($edit['search_fields'] as $k=>$v){
                         $search_fields[$k] = $v;
+                        $from_sub_where = false;
                         //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
                         if(isset($this->getTables->REQUEST['sub_where_current'])){
                             foreach($this->getTables->REQUEST['sub_where_current'] as $f=>$f_v){
                                 if($f == mb_strtolower($v)){
                                     $search_fields[$k] = $f_v;
+                                    $from_sub_where = true;
                                     //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
                                 }
                             }
@@ -1123,7 +1125,9 @@ class getTableProcessor
                         foreach($tr_data as $tr_field=>$tr_value){
                             //$this->getTables->addDebug($search_fields[$k],$v." $tr_field ".$k.' 1 k update $$search_fields');
                             if($tr_field == mb_strtolower($v)){
-                                
+                                //пустое значение из строки не затирает уже найденное в sub_where_current,
+                                //иначе запись уходит в БД с 0 в поле связи (см. gtsBPayment.translation_id)
+                                if($from_sub_where and ($tr_value === '' or $tr_value === null)) continue;
                                 $search_fields[$k] = $tr_value;
                                 //$this->getTables->addDebug($search_fields[$k],$v." ".$k.' 1 k update $$search_fields');
                             }

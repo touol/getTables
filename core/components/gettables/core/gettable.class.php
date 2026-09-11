@@ -87,9 +87,13 @@ class getTable
             
 
         //$this->getTables->addDebug($data['table_name'],'handleRequest  $table_name');
+        $sub_where_current_request = isset($table['sub_where_current']) ? $table['sub_where_current'] : '';
         if(!$table = $this->getTables->getClassCache('getTable',$data['table_name'])){
             return $this->error("Таблица {$data['table_name']} не найдено");
         }
+        //конфиг из кеша затирает $table целиком, а sub_where_current пришёл в запросе и он свежее:
+        //без него generateData не подставит значения подтаблицы в data-атрибуты строки
+        if($sub_where_current_request) $table['sub_where_current'] = $sub_where_current_request;
         
         if($this->config['isAjax'] and $selects = $this->getTables->getClassCache('getSelect','all')){
             $this->config['selects'] = $selects;
